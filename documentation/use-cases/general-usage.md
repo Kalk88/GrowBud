@@ -1,4 +1,4 @@
-Billy is a generic user. Use-cases here are not to growing style.
+Billy is a generic user. Use-cases here are not specific to a growing style.
 
 ## Act on harvest notice
  Billy has previously chosen a notification option.
