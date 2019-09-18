@@ -1,13 +1,12 @@
 name: Elixir CI
 
-on: 
+on:
   push:
     branches:
     - master
- pull_request:
+  pull_request:
     branches:
     - master
-     
 
 jobs:
   build:
