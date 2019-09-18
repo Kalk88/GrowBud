@@ -26,5 +26,5 @@ jobs:
         mix deps.get
     - name: Run Tests
       run: |
-      cd server/growbud
-      mix test
+        cd server/growbud
+        mix test
