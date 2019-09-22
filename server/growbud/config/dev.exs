@@ -5,7 +5,7 @@ config :growbud, Growbud.Repo,
   username: "postgres",
   password: "postgres",
   database: "growbud_dev",
-  hostname: "localhost",
+  hostname: "database",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
