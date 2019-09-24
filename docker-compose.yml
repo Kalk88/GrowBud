@@ -18,3 +18,10 @@ services:
     - database
     ports:
     - "4000:4000"
+
+  growbud_client:
+    container_name: growbud_client
+    build:
+      context: ./client
+    ports:
+    - "8080:8080"
