@@ -2,8 +2,9 @@ name: Elixir CI
 
 on:
   push:
-    branches:
-    - master
+    paths:
+    - '*.ex'
+    - '*.exs'
 
   pull_request:
     branches:
