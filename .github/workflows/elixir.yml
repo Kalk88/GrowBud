@@ -5,13 +5,13 @@ on:
     branches:
     - master
     paths:
-      - server/*
+      - 'server/*'
 
   pull_request:
     branches:
     - master
     paths:
-      - server/*
+      - 'server/*'
 
 jobs:
   test:
