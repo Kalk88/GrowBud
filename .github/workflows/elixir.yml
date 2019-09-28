@@ -5,15 +5,13 @@ on:
     branches:
     - master
     paths:
-      - '*.ex'
-      - '*.exs'
+    - 'server/*'
 
   pull_request:
     branches:
     - master
     paths:
-      - '*.ex'
-      - '*.exs'
+    - 'server/*'
 
 jobs:
   test:
