@@ -3,12 +3,7 @@ name: Elixir CI
 on:
   push:
     paths:
-    - '*.ex'
-    - '*.exs'
-
-  pull_request:
-    branches:
-    - master
+    - 'server/*'
 
 jobs:
   test:
