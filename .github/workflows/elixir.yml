@@ -1,15 +1,6 @@
 name: Elixir CI
 
-on:
-  push:
-    paths:
-    - './server/growbud/*'
-
-  pull_request:
-    branches:
-    - master
-    paths:
-    - './server/growbud/*'
+on: [push, pull_request]
 
 jobs:
   test:
