@@ -5,8 +5,7 @@ defmodule Growbud.Accounts do
 
   import Ecto.Query, warn: false
   alias Growbud.Repo
-
-  alias Growbud.Accounts.User
+  alias Growbud.Accounts.{User, Credential}
 
   @doc """
   Returns the list of users.
@@ -52,6 +51,7 @@ defmodule Growbud.Accounts do
   def create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
+    |> Ecto.Changeset.cast_assoc(:credential, with: &Credential.changeset/2)
     |> Repo.insert()
   end
 

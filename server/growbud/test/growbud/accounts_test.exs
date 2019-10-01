@@ -7,6 +7,7 @@ defmodule Growbud.AccountsTest do
     alias Growbud.Accounts.User
 
     @valid_attrs %{name: "some name"}
+    @valid_create %{name: "some name", email: "test@growbud.email", password: "somefancypassword"}
     @update_attrs %{name: "some updated name"}
     @invalid_attrs %{name: nil}
 
@@ -30,7 +31,7 @@ defmodule Growbud.AccountsTest do
     end
 
     test "create_user/1 with valid data creates a user" do
-      assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
+      assert {:ok, %User{} = user} = Accounts.create_user(@valid_create)
       assert user.name == "some name"
     end
 
