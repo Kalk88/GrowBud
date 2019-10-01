@@ -3,13 +3,13 @@ name: Elixir CI
 on:
   push:
     paths:
-    - 'server/growbud/*'
+    - './server/growbud/*'
 
   pull_request:
     branches:
     - master
     paths:
-    - 'server/growbud/*'
+    - './server/growbud/*'
 
 jobs:
   test:
