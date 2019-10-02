@@ -1,22 +1,20 @@
-defmodule Growbud.Accounts.User do
+defmodule Growbud.Accounts.Role do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Growbud.Accounts.Credential
-  alias Growbud.Accounts.Role
+  alias Growbud.Accounts.User
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "users" do
+  schema "roles" do
     field :name, :string
-    has_one :credential, Credential
-    has_many :roles, Role
+    has_one :user, User
 
     timestamps()
   end
 
   @doc false
-  def changeset(user, attrs) do
-    user
+  def changeset(role, attrs) do
+    role
     |> cast(attrs, [:name])
     |> validate_required([:name])
   end

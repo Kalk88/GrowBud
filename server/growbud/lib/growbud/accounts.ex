@@ -5,7 +5,7 @@ defmodule Growbud.Accounts do
 
   import Ecto.Query, warn: false
   alias Growbud.Repo
-  alias Growbud.Accounts.{User, Credential}
+  alias Growbud.Accounts.{User, Credential, Role}
 
   @doc """
   Returns the list of users.
