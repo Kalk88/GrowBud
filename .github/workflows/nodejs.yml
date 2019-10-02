@@ -5,7 +5,7 @@ on:
     branches:
     - master
     paths:
-      - client/*
+    - 'client/**'
 
   pull_request:
     branches:
