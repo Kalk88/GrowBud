@@ -4,6 +4,7 @@ defmodule Growbud.Accounts do
   """
 
   import Ecto.Query, warn: false
+  alias Ecto.Multi
   alias Growbud.Repo
   alias Growbud.Accounts.{User, Credential, Role}
 
@@ -17,7 +18,9 @@ defmodule Growbud.Accounts do
 
   """
   def list_users do
-    Repo.all(User)
+    User
+    |> Repo.all()
+    |> Repo.preload(:roles)
   end
 
   @doc """
@@ -34,25 +37,31 @@ defmodule Growbud.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user!(id), do: Repo.get!(User, id)
+  def get_user!(id) do
+    User
+    |> Repo.get!(id)
+    |> Repo.preload(:roles)
+  end
 
   @doc """
-  Creates a user.
+  Register a user.
 
   ## Examples
 
-      iex> create_user(%{field: value})
+      iex> register_user(%{field: value})
       {:ok, %User{}}
 
-      iex> create_user(%{field: bad_value})
+      iex> register_user(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_user(attrs \\ %{}) do
-    %User{}
-    |> User.changeset(attrs)
-    |> Ecto.Changeset.cast_assoc(:credential, with: &Credential.changeset/2)
-    |> Repo.insert()
+  def register_user(attrs \\ %{}) do
+    result = Repo.transaction(create_user(attrs, "User"))
+
+    case result do
+      {:ok, %{user: user, roles: roles}} -> {:ok, %{user | roles: roles}}
+      {:error, _failed_operation, failed_value, _changes_so_far} -> {:error, failed_value}
+    end
   end
 
   @doc """
@@ -100,5 +109,19 @@ defmodule Growbud.Accounts do
   """
   def change_user(%User{} = user) do
     User.changeset(user, %{})
+  end
+
+  defp create_user(attrs, role) do
+    id = Ecto.UUID.generate()
+    user_attrs = Map.put(attrs, :id, id)
+
+    user =
+      %User{}
+      |> User.changeset(user_attrs)
+      |> Ecto.Changeset.cast_assoc(:credential, with: &Credential.changeset/2)
+
+    Multi.new()
+    |> Multi.insert(:user, user)
+    |> Multi.insert(:roles, Role.changeset(%Role{}, %{name: role, user_id: id}))
   end
 end

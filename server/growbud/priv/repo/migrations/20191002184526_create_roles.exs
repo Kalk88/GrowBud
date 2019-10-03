@@ -9,6 +9,5 @@ defmodule Growbud.Repo.Migrations.CreateRoles do
 
       timestamps()
     end
-
   end
 end
