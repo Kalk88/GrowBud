@@ -33,6 +33,7 @@ defmodule Growbud.AccountsTest do
     test "register_user/1 with valid data creates a user" do
       assert {:ok, %User{} = user} = Accounts.register_user(@valid_create)
       assert user.name == "some name"
+      assert user.roles.name == "User"
     end
 
     test "register_user/1 with invalid data returns error changeset" do
@@ -60,6 +61,12 @@ defmodule Growbud.AccountsTest do
     test "change_user/1 returns a user changeset" do
       user = user_fixture()
       assert %Ecto.Changeset{} = Accounts.change_user(user)
+    end
+
+    test "register_admin/1 with valid data creates a user" do
+      assert {:ok, %User{} = user} = Accounts.register_admin(@valid_create)
+      assert user.name == "some name"
+      assert user.roles.name == "Administrator"
     end
   end
 end

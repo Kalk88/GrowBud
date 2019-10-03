@@ -65,6 +65,27 @@ defmodule Growbud.Accounts do
   end
 
   @doc """
+  Register an Administrator.
+
+  ## Examples
+
+      iex> register_admin(%{field: value})
+      {:ok, %User{}}
+
+      iex> register_admin(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def register_admin(attrs \\ %{}) do
+    result = Repo.transaction(create_user(attrs, "Administrator"))
+
+    case result do
+      {:ok, %{user: user, roles: roles}} -> {:ok, %{user | roles: roles}}
+      {:error, _failed_operation, failed_value, _changes_so_far} -> {:error, failed_value}
+    end
+  end
+
+  @doc """
   Updates a user.
 
   ## Examples
