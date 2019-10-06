@@ -29,4 +29,3 @@ services:
       - './client/:/client'
     environment:
       - CHOKIDAR_USEPOLLING=true
-   
