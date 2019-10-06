@@ -1,7 +1,7 @@
 FROM node:12
 
 # make the 'app' folder the current working directory
-WORKDIR /app
+WORKDIR /client
 
 # copy both 'package.json' and 'package-lock.json' (if available)
 COPY package*.json ./
