@@ -15,7 +15,7 @@ defmodule Growbud.AccountsTest do
       {:ok, user} =
         attrs
         |> Enum.into(@valid_attrs)
-        |> Accounts.create_user()
+        |> Accounts.register_user()
 
       user
     end
@@ -30,13 +30,14 @@ defmodule Growbud.AccountsTest do
       assert Accounts.get_user!(user.id) == user
     end
 
-    test "create_user/1 with valid data creates a user" do
-      assert {:ok, %User{} = user} = Accounts.create_user(@valid_create)
+    test "register_user/1 with valid data creates a user" do
+      assert {:ok, %User{} = user} = Accounts.register_user(@valid_create)
       assert user.name == "some name"
+      assert user.roles.name == "User"
     end
 
-    test "create_user/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Accounts.create_user(@invalid_attrs)
+    test "register_user/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Accounts.register_user(@invalid_attrs)
     end
 
     test "update_user/2 with valid data updates the user" do
@@ -60,6 +61,12 @@ defmodule Growbud.AccountsTest do
     test "change_user/1 returns a user changeset" do
       user = user_fixture()
       assert %Ecto.Changeset{} = Accounts.change_user(user)
+    end
+
+    test "register_admin/1 with valid data creates a user" do
+      assert {:ok, %User{} = user} = Accounts.register_admin(@valid_create)
+      assert user.name == "some name"
+      assert user.roles.name == "Administrator"
     end
   end
 end

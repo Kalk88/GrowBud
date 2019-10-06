@@ -4,12 +4,12 @@ defmodule Growbud.Accounts.User do
   alias Growbud.Accounts.Credential
   alias Growbud.Accounts.Role
 
-  @primary_key {:id, :binary_id, autogenerate: true}
+  @primary_key {:id, :binary_id, autogenerate: false}
   @foreign_key_type :binary_id
   schema "users" do
     field :name, :string
     has_one :credential, Credential
-    has_many :roles, Role
+    has_one :roles, Role
 
     timestamps()
   end
@@ -17,7 +17,7 @@ defmodule Growbud.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:name])
-    |> validate_required([:name])
+    |> cast(attrs, [:id, :name])
+    |> validate_required([:id, :name])
   end
 end
