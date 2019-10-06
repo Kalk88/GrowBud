@@ -25,3 +25,7 @@ services:
       context: ./client
     ports:
     - "8080:8080"
+    volumes:
+      - './client/:/client'
+    environment:
+      - CHOKIDAR_USEPOLLING=true
