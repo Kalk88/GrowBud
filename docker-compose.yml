@@ -18,6 +18,8 @@ services:
     - database
     ports:
     - "4000:4000"
+    volumes:
+      - './app/:/server/growbud'
 
   growbud_client:
     container_name: growbud_client
