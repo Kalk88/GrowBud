@@ -5,7 +5,9 @@ defmodule GrowbudWeb.Schema do
   alias GrowbudWeb.Resolvers
 
   query do
-
+    @desc "test"
+    field :test, type: :registration do
+    end
   end
 
   mutation do
