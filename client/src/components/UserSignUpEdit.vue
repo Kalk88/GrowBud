@@ -31,6 +31,7 @@
 <script>
 // @ is an alias to /src
 import { mapMutations, mapGetters, mapActions } from 'vuex';
+import API from '../api/api';
 
 export default {
   name: 'UserSignUpEdit',
@@ -51,7 +52,11 @@ export default {
   methods: {
 
     register() {
-      this.setUser(this.User)
+      API.accountRegister(this.User).then(data =>{
+        console.log(data);
+      }
+        
+      );
     },
 
     ...mapMutations(["setUser"]),
