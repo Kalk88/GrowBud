@@ -19,8 +19,9 @@ defmodule GrowbudWeb.Router do
     get "/", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", GrowbudWeb do
-  #   pipe_through :api
-  # end
+  forward "/graphiql", Absinthe.Plug.GraphiQL,
+    schema: GrowbudWeb.Schema
+
+  forward "/api", Absinthe.Plug,
+    schema: GrowbudWeb.Schema
 end
