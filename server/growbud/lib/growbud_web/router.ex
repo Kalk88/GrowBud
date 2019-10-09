@@ -20,12 +20,8 @@ defmodule GrowbudWeb.Router do
   end
 
   scope "/api" do
+    forward "/graph", Absinthe.Plug.GraphiQL, schema: GrowbudWeb.Schema
 
-    forward "/graph", Absinthe.Plug.GraphiQL,
-      schema: GrowbudWeb.Schema
-
-    forward "/", Absinthe.Plug,
-      schema: GrowbudWeb.Schema
+    forward "/", Absinthe.Plug, schema: GrowbudWeb.Schema
   end
-
 end
