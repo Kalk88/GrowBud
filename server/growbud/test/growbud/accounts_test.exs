@@ -11,12 +11,11 @@ defmodule Growbud.AccountsTest do
     @invalid_attrs %{name: nil}
 
     def user_fixture(attrs \\ %{}) do
-      {:ok, user} =
+      {:ok, registration} =
         attrs
         |> Enum.into(@valid_create)
         |> Accounts.register_user()
-
-      user
+      user = Accounts.get_user!(registration.id)
     end
 
     test "list_users/0 returns all users" do
@@ -73,7 +72,6 @@ defmodule Growbud.AccountsTest do
       assert {:ok, %Registration{} = registration} = Accounts.register_admin(@valid_attrs)
       assert registration.name == "some name"
       assert registration.email == "some@email"
-      assert registration.roles.name == "Administrator"
     end
   end
 end
