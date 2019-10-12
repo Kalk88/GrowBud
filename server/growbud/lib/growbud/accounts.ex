@@ -6,7 +6,7 @@ defmodule Growbud.Accounts do
   import Ecto.Query, warn: false
   alias Ecto.Multi
   alias Growbud.Repo
-  alias Growbud.Accounts.{User, Credential, Role}
+  alias Growbud.Accounts.{User, Credential, Role, Registration}
 
   @doc """
   Returns the list of users.
@@ -56,12 +56,7 @@ defmodule Growbud.Accounts do
 
   """
   def register_user(attrs \\ %{}) do
-    result = Repo.transaction(create_user(attrs, "User"))
-
-    case result do
-      {:ok, %{user: user, roles: roles}} -> {:ok, %{user | roles: roles}}
-      {:error, _failed_operation, failed_value, _changes_so_far} -> {:error, failed_value}
-    end
+    register(attrs, "User")
   end
 
   @doc """
@@ -76,13 +71,8 @@ defmodule Growbud.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def register_admin(attrs \\ %{}) do
-    result = Repo.transaction(create_user(attrs, "Administrator"))
-
-    case result do
-      {:ok, %{user: user, roles: roles}} -> {:ok, %{user | roles: roles}}
-      {:error, _failed_operation, failed_value, _changes_so_far} -> {:error, failed_value}
-    end
+  def register_admin(attrs) do
+    register(attrs, "Administrator")
   end
 
   @doc """
@@ -132,17 +122,40 @@ defmodule Growbud.Accounts do
     User.changeset(user, %{})
   end
 
-  defp create_user(attrs, role) do
+  defp register(attrs, role) do
+    IO.puts("register")
     id = Ecto.UUID.generate()
-    user_attrs = Map.put(attrs, :id, id)
+    attrs = Map.put(attrs, :id, id)
+    changeset =
+      %Registration{}
+      |> Registration.changeset(attrs)
 
-    user =
-      %User{}
-      |> User.changeset(user_attrs)
-      |> Ecto.Changeset.cast_assoc(:credential, with: &Credential.changeset/2)
+    if changeset.valid? do
+      registration = Ecto.Changeset.apply_changes(changeset)
+      user_attrs = Registration.to_user(registration)
+      credentials_attrs = Registration.to_credentials(registration)
 
-    Multi.new()
-    |> Multi.insert(:user, user)
-    |> Multi.insert(:roles, Role.changeset(%Role{}, %{name: role, user_id: id}))
+      user =
+        %User{}
+        |> User.changeset(user_attrs)
+        |> Ecto.Changeset.cast_assoc(:credential, with: credentials_attrs)
+
+      result =
+        Multi.new()
+        |> Multi.insert(:user, user)
+        |> Multi.insert(
+          :roles,
+          Role.changeset(%Role{}, %{name: role, user_id: id})
+        )
+        |>Repo.transaction()
+
+
+      case result do
+        {:ok, _} -> {:ok, registration}
+        {:error, _failed_operation, failed_value, _changes_so_far} -> {:error, failed_value}
+      end
+    else
+      %{error: changeset}
+    end
   end
 end
