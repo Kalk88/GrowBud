@@ -123,7 +123,6 @@ defmodule Growbud.Accounts do
   end
 
   defp register(attrs, role) do
-    IO.puts("register")
     id = Ecto.UUID.generate()
     attrs = Map.put(attrs, :id, id)
     changeset =
@@ -155,7 +154,7 @@ defmodule Growbud.Accounts do
         {:error, _failed_operation, failed_value, _changes_so_far} -> {:error, failed_value}
       end
     else
-      %{error: changeset}
+      {:error, changeset}
     end
   end
 end
