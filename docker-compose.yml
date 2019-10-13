@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   database:
     container_name: growbud_db
@@ -15,19 +15,19 @@ services:
       context: ./server
     command: bash -c "mix ecto.create && mix ecto.migrate && mix phx.server"
     depends_on:
-    - database
+      - database
     ports:
-    - "4000:4000"
+      - "4000:4000"
     volumes:
-      - './app/:/server/growbud'
+      - "./server/growbud:/app/"
 
   growbud_client:
     container_name: growbud_client
     build:
       context: ./client
     ports:
-    - "8080:8080"
+      - "8080:8080"
     volumes:
-      - './client/:/client'
+      - "./client/:/client"
     environment:
       - CHOKIDAR_USEPOLLING=true
