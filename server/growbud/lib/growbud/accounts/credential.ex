@@ -7,9 +7,9 @@ defmodule Growbud.Accounts.Credential do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "credentials" do
-    field :email, :string
-    field :password, :string
-    belongs_to :user, User
+    field(:email, :string)
+    field(:password, :string)
+    belongs_to(:user, User)
 
     timestamps()
   end
@@ -17,8 +17,8 @@ defmodule Growbud.Accounts.Credential do
   @doc false
   def changeset(credential, attrs) do
     credential
-    |> cast(attrs, [:email, :password])
-    |> validate_required([:email, :password])
+    |> cast(attrs, [:email, :password, :user_id])
+    |> validate_required([:email, :password, :user_id])
     |> unique_constraint(:email)
     |> validate_format(:email, ~r/@/)
     |> validate_length(:password, min: 8)

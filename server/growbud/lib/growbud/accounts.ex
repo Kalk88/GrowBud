@@ -123,31 +123,30 @@ defmodule Growbud.Accounts do
   end
 
   defp register(attrs, role) do
-    id = Ecto.UUID.generate()
-    attrs = Map.put(attrs, :id, id)
     changeset =
       %Registration{}
       |> Registration.changeset(attrs)
 
     if changeset.valid? do
       registration = Ecto.Changeset.apply_changes(changeset)
-      user_attrs = Registration.to_user(registration)
-      credentials_attrs = Registration.to_credentials(registration)
 
       user =
         %User{}
-        |> User.changeset(user_attrs)
-        |> Ecto.Changeset.cast_assoc(:credential, with: credentials_attrs)
+        |> User.changeset(Registration.to_user(registration))
+
+      credential =
+        %Credential{}
+        |> Credential.changeset(Registration.to_credentials(registration))
 
       result =
         Multi.new()
         |> Multi.insert(:user, user)
+        |> Multi.insert(:credential, credential)
         |> Multi.insert(
           :roles,
-          Role.changeset(%Role{}, %{name: role, user_id: id})
+          Role.changeset(%Role{}, %{name: role, user_id: registration.id})
         )
-        |>Repo.transaction()
-
+        |> Repo.transaction()
 
       case result do
         {:ok, _} -> {:ok, registration}
