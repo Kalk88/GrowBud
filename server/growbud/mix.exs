@@ -47,6 +47,7 @@ defmodule Growbud.MixProject do
       {:absinthe, "~> 1.4.0"},
       {:absinthe_plug, "~> 1.4.0"},
       {:cors_plug, "~> 2.0"}
+      {:guardian, "~> 1.2"}
     ]
   end
 
