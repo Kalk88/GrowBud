@@ -3,17 +3,17 @@ defmodule Growbud.Accounts.Registration do
   import Ecto.Changeset
 
   embedded_schema do
-    field :email, :string
-    field :name, :string
-    field :password, :string
+    field(:email, :string)
+    field(:name, :string)
+    field(:password, :string)
   end
 
   @doc false
   def changeset(registration, attrs) do
-
     registration
-    |> cast(attrs, [:id, :name, :email, :password])
-    |> validate_required([:id, :name, :email, :password])
+    |> cast(attrs, [:name, :email, :password])
+    |> validate_required([:name, :email, :password])
+    |> put_change(:id, Ecto.UUID.generate())
   end
 
   def to_user(registration) do
@@ -21,6 +21,7 @@ defmodule Growbud.Accounts.Registration do
   end
 
   def to_credentials(registration) do
-    Map.take(registration, [:id, :email, :password])
+    Map.take(registration, [:email, :password])
+    |> Map.put(:user_id, registration.id)
   end
 end
