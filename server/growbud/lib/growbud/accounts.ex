@@ -44,6 +44,31 @@ defmodule Growbud.Accounts do
   end
 
   @doc """
+    Authenticates the user by email and password.
+  """
+  def authenticate_by_email_password(%{email: email, password: password}) do
+    query =
+      from(u in User,
+        inner_join: c in Credential,
+        on: c.user_id == u.id,
+        inner_join: r in Role,
+        on: r.user_id == u.id,
+        where: c.email == ^email,
+        select: %{user: u, cred: c, role: r}
+      )
+
+    auth_data = Repo.one(query)
+    IO.inspect(auth_data)
+    credentials = Map.get(auth_data, :cred)
+    stored_password = Map.get(credentials, :password)
+
+    case Bcrypt.verify_pass(password, stored_password) do
+      true -> {:ok, auth_data}
+      nil -> {:error, :unauthorized}
+    end
+  end
+
+  @doc """
   Register a user.
 
   ## Examples
