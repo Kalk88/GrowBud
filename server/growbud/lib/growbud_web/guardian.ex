@@ -10,6 +10,7 @@ defmodule MyApp.Guardian do
     sub = to_string(resource.id)
     {:ok, sub}
   end
+
   def subject_for_token(_, _) do
     {:error, :reason_for_error}
   end
@@ -20,8 +21,9 @@ defmodule MyApp.Guardian do
     # the resource id so here we'll rely on that to look it up.
     id = claims["sub"]
     resource = Growbud.Accounts.get_user!(id)
-    {:ok,  resource}
+    {:ok, resource}
   end
+
   def resource_from_claims(_claims) do
     {:error, :reason_for_error}
   end
