@@ -13,7 +13,7 @@ services:
     container_name: growbud_server
     build:
       context: ./server
-    command: bash -c "mix ecto.create && mix ecto.migrate && mix phx.server"
+    command: bash -c "mix deps.get && mix ecto.setup && mix phx.server"
     depends_on:
       - database
     ports:
