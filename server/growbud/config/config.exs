@@ -26,11 +26,9 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-config :guardian, Guardian,
+config :growbud, GrowbudWeb.Auth.Guardian,
   issuer: "growbud",
-  secret_key: Mix.env(),
-  serializer: MyApp.GuardianSerializer
-
+  secret_key: "zjcPc6aF4x6fOz+OfhwLmy9qc4WBZZaKLwq17fxem5b2vXDxmJOqLeR6qV+eq/Qu"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

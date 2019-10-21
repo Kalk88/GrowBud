@@ -19,15 +19,15 @@ defmodule GrowbudWeb.Router do
     get("/", PageController, :index)
   end
 
-  scope "/api" do
-    forward("/graph", Absinthe.Plug.GraphiQL, schema: GrowbudWeb.Schema)
-
-    forward("/", Absinthe.Plug, schema: GrowbudWeb.Schema)
-  end
-
   scope "/api", GrowbudWeb do
     pipe_through(:api)
 
-    post("/login", AuthController, :login)
+    post("/login", SessionController, :login)
+    post("/logout", SessionController, :logout)
+  end
+
+  scope "/api" do
+    forward("/graph", Absinthe.Plug.GraphiQL, schema: GrowbudWeb.Schema)
+    forward("/", Absinthe.Plug, schema: GrowbudWeb.Schema)
   end
 end

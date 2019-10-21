@@ -15,7 +15,8 @@ defmodule Growbud.AccountsTest do
         attrs
         |> Enum.into(@valid_create)
         |> Accounts.register_user()
-      user = Accounts.get_user!(registration.id)
+
+      Accounts.get_user!(registration.id)
     end
 
     test "list_users/0 returns all users" do

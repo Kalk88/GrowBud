@@ -9,3 +9,8 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+alias Growbud.Accounts
+
+if Mix.env() == :dev do
+  Accounts.register_user(%{name: "mister", email: "mister@test", password: "p"})
+end
