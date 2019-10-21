@@ -20,6 +20,8 @@ services:
       - "4000:4000"
     volumes:
       - "./server/growbud:/app/"
+    environment:
+      - Mix.env=dev
 
   growbud_client:
     container_name: growbud_client
