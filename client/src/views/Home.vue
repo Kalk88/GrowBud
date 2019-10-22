@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <UserSignUpEdit/>
+    <UserSignUpEdit />
   </div>
 </template>
 
