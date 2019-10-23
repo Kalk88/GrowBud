@@ -1,0 +1,49 @@
+# Options in this schema is query or mutation
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+# Possible querys
+type Query {
+    me(id: String!): User
+}
+
+# Possible mutations
+type Mutation {
+    registerUser(name: String!, email: String!, password: String!): Registration
+    login(email: String!, password: String!)
+    logout(id: String!)
+}
+
+# type definitions
+type  Registration {
+    id: String!
+    name: String!
+    email: String!
+    password: String!
+}
+
+type Schedule {
+    from: Date!
+    to: Date!
+    active: Boolean!
+}
+
+type User implements Account {
+    id: String!
+    name: String!
+}
+
+type Administrator implements Account {
+    id: String!
+    name: String!
+}
+
+interface Account {
+    id: String!
+    name: String!
+}
+
+# Custom scalar values
+scalar Date
