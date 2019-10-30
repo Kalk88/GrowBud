@@ -2,11 +2,12 @@
   "name": "data-store",
   "version": "1.0.0",
   "description": "Graphql layer over data persistence.",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "start": "node index.js",
+    "start": "node index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "standard": "./node_modules/standard/bin/cmd.js --fix"
+    "standard": "./node_modules/standard/bin/cmd.js --fix",
+    "tsc-watch": "./node_modules/typescript/bin/tsc -w"
   },
   "author": "",
   "license": "ISC",
@@ -20,6 +21,7 @@
     "@google-cloud/firestore": "^2.5.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-graphql": "^0.9.0",
     "firebase": "^7.2.2",
     "graphql": "^14.5.8",
     "uuid": "^3.3.3"
