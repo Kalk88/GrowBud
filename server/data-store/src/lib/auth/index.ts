@@ -1,7 +1,7 @@
 import * as firebase from "firebase/app";
 import "firebase/auth";
 
-interface Credential {
+export interface Credential {
   email: string,
   password: string
 }
@@ -24,23 +24,30 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-async function login(credential: Credential) {
+export async function login(credential: Credential): Promise<string> {
   try {
     const result = await firebase.auth().signInWithEmailAndPassword(credential.email, credential.password)
+    if (result.user) {
+      const token = await result.user.getIdToken(true)
+      console.log(token)
+      return token
+    }
   } catch (error) {
     console.error('Unable to authorize user: ', formatError(error))
   }
+  return new Promise((resolve, _) => resolve(''))
 }
 
-async function logout() {
+export async function logout() {
   try {
+    //TODO: Something other than sign out
     await firebase.auth().signOut()
   } catch (error) {
     console.error('Unable to sign out user: ', formatError(error))
   }
 }
 
-async function registerCredentials(credential: Credential) {
+export async function registerCredentials(credential: Credential) {
   try {
     await firebase.auth().createUserWithEmailAndPassword(credential.email, credential.password)
   } catch (error) {
@@ -51,11 +58,4 @@ async function registerCredentials(credential: Credential) {
 
 function formatError(error: firebaseError): string {
   return `code: ${error.code} msg: ${error.message}`
-}
-
-module.exports = {
-  login,
-  logout,
-  registerCredentials,
-  Credential
 }
