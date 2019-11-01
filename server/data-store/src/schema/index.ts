@@ -26,8 +26,8 @@ const RegistrationType = new GraphQLObjectType({
     name: 'Registration',
     description: 'Registration details',
     fields: () => ({
+        JWT: gqlString,
         email: gqlString,
-        password: gqlString,
         userName: gqlString
     })
 })
@@ -57,19 +57,8 @@ const mutationType = new GraphQLObjectType({
                 return { JWT }
             }
         },
-        logout: {
-            description: 'Logout the user',
-            type: GraphQLBoolean,
-            args: {
-                JWT: gqlString
-            },
-            resolve: async (_root, args) => {
-                await logout()
-                return true
-            }
-        },
         register: {
-            description: 'Register a user',
+            description: 'Register an account.',
             type: RegistrationType,
             args: {
                 email: gqlString,
@@ -78,7 +67,12 @@ const mutationType = new GraphQLObjectType({
             },
             resolve: async (_root, args) => {
                 const cred: Credential = { email: args.email, password: args.password }
-                await registerCredentials(cred)
+                const JWT = await registerCredentials(cred)
+                return {
+                    JWT,
+                    email: args.email,
+                    userName: args.userName
+                }
             }
 
         }

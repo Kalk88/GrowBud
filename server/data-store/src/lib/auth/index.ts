@@ -38,22 +38,16 @@ export async function login(credential: Credential): Promise<string> {
   return new Promise((resolve, _) => resolve(''))
 }
 
-export async function logout() {
+export async function registerCredentials(credential: Credential): Promise<string> {
   try {
-    //TODO: Something other than sign out
-    await firebase.auth().signOut()
-  } catch (error) {
-    console.error('Unable to sign out user: ', formatError(error))
-  }
-}
-
-export async function registerCredentials(credential: Credential) {
-  try {
-    await firebase.auth().createUserWithEmailAndPassword(credential.email, credential.password)
+    const result = await firebase.auth().createUserWithEmailAndPassword(credential.email, credential.password)
+    if (result.user) {
+      return result.user.getIdToken(true)
+    }
   } catch (error) {
     console.error('Unable to register credentials: ', formatError(error))
-
   }
+  return new Promise((resolve, _) => resolve(''))
 }
 
 function formatError(error: firebaseError): string {
