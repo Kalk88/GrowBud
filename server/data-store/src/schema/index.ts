@@ -8,7 +8,6 @@ import {
 import {
     login,
     Credential,
-    logout,
     registerCredentials
 } from '../lib/auth'
 
