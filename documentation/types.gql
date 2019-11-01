@@ -14,20 +14,14 @@ type Mutation {
     registerUser(name: String!, email: String!, password: String!): Registration
     login(email: String!, password: String!)
     logout(id: String!)
+    nextWateringDateFor(plant: Plant!, timestamp: String!): WateringSchedule
 }
 
 # type definitions
-type  Registration {
+type  Registration implements Account {
     id: String!
     name: String!
     email: String!
-    password: String!
-}
-
-type Schedule {
-    from: Date!
-    to: Date!
-    active: Boolean!
 }
 
 type User implements Account {
@@ -45,5 +39,17 @@ interface Account {
     name: String!
 }
 
+type Plant {
+    id: String!,
+    name: String!,
+    description: String!
+}
+
+type WateringSchedule {
+    id: String!
+    plant: Plant!
+    nextTimeToWater: Timestamp!
+}
+
 # Custom scalar values
-scalar Date
+scalar Timestamp # unix timestamp
