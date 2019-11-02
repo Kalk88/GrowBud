@@ -47,6 +47,7 @@ type Plant {
 
 type WateringSchedule {
     id: String!
+    userId: String!
     plant: Plant!
     nextTimeToWater: Timestamp!
 }
