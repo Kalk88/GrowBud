@@ -2,7 +2,9 @@ import {
     GraphQLSchema,
     GraphQLObjectType,
     GraphQLString,
-    GraphQLBoolean
+    GraphQLBoolean,
+    GraphQLInputObjectType,
+    GraphQLNonNull
 } from 'graphql'
 
 import {
@@ -11,27 +13,53 @@ import {
     registerCredentials
 } from '../lib/auth'
 
-const gqlString = { type: GraphQLString }
+const nonNullGqlString = { type: new GraphQLNonNull(GraphQLString) }
 
-const JWTType = new GraphQLObjectType({
+/**
+ * Types
+ */
+const JWT = new GraphQLObjectType({
     name: 'JWT',
     description: 'JWT',
     fields: () => ({
-        JWT: gqlString
+        JWT: nonNullGqlString
     })
 })
 
-const RegistrationType = new GraphQLObjectType({
+const Registration = new GraphQLObjectType({
     name: 'Registration',
     description: 'Registration details',
     fields: () => ({
-        JWT: gqlString,
-        email: gqlString,
-        userName: gqlString
+        JWT: nonNullGqlString,
+        email: nonNullGqlString,
+        userName: nonNullGqlString
     })
 })
 
+const WateringSchedule = new GraphQLObjectType({
+    name: 'WateringSchedule',
+    description: 'Information about a plant and when to water next.',
+    fields: () => ({
+        id: nonNullGqlString,
+        userId: nonNullGqlString,
+        plant: { type: Plant },
+        nextTimeToWater: nonNullGqlString
+    })
+})
 
+const Plant = new GraphQLObjectType({
+    name: "Plant",
+    description: "Information about a plant.",
+    fields: () => ({
+        id: nonNullGqlString,
+        name: nonNullGqlString,
+        description: nonNullGqlString
+    })
+})
+
+/**
+ * Queries
+ */
 const queryType = new GraphQLObjectType({
     name: 'Query',
     description: 'Query operations',
@@ -40,16 +68,19 @@ const queryType = new GraphQLObjectType({
     })
 })
 
+/**
+ * Mutations
+ */
 const mutationType = new GraphQLObjectType({
     name: 'Mutation',
     description: 'Mutation operations',
     fields: () => ({
         login: {
             description: 'Login with the given credentials, returns a JWT',
-            type: JWTType,
+            type: JWT,
             args: {
-                email: gqlString,
-                password: gqlString
+                email: nonNullGqlString,
+                password: nonNullGqlString
             },
             resolve: async (_root, args) => {
                 const JWT = await login(args as Credential)
@@ -58,11 +89,11 @@ const mutationType = new GraphQLObjectType({
         },
         register: {
             description: 'Register an account.',
-            type: RegistrationType,
+            type: Registration,
             args: {
-                email: gqlString,
-                password: gqlString,
-                userName: gqlString,
+                email: nonNullGqlString,
+                password: nonNullGqlString,
+                userName: nonNullGqlString,
             },
             resolve: async (_root, args) => {
                 const cred: Credential = { email: args.email, password: args.password }
@@ -73,7 +104,26 @@ const mutationType = new GraphQLObjectType({
                     userName: args.userName
                 }
             }
-
+        },
+        nextWateringDateFor: {
+            description: "Set up a reminder for when to water a plant next.",
+            type: WateringSchedule,
+            args: {
+                plant: {
+                    type: new GraphQLInputObjectType({
+                        name: 'plantInput',
+                        fields: {
+                            id: nonNullGqlString,
+                            name: nonNullGqlString,
+                            description: nonNullGqlString
+                        }
+                    })
+                },
+                timestamp: nonNullGqlString
+            },
+            resolve: async (_root, args) => {
+                return {}
+            }
         }
     })
 })
