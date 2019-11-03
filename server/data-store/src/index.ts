@@ -29,6 +29,10 @@ app.get('/graph', graphQLHTTP({
   schema
 }))
 
+app.use((err: any, _req: any, res: any, _next: any) => {
+  console.error(err.stack)
+  res.status(500).send('Something broke!')
+})
 
 // start the Express server
 app.listen(port, () => {

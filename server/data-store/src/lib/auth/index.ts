@@ -34,6 +34,7 @@ export async function login(credential: Credential): Promise<string> {
     }
   } catch (error) {
     console.error('Unable to authorize user: ', formatError(error))
+    throw (new Error('Authentication error'))
   }
   return new Promise((resolve, _) => resolve(''))
 }
@@ -46,6 +47,7 @@ export async function registerCredentials(credential: Credential): Promise<strin
     }
   } catch (error) {
     console.error('Unable to register credentials: ', formatError(error))
+    throw (new Error('Authentication error'))
   }
   return new Promise((resolve, _) => resolve(''))
 }
