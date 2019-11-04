@@ -1,0 +1,22 @@
+name: Data store deploy
+on:
+  push:
+    branches:
+      - master
+
+    paths:
+      - "server/data-store/**"
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions-hub/gcloud@master
+        env:
+          PROJECT_ID: ${{secrets.GCLOUD_PROJECT_ID}}
+          APPLICATION_CREDENTIALS: ${{secrets.GOOGLE_APPLICATION_CREDENTIALS}}
+        with:
+          args: app deploy server/data-store/app.yaml

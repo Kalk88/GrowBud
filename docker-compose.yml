@@ -1,25 +1,13 @@
 version: "3"
 services:
-  database:
-    container_name: growbud_db
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: growbud_dev
-
-  growbud_server:
-    container_name: growbud_server
+  growbud_data_store:
+    container_name: growbud_data_store
     build:
-      context: ./server
-    command: bash -c "mix ecto.create && mix ecto.migrate && mix phx.server"
-    depends_on:
-      - database
+      context: ./server/data-store
     ports:
-      - "4000:4000"
+      - "9090:9090"
     volumes:
-      - "./server/growbud:/app/"
+      - "./server/data-store/:/app"
 
   growbud_client:
     container_name: growbud_client
