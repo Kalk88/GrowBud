@@ -1,55 +1,37 @@
 <template>
-  <q-dialog v-model="card">
+  <q-dialog v-model="showDialog">
     <q-card>
-      <q-img
-        src="https://media-cdn.tripadvisor.com/media/photo-s/0a/47/a8/91/chicken-salad-sandwich.jpg"
-      />
-
       <q-card-section>
-        <q-btn
-          fab
-          color="primary"
-          icon="place"
-          class="absolute"
-          style="top: 0; right: 12px; transform: translateY(-50%);"
-        />
-
-        <div class="row no-wrap items-center">
-          <div class="col text-h6 ellipsis">Cafe Basilico</div>
-          <div class="col-auto text-grey q-pt-md">
-            <q-icon name="place" />250 ft
-          </div>
-        </div>
+        <div class="text-h4 login-card-header">Log in</div>
       </q-card-section>
-
       <q-card-section>
-        <div class="text-subtitle1">$・Italian, Cafe</div>
-        <div
-          class="text-subtitle2 text-grey"
-        >Small plates, salads & sandwiches in an intimate setting.</div>
+        <q-input v-model="loginDetails.email" outlined type="email" label="Email" />
+        <q-input v-model="loginDetails.password" outlined type="password" label="Password" />
       </q-card-section>
-
-      <q-separator />
-
-      <q-card-actions>
-        <q-btn flat round icon="event" v-close-popup />
-        <q-btn flat v-close-popup>5:30PM</q-btn>
-        <q-btn flat v-close-popup>7:30PM</q-btn>
-        <q-btn flat v-close-popup>9:00PM</q-btn>
-        <q-btn flat color="primary" v-close-popup>Reserve</q-btn>
-      </q-card-actions>
+      <q-card-section class="button-section">
+        <q-btn color="amber" label="Login" />
+      </q-card-section>
     </q-card>
   </q-dialog>
 </template>
 
 <script>
-import { QDialog, ClosePopup } from "quasar";
+import {
+  QDialog,
+  QCard,
+  QCardSection,
+  QCardActions,
+  ClosePopup,
+  QInput
+} from "quasar";
 import Auth from "../api/auth";
 
 export default {
   name: "LoginModal",
   components: {
-    QDialog
+    QDialog,
+    QCard,
+    QInput
   },
   directives: {
     ClosePopup
@@ -69,12 +51,6 @@ export default {
     };
   },
 
-  computed: {
-    card() {
-      return this.showDialog;
-    }
-  },
-
   methods: {
     login() {
       //API.login(this.loginDetails);
@@ -85,4 +61,26 @@ export default {
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.q-dialog {
+  max-width: 20rem;
+  float: right;
+}
+.q-card {
+  padding: 2rem;
+  background: cornsilk;
+}
+
+.login-card-header {
+  margin-bottom: 1rem;
+}
+.q-input {
+  width: 20rem;
+  margin-bottom: 1rem;
+  background-color: whitesmoke;
+}
+
+.button-section {
+  display: flex;
+  justify-content: end;
+}
 </style>

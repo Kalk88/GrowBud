@@ -5,7 +5,7 @@ import '@quasar/extras/roboto-font/roboto-font.css'
 import '@quasar/extras/material-icons/material-icons.css'
 import '@quasar/extras/eva-icons/eva-icons.css'
 import {
-  Quasar, 
+  Quasar,
   QLayout,
   QHeader,
   QDrawer,
@@ -19,6 +19,9 @@ import {
   QItem,
   QItemSection,
   QItemLabel,
+  Meta,
+  LocalStorage,
+  SessionStorage,
 } from 'quasar'
 
 Vue.use(Quasar, {
@@ -38,8 +41,10 @@ Vue.use(Quasar, {
     QItemSection,
     QItemLabel,
   },
-  directives: {
-  },
+  directives: {},
   plugins: {
+    Meta,
+    LocalStorage,
+    SessionStorage,
   }
- })
+})
