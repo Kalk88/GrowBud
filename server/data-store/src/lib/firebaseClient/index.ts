@@ -1,3 +1,7 @@
+import * as firebase from 'firebase/app'
+import 'firebase/auth';
+import 'firebase/firestore';
+
 const firebaseConfig = {
     apiKey: "AIzaSyAOVXtaV1OsZp3YWwH_d3fiL2pdbGUuQH8",
     authDomain: "growbud-50ed4.firebaseapp.com",
@@ -9,4 +13,5 @@ const firebaseConfig = {
     measurementId: "G-N5LWZZRVS4"
 }
 
-export default firebaseConfig
+firebase.initializeApp(firebaseConfig)
+export default firebase

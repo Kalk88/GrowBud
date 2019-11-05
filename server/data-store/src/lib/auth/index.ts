@@ -1,8 +1,4 @@
-import * as firebase from 'firebase/app';
-import 'firebase/auth';
-import firebaseConfig from '../constants'
-
-firebase.initializeApp(firebaseConfig);
+import firebase from '../firebaseClient';
 export interface Credential {
   email: string,
   password: string

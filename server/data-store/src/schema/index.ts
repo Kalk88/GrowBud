@@ -2,9 +2,10 @@ import {
     GraphQLSchema,
     GraphQLObjectType,
     GraphQLString,
-    GraphQLBoolean,
     GraphQLInputObjectType,
-    GraphQLNonNull
+    GraphQLNonNull,
+    GraphQLInt,
+    GraphQLList,
 } from 'graphql'
 
 import {
@@ -12,6 +13,11 @@ import {
     Credential,
     registerCredentials
 } from '../lib/auth'
+
+import {
+    getWateringSchedulesForUser,
+    getWateringScheduleById,
+} from '../lib/db'
 
 const nonNullGqlString = { type: new GraphQLNonNull(GraphQLString) }
 
@@ -64,7 +70,32 @@ const queryType = new GraphQLObjectType({
     name: 'Query',
     description: 'Query operations',
     fields: () => ({
-        test: { type: GraphQLBoolean }
+        wateringScheduleById: {
+            name: 'wateringScheduleById',
+            description: 'The watering schedule by schedule id',
+            type: WateringSchedule,
+            args: {
+                id: nonNullGqlString,
+            },
+            resolve: async (_root, args) => await getWateringScheduleById(args.id)
+        },
+        wateringScheduleForUser: {
+            name: 'wateringScheduleForUser',
+            description: 'The watering schedules for a user by user id',
+            type: GraphQLList(WateringSchedule),
+            args: {
+                userId: nonNullGqlString,
+                offset: {
+                    type: GraphQLInt,
+                    description: 'The starting point for schedules to be retrieved, Defaults to 0'
+                },
+                limit: {
+                    type: GraphQLInt,
+                    description: 'The number of schedules to retrieve. Defaults to 10'
+                }
+            },
+            resolve: async (_root, args) => await getWateringSchedulesForUser(args.userId, args.offset ? args.offset : 0, args.number ? args.number : 10)
+        }
     })
 })
 
