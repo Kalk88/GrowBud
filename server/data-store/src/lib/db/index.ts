@@ -8,14 +8,10 @@ export async function getWateringSchedulesInRangeOf(start: string, end: string):
             .where('timestamp', '>=', start)
             .where('timestamp', '<=', end)
             .get()
-        const data: Array<object> = snapshot
+
+        return snapshot
             .docs
-            .map(doc => {
-                const item = doc.data()
-                item.id = doc.id
-                return item
-            })
-        return data
+            .map(doc => snapshotToSchedule(doc))
     } catch (error) {
         console.error(error.message)
         throw new Error("Database error")
@@ -31,15 +27,9 @@ export async function getWateringSchedulesForUser(userId: string, offset: number
             .startAt(offset)
             .limit(limit)
             .get()
-        const data: Array<object> = snapshot
+        return snapshot
             .docs
-            .map(doc => {
-                const item = doc.data()
-                item.id = doc.id
-                return item
-            })
-        console.log(data)
-        return data
+            .map(doc => snapshotToSchedule(doc))
     } catch (error) {
         console.error(error.message)
         throw new Error("Database error")
@@ -53,15 +43,20 @@ export async function getWateringScheduleById(id: string): Promise<object> {
             .doc(id)
             .get()
         if (doc.exists) {
-            const item = doc.data()
-            if (item) {
-                item.id = doc.id
-                return item
-            }
+            return snapshotToSchedule(doc)
         }
         return {}
     } catch (error) {
         console.error(error.message)
         throw new Error("Database error")
     }
+}
+
+function snapshotToSchedule(doc: firebase.firestore.QueryDocumentSnapshot | firebase.firestore.DocumentSnapshot): object {
+    const item = doc.data()
+    if (item === undefined) {
+        throw new Error("Database error")
+    }
+    item.id = doc.id
+    return item
 }
