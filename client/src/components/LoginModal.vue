@@ -9,7 +9,7 @@
         <q-input v-model="loginDetails.password" outlined type="password" label="Password" />
       </q-card-section>
       <q-card-section class="button-section">
-        <q-btn color="amber" label="Login" />
+        <q-btn color="amber" label="Login" @click="login" />
       </q-card-section>
     </q-card>
   </q-dialog>
@@ -24,14 +24,16 @@ import {
   ClosePopup,
   QInput
 } from "quasar";
-import Auth from "../api/auth";
+import { LOGIN } from "../api/auth";
+//import gql from "graphql-tag";
 
 export default {
   name: "LoginModal",
   components: {
     QDialog,
     QCard,
-    QInput
+    QInput,
+    QCardSection
   },
   directives: {
     ClosePopup
@@ -42,6 +44,7 @@ export default {
       default: false
     }
   },
+
   data() {
     return {
       loginDetails: {
@@ -52,9 +55,16 @@ export default {
   },
 
   methods: {
-    login() {
+    async login() {
       //API.login(this.loginDetails);
-      Auth.login(this.loginDetails.email, this.loginDetails.password);
+      let JWT = await this.$apollo.mutate({
+        mutation: LOGIN,
+        variables: {
+          email: this.loginDetails.email,
+          password: this.loginDetails.password
+        }
+      });
+      console.log(JWT);
     }
   }
 };

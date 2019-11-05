@@ -5,14 +5,27 @@ import store from './store'
 import './quasar'
 import VueApollo from 'vue-apollo'
 import {
-  ApolloClient,
-  createNetworkInterface
+  ApolloClient
 } from 'apollo-client'
+import {
+  createHttpLink
+} from 'apollo-link-http'
+import {
+  InMemoryCache
+} from 'apollo-cache-inmemory'
+
+
+Vue.use(VueApollo)
+
+const httpLink = createHttpLink({
+  // You should use an absolute URL here
+  uri: 'http://localhost:9090/graph',
+})
+const cache = new InMemoryCache()
 
 const apolloClient = new ApolloClient({
-  networkInterface: createNetworkInterface({
-    uri: 'http://localhost:9090/graphql'
-  }),
+  link: httpLink,
+  cache,
   connectToDevTools: true
 })
 
