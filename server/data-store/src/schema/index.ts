@@ -17,6 +17,7 @@ import {
 import {
     getWateringSchedulesForUser,
     getWateringScheduleById,
+    scheduleWateringFor
 } from '../lib/db'
 
 const nonNullGqlString = { type: new GraphQLNonNull(GraphQLString) }
@@ -146,15 +147,13 @@ const mutationType = new GraphQLObjectType({
                         fields: {
                             id: nonNullGqlString,
                             name: nonNullGqlString,
-                            description: nonNullGqlString
                         }
                     })
                 },
+                userId: nonNullGqlString,
                 timestamp: nonNullGqlString
             },
-            resolve: async (_root, args) => {
-                return {}
-            }
+            resolve: async (_root, args) => await scheduleWateringFor(args.plant ? args.plant : {}, args.userId, args.timestamp)
         }
     })
 })

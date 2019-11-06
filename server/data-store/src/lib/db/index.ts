@@ -1,8 +1,9 @@
-import firebase from '../firebaseClient';
+import firebase from '../firebaseClient'
+import uuidv4 from 'uuid/v4'
 const db = firebase.firestore()
 
 export async function getWateringSchedulesInRangeOf(start: string, end: string): Promise<Array<object>> {
-    let schedulesRef = db.collection('wateringSchedules')
+    const schedulesRef = db.collection('wateringSchedules')
     try {
         const snapshot = await schedulesRef
             .where('timestamp', '>=', start)
@@ -19,7 +20,7 @@ export async function getWateringSchedulesInRangeOf(start: string, end: string):
 }
 
 export async function getWateringSchedulesForUser(userId: string, offset: number, limit: number): Promise<Array<object>> {
-    let schedulesRef = db.collection('wateringSchedules')
+    const schedulesRef = db.collection('wateringSchedules')
     try {
         const snapshot = await schedulesRef
             .where('userId', '==', userId)
@@ -37,7 +38,7 @@ export async function getWateringSchedulesForUser(userId: string, offset: number
 }
 
 export async function getWateringScheduleById(id: string): Promise<object> {
-    let schedulesRef = db.collection('wateringSchedules')
+    const schedulesRef = db.collection('wateringSchedules')
     try {
         const doc = await schedulesRef
             .doc(id)
@@ -50,6 +51,30 @@ export async function getWateringScheduleById(id: string): Promise<object> {
         console.error(error.message)
         throw new Error("Database error")
     }
+}
+
+export async function scheduleWateringFor(plant: object, userId: string, timestamp: string) {
+    const uuid: string = uuidv4()
+    try {
+        const schedule = {
+            userId,
+            plant,
+            nextTimeToWater: timestamp
+        }
+
+        await db.collection('wateringSchedules')
+            .doc(uuid)
+            .set(schedule)
+
+        return {
+            id: uuid,
+            ...schedule
+        }
+    } catch (error) {
+        console.error(error.message)
+        throw new Error("Database error")
+    }
+
 }
 
 function snapshotToSchedule(doc: firebase.firestore.QueryDocumentSnapshot | firebase.firestore.DocumentSnapshot): object {
