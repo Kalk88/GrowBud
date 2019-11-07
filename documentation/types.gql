@@ -1,0 +1,56 @@
+# Options in this schema is query or mutation
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+# Possible querys
+type Query {
+    me(id: String!): User
+}
+
+# Possible mutations
+type Mutation {
+    registerUser(name: String!, email: String!, password: String!): Registration
+    login(email: String!, password: String!)
+    logout(id: String!)
+    nextWateringDateFor(plant: Plant!, timestamp: String!): WateringSchedule
+}
+
+# type definitions
+type  Registration implements Account {
+    id: String!
+    name: String!
+    email: String!
+}
+
+type User implements Account {
+    id: String!
+    name: String!
+}
+
+type Administrator implements Account {
+    id: String!
+    name: String!
+}
+
+interface Account {
+    id: String!
+    name: String!
+}
+
+type Plant {
+    id: String!,
+    name: String!,
+    description: String!
+}
+
+type WateringSchedule {
+    id: String!
+    userId: String!
+    plant: Plant!
+    nextTimeToWater: Timestamp!
+}
+
+# Custom scalar values
+scalar Timestamp # unix timestamp
