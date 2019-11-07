@@ -6,3 +6,6 @@ data-store:
 
 documentation:
   - documentation/**
+
+actions:
+  - .github/**
