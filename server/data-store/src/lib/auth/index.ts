@@ -1,8 +1,10 @@
 import firebase from '../firebaseClient';
+
 export interface Credential {
   email: string,
   password: string
 }
+
 interface firebaseError {
   code: string,
   message: string
