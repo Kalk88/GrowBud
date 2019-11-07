@@ -77,7 +77,7 @@ const queryType = new GraphQLObjectType({
             args: {
                 id: nonNullGqlString,
             },
-            resolve: async (_root, args) => await getWateringScheduleById(args.id)
+            resolve: async (_root, args) => getWateringScheduleById(args.id)
         },
         wateringScheduleForUser: {
             name: 'wateringScheduleForUser',
@@ -94,7 +94,7 @@ const queryType = new GraphQLObjectType({
                     description: 'The number of schedules to retrieve. Defaults to 10'
                 }
             },
-            resolve: async (_root, args) => await getWateringSchedulesForUser(args.userId, args.offset ? args.offset : 0, args.number ? args.number : 10)
+            resolve: async (_root, args) => getWateringSchedulesForUser(args.userId, args.offset ? args.offset : 0, args.number ? args.number : 10)
         }
     })
 })
