@@ -1,87 +1,64 @@
 import firebase from '../firebaseClient'
 import uuidv4 from 'uuid/v4'
 const db = firebase.firestore()
+import * as R from 'ramda'
+import Maybe from 'folktale/maybe'
+const Ok = 'Ok'
+const Error = 'Error'
 
 export async function getWateringSchedulesInRangeOf(start: string, end: string): Promise<Array<object>> {
     const schedulesRef = db.collection('wateringSchedules')
-    try {
-        const snapshot = await schedulesRef
-            .where('timestamp', '>=', start)
-            .where('timestamp', '<=', end)
-            .get()
+    const snapshot = await schedulesRef
+        .where('timestamp', '>=', start)
+        .where('timestamp', '<=', end)
+        .get()
 
-        return snapshot
-            .docs
-            .map(doc => snapshotToSchedule(doc))
-    } catch (error) {
-        console.error(error.message)
-        throw new Error("Database error")
-    }
+    return R.map(snapshotToSchedule, snapshot.docs)
 }
 
 export async function getWateringSchedulesForUser(userId: string, offset: number, limit: number): Promise<Array<object>> {
     const schedulesRef = db.collection('wateringSchedules')
-    try {
-        const snapshot = await schedulesRef
-            .where('userId', '==', userId)
-            .orderBy('desc')
-            .startAt(offset)
-            .limit(limit)
-            .get()
-        return snapshot
-            .docs
-            .map(doc => snapshotToSchedule(doc))
-    } catch (error) {
-        console.error(error.message)
-        throw new Error("Database error")
-    }
+    const snapshot = await schedulesRef
+        .where('userId', '==', userId)
+        .orderBy('desc')
+        .startAt(offset)
+        .limit(limit)
+        .get()
+
+    return R.map(snapshotToSchedule, snapshot.docs)
 }
 
 export async function getWateringScheduleById(id: string): Promise<object> {
     const schedulesRef = db.collection('wateringSchedules')
-    try {
-        const doc = await schedulesRef
-            .doc(id)
-            .get()
-        if (doc.exists) {
-            return snapshotToSchedule(doc)
-        }
-        return {}
-    } catch (error) {
-        console.error(error.message)
-        throw new Error("Database error")
-    }
+    const doc = await schedulesRef
+        .doc(id)
+        .get()
+    return snapshotToSchedule(doc)
 }
 
-export async function scheduleWateringFor(plant: object, userId: string, timestamp: string) {
+export async function scheduleWateringFor(plant: object, userId: string, timestamp: string): Promise<object> {
     const uuid: string = uuidv4()
-    try {
-        const schedule = {
-            userId,
-            plant,
-            nextTimeToWater: timestamp
-        }
-
-        await db.collection('wateringSchedules')
-            .doc(uuid)
-            .set(schedule)
-
-        return {
-            id: uuid,
-            ...schedule
-        }
-    } catch (error) {
-        console.error(error.message)
-        throw new Error("Database error")
+    const schedule = {
+        userId,
+        plant,
+        nextTimeToWater: timestamp
     }
 
+    await db.collection('wateringSchedules')
+        .doc(uuid)
+        .set(schedule)
+    return {
+        id: uuid,
+        ...schedule
+    }
 }
 
 function snapshotToSchedule(doc: firebase.firestore.QueryDocumentSnapshot | firebase.firestore.DocumentSnapshot): object {
-    const item = doc.data()
-    if (item === undefined) {
-        throw new Error("Database error")
-    }
-    item.id = doc.id
-    return item
+    return Maybe.Just(doc.data()).matchWith({
+        Just: (x: any) => ({
+            id: doc.id,
+            ...x.value
+        }),
+        Nothing: () => { }
+    })
 }
