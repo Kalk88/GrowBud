@@ -19,8 +19,9 @@ Vue.use(VueApollo)
 
 const httpLink = createHttpLink({
   // You should use an absolute URL here
-  uri: 'http://localhost:9090/graph',
+  uri: process.env.VUE_APP_API_ENDPOINT_URL,
 })
+
 const cache = new InMemoryCache()
 
 const apolloClient = new ApolloClient({

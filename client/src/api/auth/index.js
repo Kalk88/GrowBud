@@ -6,3 +6,11 @@ mutation ($email: String!,$password: String!){
 		JWT
     }
 }`
+
+export const REGISTER_USER = gql `
+mutation ($userName: String!, $email: String!, $password: String!){
+	register(email: $email, password: $password, userName: $userName,) {
+        JWT
+        userName
+    }
+}`

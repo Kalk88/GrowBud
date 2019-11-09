@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <p>This is an about page</p>
+    <p class="logged-in">WILLKOMMEN!</p>
   </q-page>
 </template>
 

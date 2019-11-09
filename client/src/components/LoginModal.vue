@@ -1,15 +1,34 @@
 <template>
-  <q-dialog v-model="showDialog">
+  <q-dialog v-model="showModal" @hide="onDialogHide">
     <q-card>
       <q-card-section>
-        <div class="text-h4 login-card-header">Log in</div>
+        <div class="text-h4 login-card-header">{{ modalTitle }}</div>
       </q-card-section>
       <q-card-section>
-        <q-input v-model="loginDetails.email" outlined type="email" label="Email" />
-        <q-input v-model="loginDetails.password" outlined type="password" label="Password" />
+        <q-input
+          class="login-email"
+          v-model="authDetails.email" 
+          outlined 
+          type="email" 
+          label="Email" 
+        />
+        <q-input 
+          class="login-password"
+          v-model="authDetails.password" 
+          outlined 
+          type="password" 
+          label="Password" 
+        />
       </q-card-section>
-      <q-card-section class="button-section">
-        <q-btn color="amber" label="Login" @click="login" />
+      <q-card-section size="lg" class="button-section">
+        <q-btn
+          class="full-width login-modal-btn"
+          color="amber"
+          size="lg"
+          label="Login"
+          @click="login"
+          v-close-popup
+        />
       </q-card-section>
     </q-card>
   </q-dialog>
@@ -20,15 +39,13 @@ import {
   QDialog,
   QCard,
   QCardSection,
-  QCardActions,
   ClosePopup,
   QInput
 } from "quasar";
 import { LOGIN } from "../api/auth";
-//import gql from "graphql-tag";
 
 export default {
-  name: "LoginModal",
+  name: "AuthModal",
   components: {
     QDialog,
     QCard,
@@ -38,34 +55,48 @@ export default {
   directives: {
     ClosePopup
   },
+
   props: {
-    showDialog: {
+    showModal:{
       type: Boolean,
-      default: false
+      default:false
     }
   },
 
   data() {
     return {
-      loginDetails: {
+      authDetails: {
         email: "",
         password: ""
-      }
+      },
+      modalTitle:"Log in"
     };
   },
 
+  created() {
+    this.authDetails.email = "";
+    this.authDetails.password = "";
+  },
+
   methods: {
+    onDialogHide() {
+      this.$emit("hideLoginModal", false);
+    },
+
     async login() {
-      //API.login(this.loginDetails);
-      let JWT = await this.$apollo.mutate({
+      let UserObject = await this.$apollo.mutate({
         mutation: LOGIN,
         variables: {
-          email: this.loginDetails.email,
-          password: this.loginDetails.password
+          email: this.authDetails.email,
+          password: this.authDetails.password
         }
       });
-      console.log(JWT);
-    }
+      const JWT = UserObject.data.login.JWT;
+      localStorage.setItem("JWT",JWT)
+      if(JWT)[
+        this.$router.push('about')
+      ]
+    },
   }
 };
 </script>
@@ -89,8 +120,5 @@ export default {
   background-color: whitesmoke;
 }
 
-.button-section {
-  display: flex;
-  justify-content: end;
-}
+
 </style>
