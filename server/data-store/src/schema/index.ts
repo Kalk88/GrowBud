@@ -95,7 +95,7 @@ const queryType = new GraphQLObjectType({
                 }
             },
             resolve: async (_root, args) => getWateringSchedulesForUser(args.userId, args.offset ? args.offset : 0, args.number ? args.number : 10)
-        }
+        },
     })
 })
 

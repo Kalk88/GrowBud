@@ -3,18 +3,6 @@ import uuidv4 from 'uuid/v4'
 const db = firebase.firestore()
 import * as R from 'ramda'
 import Maybe from 'folktale/maybe'
-const Ok = 'Ok'
-const Error = 'Error'
-
-export async function getWateringSchedulesInRangeOf(start: string, end: string): Promise<Array<object>> {
-    const schedulesRef = db.collection('wateringSchedules')
-    const snapshot = await schedulesRef
-        .where('timestamp', '>=', start)
-        .where('timestamp', '<=', end)
-        .get()
-
-    return R.map(snapshotToSchedule, snapshot.docs)
-}
 
 export async function getWateringSchedulesForUser(userId: string, offset: number, limit: number): Promise<Array<object>> {
     const schedulesRef = db.collection('wateringSchedules')
