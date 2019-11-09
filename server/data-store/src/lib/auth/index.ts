@@ -5,37 +5,43 @@ export interface Credential {
   password: string
 }
 
+export interface userInfo {
+  JWT: string,
+  id: string
+}
+
 interface firebaseError {
   code: string,
   message: string
 }
 
-export async function login(credential: Credential): Promise<string> {
+
+export async function login(credential: Credential): Promise<userInfo> {
   try {
     const result = await firebase.auth().signInWithEmailAndPassword(credential.email, credential.password)
-    if (result.user) {
-      const token = await result.user.getIdToken(true)
-      console.log(token)
-      return token
-    }
+    return userDTO(result.user)
   } catch (error) {
     console.error('Unable to authorize user: ', formatError(error))
     throw (new Error('Authentication error'))
   }
-  return new Promise((resolve, _) => resolve(''))
 }
 
-export async function registerCredentials(credential: Credential): Promise<string> {
+export async function registerCredentials(credential: Credential): Promise<userInfo> {
   try {
     const result = await firebase.auth().createUserWithEmailAndPassword(credential.email, credential.password)
-    if (result.user) {
-      return result.user.getIdToken(true)
-    }
+    return userDTO(result.user)
   } catch (error) {
     console.error('Unable to register credentials: ', formatError(error))
     throw (new Error('Authentication error'))
   }
-  return new Promise((resolve, _) => resolve(''))
+}
+
+async function userDTO(user: any): Promise<userInfo> {
+  const token = await user.getIdToken(true)
+  return {
+    JWT: token,
+    id: user.uid
+  }
 }
 
 function formatError(error: firebaseError): string {
