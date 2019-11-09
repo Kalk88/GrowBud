@@ -26,7 +26,7 @@ const nonNullGqlString = { type: new GraphQLNonNull(GraphQLString) }
 /**
  * Types
  */
-const JWTType = new GraphQLObjectType({
+const JWT = new GraphQLObjectType({
     name: 'Login',
     description: 'Login info',
     fields: () => ({
