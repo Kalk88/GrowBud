@@ -89,15 +89,18 @@ const queryType = new GraphQLObjectType({
             args: {
                 userId: nonNullGqlString,
                 offset: {
-                    type: GraphQLInt,
-                    description: 'The starting point for schedules to be retrieved, Defaults to 0'
+                    type: GraphQLString,
+                    description: 'The document id to start from.'
                 },
                 limit: {
                     type: GraphQLInt,
                     description: 'The number of schedules to retrieve. Defaults to 10'
                 }
             },
-            resolve: async (_root, args) => getWateringSchedulesForUser(args.userId, args.offset ? args.offset : 0, args.number ? args.number : 10)
+            resolve: async (_root, args) => {
+                const limit = args.limit ?? 10
+                return getWateringSchedulesForUser(args.userId, args.offset, limit)
+            }
         },
     })
 })

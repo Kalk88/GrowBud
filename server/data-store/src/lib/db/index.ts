@@ -4,15 +4,23 @@ const db = firebase.firestore()
 import * as R from 'ramda'
 import Maybe from 'folktale/maybe'
 
-export async function getWateringSchedulesForUser(userId: string, offset: number, limit: number): Promise<Array<object>> {
-    const schedulesRef = db.collection('wateringSchedules')
-    const snapshot = await schedulesRef
-        .where('userId', '==', userId)
-        .orderBy('desc')
-        .startAt(offset)
-        .limit(limit)
-        .get()
-
+export async function getWateringSchedulesForUser(userId: string, offsetDoc: string, limit: number): Promise<Array<object>> {
+    let snapshot: firebase.firestore.QuerySnapshot
+    if (offsetDoc) {
+        const prevSnapshot = await db.collection('wateringSchedules').doc(offsetDoc).get()
+        snapshot = await db.collection('wateringSchedules')
+            .where('userId', '==', userId)
+            .orderBy('nextTimeToWater', 'desc')
+            .startAfter(prevSnapshot)
+            .limit(limit)
+            .get()
+    } else {
+        snapshot = await db.collection('wateringSchedules')
+            .where('userId', '==', userId)
+            .orderBy('nextTimeToWater', 'desc')
+            .limit(limit)
+            .get()
+    }
     return R.map(snapshotToSchedule, snapshot.docs)
 }
 
