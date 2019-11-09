@@ -1,0 +1,11 @@
+client:
+  - client/**
+
+data-store:
+  - server/data-store/**
+
+documentation:
+  - documentation/**
+
+actions:
+  - .github/**
