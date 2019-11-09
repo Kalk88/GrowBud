@@ -60,7 +60,6 @@ const Plant = new GraphQLObjectType({
     fields: () => ({
         id: nonNullGqlString,
         name: nonNullGqlString,
-        description: nonNullGqlString
     })
 })
 
