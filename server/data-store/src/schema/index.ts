@@ -152,7 +152,7 @@ const mutationType = new GraphQLObjectType({
                 userId: nonNullGqlString,
                 timestamp: nonNullGqlString
             },
-            resolve: async (_root, args) => await scheduleWateringFor(args.plant ? args.plant : {}, args.userId, args.timestamp)
+            resolve: async (_root, args) => scheduleWateringFor(args.plant ? args.plant : {}, args.userId, args.timestamp)
         }
     })
 })
