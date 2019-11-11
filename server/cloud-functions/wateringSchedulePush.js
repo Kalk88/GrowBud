@@ -4,9 +4,9 @@ const app = admin.initializeApp()
 /**
  * Expects messages to be an array and each entry to conform to the FCM message spec.
  */
-exports.pushWateringScheduleNotice = functions.pubsub.topic('wateringSchedules').onPublish(async (message) => {
-    const wateringNotices = message.json
-
+exports.pushWateringScheduleNotice = async (pubSubEvent, context) => {
+    const wateringNotices = JSON.parse(Buffer.from(pubSubEvent.data, 'base64').toString())
+    console.log(wateringNotices)
     try {
         const response = await app.messaging().sendAll(wateringNotices)
         console.log('Successfully sent message:', response)
@@ -14,4 +14,4 @@ exports.pushWateringScheduleNotice = functions.pubsub.topic('wateringSchedules')
     } catch (error) {
         console.log('Error sending message:', error)
     }
-})
+}
