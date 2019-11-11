@@ -8,7 +8,15 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@quasar/extras": "^1.0.0",
+    "apollo-cache-inmemory": "^1.6.3",
+    "apollo-link": "^1.2.13",
+    "apollo-link-http": "^1.5.16",
     "core-js": "^2.6.5",
+    "graphql": "^14.5.8",
+    "graphql-tag": "^2.10.1",
+    "nightwatch": "^1.2.4",
+    "quasar": "^1.0.0",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
     "vuex": "^3.0.1"
@@ -17,9 +25,16 @@
     "@vue/cli-plugin-babel": "^3.11.0",
     "@vue/cli-plugin-eslint": "^3.11.0",
     "@vue/cli-service": "^3.11.0",
+    "apollo-client": "^2.6.4",
     "babel-eslint": "^10.0.1",
+    "babel-plugin-transform-imports": "1.5.0",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
+    "geckodriver": "^1.19.1",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2",
+    "vue-apollo": "^3.0.0",
+    "vue-cli-plugin-quasar": "^1.0.0",
     "vue-template-compiler": "^2.6.10",
     "webpack": "^4.41.0"
   },
