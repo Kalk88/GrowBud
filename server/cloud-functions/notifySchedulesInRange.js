@@ -23,8 +23,8 @@ exports.notifySchedulesInRange = async (req, res) => {
         console.log(`Message ${messageId} published.`)
         res.sendStatus(200)
     } catch (error) {
-        res.sendStatus(500)
         console.log('Error sending message:', error)
+        res.sendStatus(500)
     }
 }
 
