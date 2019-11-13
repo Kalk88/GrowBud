@@ -31,7 +31,8 @@ const JWT = new GraphQLObjectType({
     description: 'Login info',
     fields: () => ({
         JWT: nonNullGqlString,
-        id: nonNullGqlString
+        id: nonNullGqlString,
+        refreshToken: nonNullGqlString
     })
 })
 
@@ -42,7 +43,8 @@ const Registration = new GraphQLObjectType({
         JWT: nonNullGqlString,
         email: nonNullGqlString,
         userName: nonNullGqlString,
-        id: nonNullGqlString
+        id: nonNullGqlString,
+        refreshToken: nonNullGqlString
     })
 })
 
@@ -120,10 +122,11 @@ const mutationType = new GraphQLObjectType({
                 password: nonNullGqlString
             },
             resolve: async (_root, args) => {
-                const { JWT, id }: userInfo = await login(args as Credential)
+                const { JWT, id, refreshToken }: userInfo = await login(args as Credential)
                 return {
                     JWT,
-                    id
+                    id,
+                    refreshToken
                 }
             }
         },
@@ -137,10 +140,11 @@ const mutationType = new GraphQLObjectType({
             },
             resolve: async (_root, args) => {
                 const cred: Credential = { email: args.email, password: args.password }
-                const { JWT, id }: userInfo = await registerCredentials(cred)
+                const { JWT, id, refreshToken }: userInfo = await registerCredentials(cred)
                 return {
                     JWT,
                     id,
+                    refreshToken,
                     email: args.email,
                     userName: args.userName
                 }

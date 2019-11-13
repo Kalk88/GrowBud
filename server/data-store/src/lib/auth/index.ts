@@ -7,7 +7,8 @@ export interface Credential {
 
 export interface userInfo {
   JWT: string,
-  id: string
+  id: string,
+  refreshToken: string
 }
 
 interface firebaseError {
@@ -40,7 +41,8 @@ async function userDTO(user: any): Promise<userInfo> {
   const token = await user.getIdToken(true)
   return {
     JWT: token,
-    id: user.uid
+    id: user.uid,
+    refreshToken: user.refreshToken
   }
 }
 
