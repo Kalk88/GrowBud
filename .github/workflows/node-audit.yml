@@ -1,0 +1,32 @@
+name: Node audit
+
+on:
+  schedule:
+    - cron: "0 8 * * 0"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: npm audit client
+        run: |
+          cd client
+          npm audit
+      - name: npm audit cloud-functions
+        run: |
+          cd server/cloud-functions
+          npm audit
+      - name: npm audit data-store
+        run: |
+          cd server/data-store
+          npm audit
