@@ -14,6 +14,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+      - name: Install dependencies
+        run: |
+          cd server/data-store
+          npm install
+          npm run tsc-build
       - uses: actions-hub/gcloud@master
         env:
           PROJECT_ID: ${{secrets.GCLOUD_PROJECT_ID}}
