@@ -6,11 +6,11 @@ on:
       - master
 
     paths:
-      - 'client/**'
+      - "client/**"
 
 jobs:
   build:
-    name: Build
+    name: Build and Deploy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -23,27 +23,8 @@ jobs:
         run: |
           cd client
           npm run build
-      - name: Archive Production Artifact
-        uses: actions/upload-artifact@master
-        with:
-          name: webclient
-          path: client/dist
-  deploy:
-    name: Deploy
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@master
-      - name: Download Artifact
-        uses: actions/download-artifact@master
-        with:
-          name: webclient
       - name: Deploy to Firebase
-        uses: w9jds/firebase-action@develop
-        with:
-          args: deploy --only hosting:prod
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          PROJECT_PATH: ./client
-          PROJECT_ID: "growbud-50ed4"
+        run: |
+          cd client
+          firebase use --add ${{ secrets.GCLOUD_PROJECT_ID }} #same for id for firebase and gcloud
+          firebase deploy --token  ${{ secrets.FIREBASE_TOKEN }}
