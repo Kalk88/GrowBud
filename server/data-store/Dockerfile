@@ -1,12 +1,13 @@
-FROM node:12
+FROM node:10
 
 WORKDIR /app
 
 COPY package*.json ./
-COPY src ./
+COPY src ./src
+COPY tsconfig.json ./
 
 RUN npm install
-RUN npm run tsc
+RUN npm run tsc-build
 
 EXPOSE 9090
 
