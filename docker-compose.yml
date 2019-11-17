@@ -6,8 +6,6 @@ services:
       context: ./server/data-store
     ports:
       - "9090:9090"
-    volumes:
-      - "./server/data-store/:/app"
 
   growbud_client:
     container_name: growbud_client
