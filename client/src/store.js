@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { stat } from 'fs';
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    userID: "",
     isLoggedin: false,
     inMemoryToken: {
       jwt_token: "",
@@ -13,6 +13,9 @@ export default new Vuex.Store({
     }
   },
   mutations: {
+    setUserID (state, value) {
+      state.userID = value;
+    },
     setIsLoggedin (state, value) {
       state.isLoggedin = value;
     },
@@ -21,6 +24,12 @@ export default new Vuex.Store({
     }
   },
   actions: {
+
+    refreshToken (context) { //eslint-disable-line
+			if(!this.state.inMemoryToken.jwt_token) {
+				return false;
+			}
+		},
 
   }
 })

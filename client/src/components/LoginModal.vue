@@ -43,7 +43,6 @@ import {
   QInput
 } from "quasar";
 import { LOGIN } from '../api/auth'
-import { auth } from '../utils/auth.js'
 
 export default {
   name: "AuthModal",
@@ -92,8 +91,9 @@ export default {
           password: this.authDetails.password
         }
       });
-      console.log(response.data.login);
       const JWT  = response.data.login.JWT;
+      const userID  = response.data.login.id;
+      this.$store.commit('setUserID', userID);
       this.$store.commit('setIsLoggedin', true);
       this.$store.commit('setInMemoryToken', JWT);
       if(JWT)[
