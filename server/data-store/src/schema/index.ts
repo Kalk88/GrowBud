@@ -31,7 +31,8 @@ const JWT = new GraphQLObjectType({
     description: 'Login info',
     fields: () => ({
         JWT: nonNullGqlString,
-        id: nonNullGqlString
+        JWTExpiry: nonNullGqlString,
+        id: nonNullGqlString,
     })
 })
 
@@ -40,9 +41,10 @@ const Registration = new GraphQLObjectType({
     description: 'Registration details',
     fields: () => ({
         JWT: nonNullGqlString,
+        JWTExpiry: nonNullGqlString,
         email: nonNullGqlString,
         userName: nonNullGqlString,
-        id: nonNullGqlString
+        id: nonNullGqlString,
     })
 })
 
@@ -119,10 +121,15 @@ const mutationType = new GraphQLObjectType({
                 email: nonNullGqlString,
                 password: nonNullGqlString
             },
-            resolve: async (_root, args) => {
-                const { JWT, id }: userInfo = await login(args as Credential)
+            resolve: async (_root, args, context) => {
+                const { JWT, JWTExpiry, id, refreshToken }: userInfo = await login(args as Credential)
+                // Modify the response object
+                context.res.cookie('refreshToken', refreshToken, {
+                    httpOnly: true
+                })
                 return {
                     JWT,
+                    JWTExpiry,
                     id
                 }
             }
@@ -135,11 +142,16 @@ const mutationType = new GraphQLObjectType({
                 password: nonNullGqlString,
                 userName: nonNullGqlString,
             },
-            resolve: async (_root, args) => {
+            resolve: async (_root, args, context) => {
                 const cred: Credential = { email: args.email, password: args.password }
-                const { JWT, id }: userInfo = await registerCredentials(cred)
+                const { JWT, JWTExpiry, id, refreshToken }: userInfo = await registerCredentials(cred)
+                // Modify the response object
+                context.res.cookie('refreshToken', refreshToken, {
+                    httpOnly: true
+                })
                 return {
                     JWT,
+                    JWTExpiry,
                     id,
                     email: args.email,
                     userName: args.userName
