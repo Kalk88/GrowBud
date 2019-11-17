@@ -7,6 +7,7 @@ export interface Credential {
 
 export interface userInfo {
   JWT: string,
+  JWTExpiry: string,
   id: string,
   refreshToken: string
 }
@@ -20,7 +21,10 @@ interface firebaseError {
 export async function login(credential: Credential): Promise<userInfo> {
   try {
     const result = await firebase.auth().signInWithEmailAndPassword(credential.email, credential.password)
-    return userDTO(result.user)
+    if (result.user) {
+      return userDTO(result.user)
+    }
+    throw (new Error('Authentication error'))
   } catch (error) {
     console.error('Unable to authorize user: ', formatError(error))
     throw (new Error('Authentication error'))
@@ -30,17 +34,21 @@ export async function login(credential: Credential): Promise<userInfo> {
 export async function registerCredentials(credential: Credential): Promise<userInfo> {
   try {
     const result = await firebase.auth().createUserWithEmailAndPassword(credential.email, credential.password)
-    return userDTO(result.user)
+    if (result.user) {
+      return userDTO(result.user)
+    }
+    throw (new Error('Authentication error'))
   } catch (error) {
     console.error('Unable to register credentials: ', formatError(error))
     throw (new Error('Authentication error'))
   }
 }
 
-async function userDTO(user: any): Promise<userInfo> {
-  const token = await user.getIdToken(true)
+async function userDTO(user: firebase.User): Promise<userInfo> {
+  const { token, expirationTime } = await user.getIdTokenResult(true)
   return {
     JWT: token,
+    JWTExpiry: expirationTime,
     id: user.uid,
     refreshToken: user.refreshToken
   }
