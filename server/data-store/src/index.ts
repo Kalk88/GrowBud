@@ -18,7 +18,7 @@ app.get('/', (_req, res) => {
   res.send('Hello world!')
 })
 
-app.post('/refreshToken', async (req, res) => {
+app.post('/api/refreshToken', async (req, res) => {
   const { JWT, JWTExpiry, refreshToken }: RefreshInfo = await rf(req.body.token)
 
   res.cookie('refreshToken', refreshToken, {
