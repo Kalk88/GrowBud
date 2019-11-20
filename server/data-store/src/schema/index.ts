@@ -22,6 +22,7 @@ import {
 } from '../lib/db'
 
 const nonNullGqlString = { type: new GraphQLNonNull(GraphQLString) }
+const interval = { type: GraphQLInt, description: "The schedule interval represented as a unix timestamp." }
 
 /**
  * Types
@@ -55,7 +56,8 @@ const WateringSchedule = new GraphQLObjectType({
         id: nonNullGqlString,
         userId: nonNullGqlString,
         plant: { type: Plant },
-        nextTimeToWater: nonNullGqlString
+        nextTimeToWater: nonNullGqlString,
+        interval
     })
 })
 
@@ -173,7 +175,7 @@ const mutationType = new GraphQLObjectType({
                 },
                 userId: nonNullGqlString,
                 timestamp: nonNullGqlString,
-                interval: { type: GraphQLInt, description: "The schedule interval represented as a unix timestamp." }
+                interval
             },
             resolve: async (_root, args) => scheduleWateringFor(args.plant ?? {}, args.userId, args.timestamp, args.interval)
         }
