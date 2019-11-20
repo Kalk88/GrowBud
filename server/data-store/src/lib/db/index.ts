@@ -4,7 +4,14 @@ const db = firebase.firestore()
 import * as R from 'ramda'
 import Maybe from 'folktale/maybe'
 
-export async function getWateringSchedulesForUser(userId: string, offsetDoc: string, limit: number): Promise<Array<object>> {
+export interface WateringSchedule {
+    id: string,
+    plant: object,
+    nextTimeToWater: string,
+    interval: number
+}
+
+export async function getWateringSchedulesForUser(userId: string, offsetDoc: string, limit: number): Promise<Array<WateringSchedule>> {
     let snapshot: firebase.firestore.QuerySnapshot
     if (offsetDoc) {
         const prevSnapshot = await db.collection('wateringSchedules').doc(offsetDoc).get()
@@ -24,7 +31,7 @@ export async function getWateringSchedulesForUser(userId: string, offsetDoc: str
     return R.map(snapshotToSchedule, snapshot.docs)
 }
 
-export async function getWateringScheduleById(id: string): Promise<object> {
+export async function getWateringScheduleById(id: string): Promise<WateringSchedule> {
     const schedulesRef = db.collection('wateringSchedules')
     const doc = await schedulesRef
         .doc(id)
@@ -32,12 +39,13 @@ export async function getWateringScheduleById(id: string): Promise<object> {
     return snapshotToSchedule(doc)
 }
 
-export async function scheduleWateringFor(plant: object, userId: string, timestamp: string): Promise<object> {
+export async function scheduleWateringFor(plant: object, userId: string, timestamp: string, interval: number): Promise<WateringSchedule> {
     const uuid: string = uuidv4()
     const schedule = {
         userId,
         plant,
-        nextTimeToWater: timestamp
+        nextTimeToWater: timestamp,
+        interval
     }
 
     await db.collection('wateringSchedules')
@@ -49,7 +57,7 @@ export async function scheduleWateringFor(plant: object, userId: string, timesta
     }
 }
 
-function snapshotToSchedule(doc: firebase.firestore.QueryDocumentSnapshot | firebase.firestore.DocumentSnapshot): object {
+function snapshotToSchedule(doc: firebase.firestore.QueryDocumentSnapshot | firebase.firestore.DocumentSnapshot): WateringSchedule {
     return Maybe.Just(doc.data()).matchWith({
         Just: (x: any) => ({
             id: doc.id,
