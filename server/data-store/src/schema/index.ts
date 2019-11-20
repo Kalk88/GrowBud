@@ -172,9 +172,10 @@ const mutationType = new GraphQLObjectType({
                     })
                 },
                 userId: nonNullGqlString,
-                timestamp: nonNullGqlString
+                timestamp: nonNullGqlString,
+                interval: { type: GraphQLInt, description: "The schedule interval represented as a unix timestamp." }
             },
-            resolve: async (_root, args) => scheduleWateringFor(args.plant ? args.plant : {}, args.userId, args.timestamp)
+            resolve: async (_root, args) => scheduleWateringFor(args.plant ?? {}, args.userId, args.timestamp, args.interval)
         }
     })
 })
