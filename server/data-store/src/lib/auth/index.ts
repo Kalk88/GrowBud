@@ -81,7 +81,7 @@ export async function refreshToken(token: string): Promise<RefreshInfo> {
 }
 
 async function userDTO(user: firebase.User): Promise<userInfo> {
-  const { token, expirationTime } = await user.getIdTokenResult()
+  const { token, expirationTime } = await user.getIdTokenResult(true)
   return {
     JWT: token,
     JWTExpiry: expirationTime,
