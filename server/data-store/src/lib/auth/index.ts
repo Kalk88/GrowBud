@@ -66,9 +66,11 @@ export async function refreshToken(token: string): Promise<RefreshInfo> {
     })
 
     const data = response.data
+    // Date.now() is milliseconds, expires_in is seconds.
+    const JWTExpiry = Date.now() + (data.expires_in * 1000)
     return {
       JWT: data.id_token,
-      JWTExpiry: Date.now() + data.expires_in,
+      JWTExpiry,
       refreshToken: data.refresh_token
     }
   } catch (error) {
