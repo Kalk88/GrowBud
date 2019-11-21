@@ -14,9 +14,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+        env:
+          FIREBASEAPIKEY: ${{secrets.FIREBASEAPIKEY}}
       - name: Install dependencies
         run: |
           cd server/data-store
+          sed -i "s/fbapikey/$FIREBASEAPIKEY/g" app.yaml
           npm install
           npm run tsc-build
       - uses: actions-hub/gcloud@master
