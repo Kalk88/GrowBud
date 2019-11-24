@@ -1,1 +1,4 @@
 runtime: nodejs12
+
+env_variables:
+  FIREBASEAPIKEY: "fbapikey"
