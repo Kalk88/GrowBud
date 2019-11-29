@@ -19,12 +19,17 @@ app.get('/', (_req, res) => {
 })
 
 app.post('/api/refreshToken', async (req, res) => {
-  const { JWT, JWTExpiry, refreshToken }: RefreshInfo = await rf(req.body.token)
+  const token = req?.cookies?.refreshToken
+  if (token === null || token === undefined) {
+    res.status(400).send({ error: 'missing payload' })
+  } else {
+    const { JWT, JWTExpiry, refreshToken }: RefreshInfo = await rf(token)
 
-  res.cookie('refreshToken', refreshToken, {
-    httpOnly: true
-  })
-  res.status(200).send({ JWT, JWTExpiry })
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true
+    })
+    res.status(200).send({ JWT, JWTExpiry })
+  }
 })
 
 app.use('/graph/view', graphQLHTTP({
