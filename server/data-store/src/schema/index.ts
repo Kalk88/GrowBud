@@ -18,7 +18,8 @@ import {
 import {
     getWateringSchedulesForUser,
     getWateringScheduleById,
-    scheduleWateringFor
+    scheduleWateringFor,
+    removeWateringScheduleById
 } from '../lib/db'
 
 const nonNullGqlString = { type: new GraphQLNonNull(GraphQLString) }
@@ -68,6 +69,11 @@ const Plant = new GraphQLObjectType({
         id: nonNullGqlString,
         name: nonNullGqlString,
     })
+})
+const Empty = new GraphQLObjectType({
+    name: "Empty",
+    description: "Empty return type",
+    fields: () => ({})
 })
 
 /**
@@ -178,6 +184,14 @@ const mutationType = new GraphQLObjectType({
                 interval
             },
             resolve: async (_root, args) => scheduleWateringFor(args.plant ?? {}, args.userId, args.timestamp, args.interval)
+        },
+        deleteWateringSchedule: {
+            description: "Remove a schedule",
+            type: Empty,
+            args: {
+                id: nonNullGqlString,
+            },
+            resolve: async (_root, args) => removeWateringScheduleById(args.id)
         }
     })
 })

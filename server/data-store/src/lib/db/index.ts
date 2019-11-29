@@ -57,6 +57,16 @@ export async function scheduleWateringFor(plant: object, userId: string, timesta
     }
 }
 
+export async function removeWateringScheduleById(id: string) {
+    try {
+        await db.collection('wateringSchedules')
+            .doc(id)
+            .delete()
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 function snapshotToSchedule(doc: firebase.firestore.QueryDocumentSnapshot | firebase.firestore.DocumentSnapshot): WateringSchedule {
     return Maybe.Just(doc.data()).matchWith({
         Just: (x: any) => ({
