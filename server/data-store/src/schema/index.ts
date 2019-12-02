@@ -6,6 +6,7 @@ import {
     GraphQLNonNull,
     GraphQLInt,
     GraphQLList,
+    GraphQLBoolean
 } from 'graphql'
 
 import {
@@ -70,10 +71,12 @@ const Plant = new GraphQLObjectType({
         name: nonNullGqlString,
     })
 })
-const Empty = new GraphQLObjectType({
-    name: "Empty",
-    description: "Empty return type",
-    fields: () => ({})
+const Status = new GraphQLObjectType({
+    name: "Status",
+    description: "Status of operation, evaluates to True or False",
+    fields: () => ({
+        status: { type: GraphQLBoolean }
+    })
 })
 
 /**
@@ -187,7 +190,7 @@ const mutationType = new GraphQLObjectType({
         },
         deleteWateringSchedule: {
             description: "Remove a schedule",
-            type: Empty,
+            type: Status,
             args: {
                 id: nonNullGqlString,
             },
