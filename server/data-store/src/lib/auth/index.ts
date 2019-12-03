@@ -74,7 +74,7 @@ export async function refreshToken(token: string): Promise<RefreshInfo> {
       refreshToken: data.refresh_token
     }
   } catch (error) {
-    console.error(error)
+    console.error(error.message)
     throw (new Error('Authentication error'))
 
   }
