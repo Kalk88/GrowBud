@@ -6,6 +6,7 @@ import {
     GraphQLNonNull,
     GraphQLInt,
     GraphQLList,
+    GraphQLBoolean
 } from 'graphql'
 
 import {
@@ -18,7 +19,8 @@ import {
 import {
     getWateringSchedulesForUser,
     getWateringScheduleById,
-    scheduleWateringFor
+    scheduleWateringFor,
+    removeWateringScheduleById
 } from '../lib/db'
 
 const nonNullGqlString = { type: new GraphQLNonNull(GraphQLString) }
@@ -67,6 +69,13 @@ const Plant = new GraphQLObjectType({
     fields: () => ({
         id: nonNullGqlString,
         name: nonNullGqlString,
+    })
+})
+const Status = new GraphQLObjectType({
+    name: "Status",
+    description: "Status of operation, evaluates to True or False",
+    fields: () => ({
+        status: { type: GraphQLBoolean }
     })
 })
 
@@ -178,6 +187,14 @@ const mutationType = new GraphQLObjectType({
                 interval
             },
             resolve: async (_root, args) => scheduleWateringFor(args.plant ?? {}, args.userId, args.timestamp, args.interval)
+        },
+        deleteWateringSchedule: {
+            description: "Remove a schedule",
+            type: Status,
+            args: {
+                id: nonNullGqlString,
+            },
+            resolve: async (_root, args) => removeWateringScheduleById(args.id)
         }
     })
 })
