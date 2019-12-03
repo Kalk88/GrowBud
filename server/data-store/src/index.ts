@@ -3,10 +3,12 @@ import express from 'express'
 import graphQLHTTP from 'express-graphql'
 import schema from './schema'
 import { refreshToken as rf, RefreshInfo } from './lib/auth'
+import cookieParser from 'cookie-parser'
 const app = express()
 const port = process.env.PORT ? process.env.PORT : 9090
 
-app.use(express.json());
+app.use(express.json())
+app.use(cookieParser())
 app.use((_req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
