@@ -13,6 +13,7 @@ import {
     login,
     Credential,
     registerUser,
+    removeUser,
     userInfo
 } from '../lib/auth'
 
@@ -168,6 +169,14 @@ const mutationType = new GraphQLObjectType({
                     userName: args.userName
                 }
             }
+        },
+        unregister: {
+            description: 'Remove a user from the application',
+            type: Status,
+            args: {
+                id: nonNullGqlString
+            },
+            resolve: async (_root, args) => removeUser(args.id)
         },
         nextWateringDateFor: {
             description: "Set up a reminder for when to water a plant next.",

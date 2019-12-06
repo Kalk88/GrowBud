@@ -68,9 +68,9 @@ export async function registerUser(credential: Credential, userName: string): Pr
   }
 }
 
-export async function removeUser(uid: string) {
+export async function removeUser(id: string) {
   try {
-    admin.auth().deleteUser(uid)
+    await admin.auth().deleteUser(id)
   } catch (error) {
     console.log('Error deleting user:', error)
     return { status: false }
