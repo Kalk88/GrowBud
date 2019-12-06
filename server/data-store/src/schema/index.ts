@@ -12,7 +12,7 @@ import {
 import {
     login,
     Credential,
-    registerCredentials,
+    registerUser,
     userInfo
 } from '../lib/auth'
 
@@ -155,7 +155,7 @@ const mutationType = new GraphQLObjectType({
             },
             resolve: async (_root, args, context) => {
                 const cred: Credential = { email: args.email, password: args.password }
-                const { JWT, JWTExpiry, id, refreshToken }: userInfo = await registerCredentials(cred)
+                const { JWT, JWTExpiry, id, refreshToken }: userInfo = await registerUser(cred, args.userName)
                 // Modify the response object
                 context.res.cookie('refreshToken', refreshToken, {
                     httpOnly: true

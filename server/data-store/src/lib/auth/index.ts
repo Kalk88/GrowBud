@@ -1,15 +1,19 @@
-import firebase from '../firebaseClient'
+import { admin } from '../firebaseClient'
 import axios from 'axios'
 import qs from 'qs'
+import uuidv4 from 'uuid/v4'
 
+interface Token {
+  JWT: string,
+  expiresIn: number
+}
 export interface Credential {
   email: string,
   password: string
 }
-
 export interface userInfo {
   JWT: string,
-  JWTExpiry: string,
+  JWTExpiry: number,
   id: string,
   refreshToken: string
 }
@@ -20,37 +24,66 @@ export interface RefreshInfo {
   refreshToken: string
 }
 
-interface firebaseError {
-  code: string,
-  message: string
-}
-
-
 export async function login(credential: Credential): Promise<userInfo> {
   try {
-    const result = await firebase.auth().signInWithEmailAndPassword(credential.email, credential.password)
-    if (result.user) {
-      return userDTO(result.user)
+    const { email, password } = credential
+    const payload = {
+      email,
+      password,
+      returnSecureToken: true
     }
-    throw (new Error('Authentication error'))
+    const response: any = await axios({
+      method: "POST",
+      headers: { 'content-type': 'application/json' },
+      data: payload,
+      url: `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.FIREBASEAPIKEY}`,
+    })
+
+    const { localId, idToken, expiresIn, refreshToken } = response.data
+    // Date.now() is milliseconds, expiresIn is seconds.
+    const JWTExpiry = Date.now() + (expiresIn * 1000)
+    return {
+      id: localId,
+      JWT: idToken,
+      JWTExpiry,
+      refreshToken: refreshToken
+    }
+
   } catch (error) {
-    console.error('Unable to authorize user: ', formatError(error))
+    console.error('Unable to authorize user: ', error.toJSON())
     throw (new Error('Authentication error'))
   }
 }
 
-export async function registerCredentials(credential: Credential): Promise<userInfo> {
+export async function registerUser(credential: Credential, userName: string): Promise<userInfo> {
   try {
-    const result = await firebase.auth().createUserWithEmailAndPassword(credential.email, credential.password)
-    if (result.user) {
-      return userDTO(result.user)
-    }
-    throw (new Error('Authentication error'))
+    const uid = uuidv4()
+    const user = await admin.auth().createUser({
+      uid,
+      displayName: userName,
+      email: credential.email,
+      emailVerified: false,
+      password: credential.password,
+      disabled: false
+    })
+    const token = await createToken(uid)
+    return userDTO(user, token)
   } catch (error) {
-    console.error('Unable to register credentials: ', formatError(error))
+    console.error('Unable to register credentials: ', error)
     throw (new Error('Authentication error'))
   }
 }
+
+export async function removeUser(uid: string) {
+  try {
+    admin.auth().deleteUser(uid)
+  } catch (error) {
+    console.log('Error deleting user:', error);
+    return { status: false }
+  }
+  return { status: true }
+}
+
 
 export async function refreshToken(token: string): Promise<RefreshInfo> {
   try {
@@ -80,16 +113,21 @@ export async function refreshToken(token: string): Promise<RefreshInfo> {
   }
 }
 
-async function userDTO(user: firebase.User): Promise<userInfo> {
-  const { token, expirationTime } = await user.getIdTokenResult(true)
+async function createToken(uid: string): Promise<Token> {
+  // Expire 1h from now.
+  const expiresIn = Date.now() + (3600 * 1000)
+  const token = await admin.auth().createCustomToken(uid)
   return {
     JWT: token,
-    JWTExpiry: expirationTime,
-    id: user.uid,
-    refreshToken: user.refreshToken
+    expiresIn,
   }
 }
 
-function formatError(error: firebaseError): string {
-  return `code: ${error.code} msg: ${error.message}`
+function userDTO(user: admin.auth.UserRecord, token: Token): userInfo {
+  return {
+    JWT: token.JWT,
+    JWTExpiry: token.expiresIn,
+    id: user.uid,
+    refreshToken: 'asd'
+  }
 }
