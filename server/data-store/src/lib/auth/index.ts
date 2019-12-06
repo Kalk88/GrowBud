@@ -2,11 +2,6 @@ import { admin } from '../firebaseClient'
 import axios from 'axios'
 import qs from 'qs'
 import uuidv4 from 'uuid/v4'
-
-interface Token {
-  JWT: string,
-  expiresIn: number
-}
 export interface Credential {
   email: string,
   password: string
@@ -58,7 +53,7 @@ export async function login(credential: Credential): Promise<userInfo> {
 export async function registerUser(credential: Credential, userName: string): Promise<userInfo> {
   try {
     const uid = uuidv4()
-    const user = await admin.auth().createUser({
+    await admin.auth().createUser({
       uid,
       displayName: userName,
       email: credential.email,
@@ -66,8 +61,7 @@ export async function registerUser(credential: Credential, userName: string): Pr
       password: credential.password,
       disabled: false
     })
-    const token = await createToken(uid)
-    return userDTO(user, token)
+    return login(credential)
   } catch (error) {
     console.error('Unable to register credentials: ', error)
     throw (new Error('Authentication error'))
@@ -78,7 +72,7 @@ export async function removeUser(uid: string) {
   try {
     admin.auth().deleteUser(uid)
   } catch (error) {
-    console.log('Error deleting user:', error);
+    console.log('Error deleting user:', error)
     return { status: false }
   }
   return { status: true }
@@ -110,24 +104,5 @@ export async function refreshToken(token: string): Promise<RefreshInfo> {
     console.error(error.message)
     throw (new Error('Authentication error'))
 
-  }
-}
-
-async function createToken(uid: string): Promise<Token> {
-  // Expire 1h from now.
-  const expiresIn = Date.now() + (3600 * 1000)
-  const token = await admin.auth().createCustomToken(uid)
-  return {
-    JWT: token,
-    expiresIn,
-  }
-}
-
-function userDTO(user: admin.auth.UserRecord, token: Token): userInfo {
-  return {
-    JWT: token.JWT,
-    JWTExpiry: token.expiresIn,
-    id: user.uid,
-    refreshToken: 'asd'
   }
 }
