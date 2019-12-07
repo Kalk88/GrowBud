@@ -31,8 +31,9 @@ export default new Vuex.Store({
 			if(!this.state.inMemoryToken.JWT) {
 				return false;
 			} else {
-        refreshToken().then((data)=> {
-          console.log(data)//eslint-disable-line
+        refreshToken().then((response)=> {
+          const {JWT, JWTExpiry} = response.data;
+          context.commit('setInMemoryToken', { JWT, JWTExpiry });
         })
       }
 		},

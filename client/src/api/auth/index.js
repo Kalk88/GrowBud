@@ -2,13 +2,12 @@ import gql from 'graphql-tag';
 import axios from 'axios'
 
 var API = axios.create({
-    withCredentials: true,
     baseURL: process.env.VUE_APP_API_BASE_URL,
     timeout: 30000,
 });
 
 export function refreshToken(){
-    return API.post('/api/refreshToken');
+    return API.post('/api/refreshToken', {}, {withCredentials: true});
 }
 
 

@@ -97,7 +97,6 @@ export default {
       this.$store.commit('setUserID', userID);
       this.$store.commit('setIsLoggedin', true);
       this.$store.commit('setInMemoryToken', { JWT, JWTExpiry });
-      this.$store.dispatch('silentTokenRefresh');
     } catch (error) {
       console.log(error);//eslint-disable-line
     }

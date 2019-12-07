@@ -20,6 +20,7 @@ Vue.use(VueApollo)
 const httpLink = createHttpLink({
   // You should use an absolute URL here
   uri: process.env.VUE_APP_API_GRAPH_ENDPOINT_URL,
+  credentials: 'include'
 })
 
 const cache = new InMemoryCache()
