@@ -36,7 +36,7 @@ const apolloProvider = new VueApollo({
 
 Vue.config.productionTip = false
 
-window.setInterval(function () { store.dispatch('refreshToken'); }, 1000 * 15 * 15);
+window.setInterval(function () { store.dispatch('silentTokenRefresh'); }, 360000);
 
 new Vue({
   router,

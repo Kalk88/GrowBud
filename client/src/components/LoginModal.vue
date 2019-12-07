@@ -84,6 +84,7 @@ export default {
     },
 
     async login() {
+    try {
       let response = await this.$apollo.mutate({
         mutation: LOGIN,
         variables: {
@@ -91,14 +92,16 @@ export default {
           password: this.authDetails.password
         }
       });
-      const JWT  = response.data.login.JWT;
+      const { JWT, JWTExpiry }  = response.data.login;
       const userID  = response.data.login.id;
       this.$store.commit('setUserID', userID);
       this.$store.commit('setIsLoggedin', true);
-      this.$store.commit('setInMemoryToken', JWT);
-      if(JWT)[
-        this.$router.push('about')
-      ]
+      this.$store.commit('setInMemoryToken', { JWT, JWTExpiry });
+      this.$store.dispatch('silentTokenRefresh');
+    } catch (error) {
+      console.log(error);//eslint-disable-line
+    }
+      
     },
   }
 };

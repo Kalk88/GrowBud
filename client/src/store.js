@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import Axios from 'axios'
+import {refreshToken} from '@/api/auth';
 
 Vue.use(Vuex)
 
@@ -9,8 +9,8 @@ export default new Vuex.Store({
     userID: "",
     isLoggedin: false,
     inMemoryToken: {
-      jwt_token: "",
-      jwt_expiry_token:""
+      JWT: "",
+      JWTExpiry:""
     }
   },
   mutations: {
@@ -20,17 +20,20 @@ export default new Vuex.Store({
     setIsLoggedin (state, value) {
       state.isLoggedin = value;
     },
-    setInMemoryToken (state, jwt_token) {
-      state.inMemoryToken.jwt_token = jwt_token;
+    setInMemoryToken (state, {JWT, JWTExpiry}) {
+      state.inMemoryToken.JWT = JWT;
+      state.inMemoryToken.JWTExpiry = JWTExpiry;
     }
   },
   actions: {
 
-    refreshToken (context) { //eslint-disable-line
-			if(!this.state.inMemoryToken.jwt_token) {
+    silentTokenRefresh(context) { //eslint-disable-line
+			if(!this.state.inMemoryToken.JWT) {
 				return false;
 			} else {
-
+        refreshToken().then((data)=> {
+          console.log(data)//eslint-disable-line
+        })
       }
 		},
 
