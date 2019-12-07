@@ -16,6 +16,15 @@ app.use((_req, res, next) => {
   next()
 })
 
+app.use((req, _res, next) => {
+  console.log('Incoming request: ', `
+    ip: ${req.ip}
+    path: ${req.path}
+    method: ${req.method}
+  `)
+  next()
+})
+
 app.get('/', (_req, res) => {
   res.send('Hello world!')
 })
