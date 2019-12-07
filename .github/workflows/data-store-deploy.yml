@@ -19,12 +19,16 @@ jobs:
       - name: Install dependencies
         run: |
           cd server/data-store
-          sed -i "s/fbapikey/$FIREBASEAPIKEY/g" app.yaml
           npm install
           npm run tsc-build
       - uses: actions-hub/gcloud@master
         env:
+          FIREBASEAPIKEY: ${{secrets.FIREBASEAPIKEY}}
           PROJECT_ID: ${{secrets.GCLOUD_PROJECT_ID}}
           APPLICATION_CREDENTIALS: ${{secrets.GOOGLE_APPLICATION_CREDENTIALS}}
+      - name: Push
+        run: |
+          cd server/data-store
+          sed -i "s/fbapikey/$FIREBASEAPIKEY/g" app.yaml
         with:
           args: app deploy server/data-store/app.yaml
