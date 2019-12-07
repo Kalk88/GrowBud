@@ -1,6 +1,5 @@
-import firebase from '../firebaseClient'
+import { db } from '../firebaseClient'
 import uuidv4 from 'uuid/v4'
-const db = firebase.firestore()
 import * as R from 'ramda'
 import Maybe from 'folktale/maybe'
 
@@ -12,7 +11,7 @@ export interface WateringSchedule {
 }
 
 export async function getWateringSchedulesForUser(userId: string, offsetDoc: string, limit: number): Promise<Array<WateringSchedule>> {
-    let snapshot: firebase.firestore.QuerySnapshot
+    let snapshot: any
     if (offsetDoc) {
         const prevSnapshot = await db.collection('wateringSchedules').doc(offsetDoc).get()
         snapshot = await db.collection('wateringSchedules')
@@ -69,7 +68,7 @@ export async function removeWateringScheduleById(id: string): Promise<object> {
     return { status: true }
 }
 
-function snapshotToSchedule(doc: firebase.firestore.QueryDocumentSnapshot | firebase.firestore.DocumentSnapshot): WateringSchedule {
+function snapshotToSchedule(doc: FirebaseFirestore.DocumentSnapshot): WateringSchedule {
     return Maybe.Just(doc.data()).matchWith({
         Just: (x: any) => ({
             id: doc.id,
