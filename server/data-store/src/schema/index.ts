@@ -12,7 +12,8 @@ import {
 import {
     login,
     Credential,
-    registerCredentials,
+    registerUser,
+    removeUser,
     userInfo
 } from '../lib/auth'
 
@@ -155,7 +156,7 @@ const mutationType = new GraphQLObjectType({
             },
             resolve: async (_root, args, context) => {
                 const cred: Credential = { email: args.email, password: args.password }
-                const { JWT, JWTExpiry, id, refreshToken }: userInfo = await registerCredentials(cred)
+                const { JWT, JWTExpiry, id, refreshToken }: userInfo = await registerUser(cred, args.userName)
                 // Modify the response object
                 context.res.cookie('refreshToken', refreshToken, {
                     httpOnly: true
@@ -168,6 +169,14 @@ const mutationType = new GraphQLObjectType({
                     userName: args.userName
                 }
             }
+        },
+        unregister: {
+            description: 'Remove a user from the application',
+            type: Status,
+            args: {
+                id: nonNullGqlString
+            },
+            resolve: async (_root, args) => removeUser(args.id)
         },
         nextWateringDateFor: {
             description: "Set up a reminder for when to water a plant next.",
