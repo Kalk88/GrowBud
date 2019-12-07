@@ -1,65 +1,30 @@
 <template>
   <q-layout view="lHh Lpr lFf" class="layout-body text-white">
     <q-header bordered class="layout-header">
-      <q-toolbar>
-        <q-toolbar-title>Growbud</q-toolbar-title>
-        <q-btn
-          class="signupbtn"
-          @click="openSignupModal()"
-          label="Sign up"
-        />
-        <q-btn
-          class="loginbtn"
-          @click="openLoginModal()"
-          label="Log in"
-        />
-      </q-toolbar>
+      <LoggedoutToolbar v-if="!isLoggedin"/>
+      <LoggedinToolbar v-else-if="isLoggedin" />
     </q-header>
 
     <q-page-container>
-      <SignupModal
-        v-on:hideSignupModal="hideSignupModal"
-        :showModal="showSignupModal"
-      />
-      <LoginModal
-        v-on:hideLoginModal="hideLoginModal"
-        :showModal="showLoginModal"
-      />
       <router-view />
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
-import LoginModal from "../components/LoginModal";
-import SignupModal from "../components/SignupModal";
+import LoggedoutToolbar from "../components/LoggedoutToolbar.vue";
+import LoggedinToolbar from "../components/LoggedinToolbar.vue";
+import { mapState } from "vuex";
 
 export default {
   name: "MyLayout",
   components: {
-    LoginModal,
-    SignupModal
+    LoggedoutToolbar,
+    LoggedinToolbar
   },
-  data() {
-    return {
-      showLoginModal: false,
-      showSignupModal: false,
-    };
-  },
-  methods: {
-    openLoginModal() {
-      this.showLoginModal = true;
-    },
-    openSignupModal(){
-      this.showSignupModal = true;
-    },
-    hideLoginModal(hide) {
-      this.showLoginModal = hide;
-    },
-    hideSignupModal(hide) {
-      this.showSignupModal = hide;
-    }
-  }
+  computed: mapState([
+    "isLoggedin"
+])
 };
 </script>
 
@@ -72,7 +37,4 @@ export default {
   background-color: #009401;
 }
 
-.signupbtn{
-  margin-right: 1rem;
-}
 </style>

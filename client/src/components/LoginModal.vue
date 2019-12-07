@@ -42,7 +42,7 @@ import {
   ClosePopup,
   QInput
 } from "quasar";
-import { LOGIN } from "../api/auth";
+import { LOGIN } from '../api/auth'
 
 export default {
   name: "AuthModal",
@@ -84,18 +84,23 @@ export default {
     },
 
     async login() {
-      let UserObject = await this.$apollo.mutate({
+    try {
+      let response = await this.$apollo.mutate({
         mutation: LOGIN,
         variables: {
           email: this.authDetails.email,
           password: this.authDetails.password
         }
       });
-      const JWT = UserObject.data.login.JWT;
-      localStorage.setItem("JWT",JWT)
-      if(JWT)[
-        this.$router.push('about')
-      ]
+      const { JWT, JWTExpiry }  = response.data.login;
+      const userID  = response.data.login.id;
+      this.$store.commit('setUserID', userID);
+      this.$store.commit('setIsLoggedin', true);
+      this.$store.commit('setInMemoryToken', { JWT, JWTExpiry });
+    } catch (error) {
+      console.log(error);//eslint-disable-line
+    }
+      
     },
   }
 };
