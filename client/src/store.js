@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {refreshToken} from '@/api/auth';
+import {
+  refreshToken
+} from '@/api/auth';
 
 Vue.use(Vuex)
 
@@ -10,17 +12,20 @@ export default new Vuex.Store({
     isLoggedin: false,
     inMemoryToken: {
       JWT: "",
-      JWTExpiry:""
+      JWTExpiry: ""
     }
   },
   mutations: {
-    setUserID (state, value) {
+    setUserID(state, value) {
       state.userID = value;
     },
-    setIsLoggedin (state, value) {
+    setIsLoggedin(state, value) {
       state.isLoggedin = value;
     },
-    setInMemoryToken (state, {JWT, JWTExpiry}) {
+    setInMemoryToken(state, {
+      JWT,
+      JWTExpiry
+    }) {
       state.inMemoryToken.JWT = JWT;
       state.inMemoryToken.JWTExpiry = JWTExpiry;
     }
@@ -28,15 +33,21 @@ export default new Vuex.Store({
   actions: {
 
     silentTokenRefresh(context) { //eslint-disable-line
-			if(!this.state.inMemoryToken.JWT) {
-				return false;
-			} else {
-        refreshToken().then((response)=> {
-          const {JWT, JWTExpiry} = response.data;
-          context.commit('setInMemoryToken', { JWT, JWTExpiry });
+      if (!this.state.inMemoryToken.JWT) {
+        return false;
+      } else {
+        refreshToken().then((response) => {
+          const {
+            JWT,
+            JWTExpiry
+          } = response.data;
+          context.commit('setInMemoryToken', {
+            JWT,
+            JWTExpiry
+          });
         })
       }
-		},
+    },
 
   }
 })
