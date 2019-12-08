@@ -1,31 +1,18 @@
 <template>
   <div>
-    <q-input label="Name the plant are you going to water" 
-    outlined
-    standout />
-    <q-date 
-      v-model="date"
-      :dark="true"
-      today-btn
-      color="green"
-    />
+    <q-input label="Name the plant are you going to water" outlined standout />
+    <q-date v-model="date" :dark="true" today-btn color="green" />
     <q-btn-group>
       <q-btn label="Days" />
-      <q-btn label="Weeks"/>
+      <q-btn label="Weeks" />
     </q-btn-group>
     <IncrementerButton />
   </div>
 </template>
 
 <script>
-
-import {
-  QDate,
-  QInput,
-  QBtnGroup,
-  QBtn
-} from 'quasar'
-import IncrementerButton from '../components/IncrementerButton.vue'
+import { QDate, QInput, QBtnGroup, QBtn } from "quasar";
+import IncrementerButton from "../components/IncrementerButton.vue";
 
 export default {
   name: "AddWateringSchedule",
@@ -38,16 +25,17 @@ export default {
   },
   data() {
     return {
-      date: "",
+      date: ""
     };
   },
-  mounted() {
-    this.date = new Date();
+  created() {
+    this.date = new Date()
+      .toISOString()
+      .slice(0, 10)
+      .replace(/-/g, "/");
   }
-  
-}
+};
 </script>
 
 <style scoped>
-
 </style>
