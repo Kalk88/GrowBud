@@ -7,6 +7,10 @@
       <q-btn label="Weeks" />
     </q-btn-group>
     <IncrementerButton />
+    <q-btn-group>
+      <q-btn label="Cancel" />
+      <q-btn label="Add schedule" />
+    </q-btn-group>
   </div>
 </template>
 
