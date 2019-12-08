@@ -1,17 +1,17 @@
 <template>
   <div class="incrementerbutton-wrapper">
     <button class="add_button" @click="add">
-      <q-icon class="add_button__icon" name="eva-arrow-up-outline"  style="font-size: 1.5rem;"/>
+      <q-icon class="add_button__icon" name="eva-arrow-up-outline" style="font-size: 1.5rem;" />
     </button>
-    <input class="value_input" pattern="^[0-9]*$" v-model="value">
+    <input class="value_input" pattern="^[0-9]*$" v-model.number="value" />
     <button class="sub_button" @click="subtract">
-       <q-icon class="sub_button__icon" name="eva-arrow-down-outline" style="font-size: 1.5rem;"/>
+      <q-icon class="sub_button__icon" name="eva-arrow-down-outline" style="font-size: 1.5rem;" />
     </button>
   </div>
 </template>
 
 <script>
-import {QIcon} from 'quasar'
+import { QIcon } from "quasar";
 
 export default {
   name: "IncrementerButton",
@@ -20,37 +20,35 @@ export default {
   },
 
   data() {
-     return {
-      value: 0,
+    return {
+      value: 0
     };
   },
 
-  methods:{
-    add(){
-      if (this.value.match("/^[0-9]/")) {
+  methods: {
+    add() {
+      if (Number.isInteger(this.value)) {
         this.value += 1;
       }
     },
 
-    subtract(){
-      if (this.value.match("/^[0-9]/")) {
+    subtract() {
+      if (Number.isInteger(this.value)) {
         this.value -= 1;
       }
     }
   }
-    
-}
+};
 </script>
 
 <style scoped>
-
-.incrementerbutton-wrapper{
+.incrementerbutton-wrapper {
   display: flex;
   flex-flow: column;
   justify-content: center;
 }
 
-.add_button{
+.add_button {
   display: flex;
   justify-content: center;
   width: 2.5rem;
@@ -62,7 +60,7 @@ export default {
   font-size: 2.5rem;
 }
 
-.sub_button{
+.sub_button {
   display: flex;
   justify-content: center;
   width: 2.5rem;
@@ -76,7 +74,5 @@ export default {
 
 .value_input {
   width: 2.5rem;
-
 }
-
 </style>
