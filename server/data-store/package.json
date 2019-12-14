@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "start": "node dist/src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 0",
+    "test": "jest",
     "standard": "./node_modules/standard/bin/cmd.js --fix",
     "tsc-watch": "./node_modules/typescript/bin/tsc -w",
     "tsc": "./node_modules/typescript/bin/tsc ",
@@ -15,9 +15,12 @@
   "license": "ISC",
   "devDependencies": {
     "@types/express": "^4.17.1",
+    "@types/jest": "^24.0.23",
     "@types/node": "^12.11.7",
     "@types/ramda": "^0.26.33",
+    "jest": "^24.9.0",
     "standard": "^14.3.1",
+    "ts-jest": "^24.2.0",
     "typescript": "^3.7.2"
   },
   "dependencies": {
@@ -32,7 +35,6 @@
     "firebase-admin": "^8.8.0",
     "folktale": "^2.3.2",
     "graphql": "^14.5.8",
-    "jest": "^24.9.0",
     "qs": "^6.9.1",
     "ramda": "^0.26.1",
     "uuid": "^3.3.3"
