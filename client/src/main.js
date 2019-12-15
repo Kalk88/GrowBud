@@ -11,9 +11,12 @@ import { ApolloLink, concat } from 'apollo-link';
 import {
   createHttpLink
 } from 'apollo-link-http'
+
 import {
   InMemoryCache
 } from 'apollo-cache-inmemory'
+
+import './registerServiceWorker'
 
 
 Vue.use(VueApollo)
