@@ -58,7 +58,7 @@ const WateringSchedule = new GraphQLObjectType({
     fields: () => ({
         id: nonNullGqlString,
         userId: nonNullGqlString,
-        plant: { type: GraphQLList(Plant) },
+        plants: { type: GraphQLList(Plant) },
         nextTimeToWater: nonNullGqlString,
         interval
     })
@@ -196,7 +196,7 @@ const mutationType = new GraphQLObjectType({
                 timestamp: nonNullGqlString,
                 interval
             },
-            resolve: async (_root, args) => scheduleWateringFor(args.plant ?? {}, args.userId, args.timestamp, args.interval)
+            resolve: async (_root, args) => scheduleWateringFor(args.plants ?? [], args.userId, args.timestamp, args.interval)
         },
         deleteWateringSchedule: {
             description: "Remove a schedule",

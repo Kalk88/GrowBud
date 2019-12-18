@@ -5,7 +5,7 @@ import Maybe from 'folktale/maybe'
 
 export interface WateringSchedule {
     id: string,
-    plant: object,
+    plants: Array<object>,
     nextTimeToWater: string,
     interval: number
 }
@@ -38,11 +38,11 @@ export async function getWateringScheduleById(id: string): Promise<WateringSched
     return snapshotToSchedule(doc)
 }
 
-export async function scheduleWateringFor(plant: object, userId: string, timestamp: string, interval: number): Promise<WateringSchedule> {
+export async function scheduleWateringFor(plants: Array<object>, userId: string, timestamp: string, interval: number): Promise<WateringSchedule> {
     const uuid: string = uuidv4()
     const schedule = {
         userId,
-        plant,
+        plants,
         nextTimeToWater: timestamp,
         interval
     }
