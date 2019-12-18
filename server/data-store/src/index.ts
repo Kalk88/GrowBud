@@ -6,13 +6,15 @@ import { refreshToken as rf, RefreshInfo } from './lib/auth'
 import cookieParser from 'cookie-parser'
 const app = express()
 const port = process.env.PORT ? process.env.PORT : 9090
+const whitelist = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : '*'
 
 app.use(express.json())
 app.use(cookieParser())
 app.use((_req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Origin', whitelist)
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
   res.header('Access-Control-Allow-Methods', 'GET, POST')
+  res.header('Access-Control-Allow-Credentials', 'true')
   next()
 })
 
