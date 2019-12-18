@@ -50,7 +50,7 @@ export async function login(credential: Credential): Promise<userInfo> {
   }
 }
 
-export async function registerUser(credential: Credential, userName: string): Promise<userInfo> {
+export async function registerUser(credential: Credential, userName: string): Promise<boolean> {
   try {
     const uid = uuidv4()
     await admin.auth().createUser({
@@ -61,7 +61,7 @@ export async function registerUser(credential: Credential, userName: string): Pr
       password: credential.password,
       disabled: false
     })
-    return login(credential)
+    return true
   } catch (error) {
     console.error('Unable to register credentials: ', error)
     throw (new Error('Authentication error'))
