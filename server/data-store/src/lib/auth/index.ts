@@ -19,7 +19,7 @@ export interface RefreshInfo {
   refreshToken: string
 }
 
-type userID = string
+export type userID = string
 
 export async function login(credential: Credential): Promise<userInfo> {
   try {
