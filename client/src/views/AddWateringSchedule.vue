@@ -85,9 +85,9 @@ export default {
         await this.$apollo.mutate({
           mutation: ADD_WATERINGSCHEDULE,
           variables: {
-            plant: [{ name: this.plantName }],
+            plants: [{ name: this.plantName }],
             userId: this.getUserId,
-            timestamp: this.timestamp,
+            timestamp: this.timestamp.toString(),
             interval: this.calculatedInterval
           }
         });
