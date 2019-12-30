@@ -30,6 +30,13 @@ export default new Vuex.Store({
       state.inMemoryToken.JWTExpiry = JWTExpiry;
     }
   },
+
+  getters: {
+    getUserId: state => {
+      return state.userID;
+    },
+  },
+
   actions: {
 
     silentTokenRefresh(context) { //eslint-disable-line
