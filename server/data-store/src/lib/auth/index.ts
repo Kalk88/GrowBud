@@ -62,14 +62,13 @@ export async function registerUser(credential: Credential, userName: string): Pr
   }
 }
 
-export async function removeUser(id: string) {
-  try {
-    await admin.auth().deleteUser(id)
-  } catch (error) {
-    console.log('Error deleting user:', error)
-    return { status: false }
-  }
-  return { status: true }
+export function removeUser(f: Function, id: string): Promise<Object> {
+  return f(id)
+    .then({ status: true })
+    .catch(error => {
+      console.log('Error deleting user:', error)
+      return { status: false }
+    })
 }
 
 export function verifyAndDecodeToken(token: string): Promise<object> {
