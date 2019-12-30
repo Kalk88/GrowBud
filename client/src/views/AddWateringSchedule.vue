@@ -5,6 +5,7 @@
       label="Name the plant that you are going to water"
       standout
       outlined
+      v-model="plantName"
     />
     <q-date class="calendar" v-model="date" :dark="true" today-btn color="green" />
     <q-time v-model="time" format24h />
