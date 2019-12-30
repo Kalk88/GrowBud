@@ -6,7 +6,7 @@ import { refreshToken as rf, RefreshInfo } from './lib/auth'
 import cookieParser from 'cookie-parser'
 const app = express()
 const port = process.env.PORT ? process.env.PORT : 9090
-const whitelist = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : '*'
+const whitelist = process.env.WHITELIST
 
 app.use(express.json())
 app.use(cookieParser())
