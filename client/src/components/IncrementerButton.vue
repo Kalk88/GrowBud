@@ -8,7 +8,7 @@
       pattern="^[0-9]*$"
       v-model.number="value"
       @input="emitInputValueChange()"
-      @blur="validateNotEmptyString()"
+      @blur="replaceEmptyStringWithZero()"
     />
     <button class="sub_button" @click="subtract(), emitInputValueChange()">
       <q-icon class="sub_button__icon" name="eva-arrow-down-outline" style="font-size: 3.5rem;" />
@@ -54,7 +54,7 @@ export default {
         this.value = 0;
       }
     },
-    validateNotEmptyString() {
+    replaceEmptyStringWithZero() {
       if (this.value === "") {
         this.value = 0;
       }
