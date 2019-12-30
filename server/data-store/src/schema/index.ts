@@ -14,7 +14,8 @@ import {
     Credential,
     registerUser,
     removeUser,
-    userInfo
+    userInfo,
+    verifyToken,
 } from '../lib/auth'
 
 import {
@@ -23,6 +24,7 @@ import {
     scheduleWateringFor,
     removeWateringScheduleById
 } from '../lib/db'
+import { Result } from 'folktale/result'
 
 const nonNullGqlString = { type: new GraphQLNonNull(GraphQLString) }
 const interval = { type: GraphQLInt, description: "The schedule interval represented as a unix timestamp." }
@@ -196,7 +198,17 @@ const mutationType = new GraphQLObjectType({
                 timestamp: nonNullGqlString,
                 interval
             },
-            resolve: async (_root, args) => scheduleWateringFor(args.plant ?? {}, args.userId, args.timestamp, args.interval)
+            resolve: async (_root, args, context) => {
+                parseTokenFromHeaders(context.req).matchWith({
+                    Ok: async ({ value }) => {
+                        userIdMatchesJWTId(args.userId, value).then(isValid => {
+                            if (isValid) return scheduleWateringFor(args.plant ?? {}, args.userId, args.timestamp, args.interval)
+                            throw Error('invalid Request')
+                        })
+                    },
+                    Error: ({ value }) => { throw Error(value) }
+                })
+            }
         },
         deleteWateringSchedule: {
             description: "Remove a schedule",
@@ -208,6 +220,22 @@ const mutationType = new GraphQLObjectType({
         }
     })
 })
+
+const parseTokenFromHeaders = req => [req].map(parseHeaders)
+    .map(parseAuthorization)[0]
+
+const parseHeaders = req =>
+    req.headers ? Result.Ok(req.headers)
+        : Result.Error('missing headers')
+
+const parseAuthorization = headers =>
+    headers.authorization ? Result.Ok(headers.authorization)
+        : Result.Error('missing authorization header')
+
+function userIdMatchesJWTId(userId: string, token: string): Promise<boolean> {
+    return verifyToken(token)
+        .then(id => id === userId)
+}
 
 export default new GraphQLSchema({
     mutation: mutationType,
