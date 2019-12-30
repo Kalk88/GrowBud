@@ -8,3 +8,12 @@ mutation ($plants: [plantInput], $userId: String!, $timestamp: String!, $interva
         nextTimeToWater
     }
 }`
+
+export const GET_MY_WATERINGSCHEDULES = gql `
+    query ($userId: String!){
+        wateringScheduleForUser(userId: $userId) {
+            id
+            plants { name }
+        }
+    }
+`
