@@ -6,7 +6,7 @@ import {
     GraphQLNonNull,
     GraphQLInt,
     GraphQLList,
-    GraphQLBoolean
+    GraphQLBoolean,
 } from 'graphql'
 
 import {
@@ -58,7 +58,7 @@ const WateringSchedule = new GraphQLObjectType({
     fields: () => ({
         id: nonNullGqlString,
         userId: nonNullGqlString,
-        plant: { type: Plant },
+        plants: { type: GraphQLList(Plant) },
         nextTimeToWater: nonNullGqlString,
         interval
     })
@@ -68,7 +68,7 @@ const Plant = new GraphQLObjectType({
     name: "Plant",
     description: "Information about a plant.",
     fields: () => ({
-        id: nonNullGqlString,
+        id: { type: GraphQLString, description: 'uuid of the Plant' },
         name: nonNullGqlString,
     })
 })
@@ -183,20 +183,20 @@ const mutationType = new GraphQLObjectType({
             description: "Set up a reminder for when to water a plant next.",
             type: WateringSchedule,
             args: {
-                plant: {
-                    type: new GraphQLInputObjectType({
+                plants: {
+                    type: GraphQLList(new GraphQLInputObjectType({
                         name: 'plantInput',
                         fields: {
-                            id: nonNullGqlString,
+                            id: { type: GraphQLString, description: 'uuid of the Plant' },
                             name: nonNullGqlString,
                         }
-                    })
+                    }))
                 },
                 userId: nonNullGqlString,
                 timestamp: nonNullGqlString,
                 interval
             },
-            resolve: async (_root, args) => scheduleWateringFor(args.plant ?? {}, args.userId, args.timestamp, args.interval)
+            resolve: async (_root, args) => scheduleWateringFor(args.plants ?? [], args.userId, args.timestamp, args.interval)
         },
         deleteWateringSchedule: {
             description: "Remove a schedule",
