@@ -92,7 +92,7 @@ export default {
           }
         });
       } catch (error) {
-        console.error(error); //eslint-disable-line
+        alert("Couldn't add schedule");
       }
     },
     setIntervalModifier(value) {
