@@ -80,7 +80,11 @@ export async function removeUser(id: string) {
   return { status: true }
 }
 
+<<<<<<< HEAD
 export async function parseUserIdFromToken(token: string): Promise<userID> {
+=======
+export async function verifyToken(token: string): Promise<userID> {
+>>>>>>> 35a3e78549c437ba367a849814dc5d845a4465ea
   let decodedToken = await admin.auth().verifyIdToken(token)
   return decodedToken.uid
 }
