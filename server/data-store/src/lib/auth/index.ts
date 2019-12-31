@@ -19,8 +19,6 @@ export interface RefreshInfo {
   refreshToken: string
 }
 
-export type userID = string
-
 export async function login(credential: Credential): Promise<userInfo> {
   try {
     const { email, password } = credential
@@ -80,13 +78,8 @@ export async function removeUser(id: string) {
   return { status: true }
 }
 
-<<<<<<< HEAD
-export async function parseUserIdFromToken(token: string): Promise<userID> {
-=======
-export async function verifyToken(token: string): Promise<userID> {
->>>>>>> 35a3e78549c437ba367a849814dc5d845a4465ea
-  let decodedToken = await admin.auth().verifyIdToken(token)
-  return decodedToken.uid
+export function verifyAndDecodeToken(token: string): Promise<object> {
+  return admin.auth().verifyIdToken(token)
 }
 
 export async function refreshToken(token: string): Promise<RefreshInfo> {
