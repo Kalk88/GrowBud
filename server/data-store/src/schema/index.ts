@@ -15,7 +15,7 @@ import {
     registerUser,
     removeUser,
     userInfo,
-    verifyToken,
+    parseUserIdFromToken,
 } from '../lib/auth'
 
 import {
@@ -24,7 +24,6 @@ import {
     scheduleWateringFor,
     removeWateringScheduleById
 } from '../lib/db'
-import { Result } from 'folktale/result'
 
 const nonNullGqlString = { type: new GraphQLNonNull(GraphQLString) }
 const interval = { type: GraphQLInt, description: "The schedule interval represented as a unix timestamp." }
@@ -199,14 +198,11 @@ const mutationType = new GraphQLObjectType({
                 interval
             },
             resolve: async (_root, args, context) => {
-                parseTokenFromHeaders(context.req).matchWith({
-                    Ok: async ({ value }) => {
-                        userIdMatchesJWTId(args.userId, value).then(isValid => {
-                            if (isValid) return scheduleWateringFor(args.plant ?? {}, args.userId, args.timestamp, args.interval)
-                            throw Error('invalid Request')
-                        })
-                    },
-                    Error: ({ value }) => { throw Error(value) }
+                const token = parseTokenFromHeaders(context)
+
+                userIdMatchesJWTId(args.userId, token).then(isValid => {
+                    if (isValid) return scheduleWateringFor(args.plant ?? {}, args.userId, args.timestamp, args.interval)
+                    throw Error('invalid Request')
                 })
             }
         },
@@ -221,19 +217,22 @@ const mutationType = new GraphQLObjectType({
     })
 })
 
-const parseTokenFromHeaders = req => [req].map(parseHeaders)
+const parseTokenFromHeaders = req => [req]
+    .map(parseHeaders)
     .map(parseAuthorization)[0]
 
-const parseHeaders = req =>
-    req.headers ? Result.Ok(req.headers)
-        : Result.Error('missing headers')
+const parseHeaders = req => {
+    if (req.headers == null) throw new Error('Missing headers')
+    return req.headers
+}
 
-const parseAuthorization = headers =>
-    headers.authorization ? Result.Ok(headers.authorization)
-        : Result.Error('missing authorization header')
+const parseAuthorization = headers => {
+    if (headers.authorization == null) throw new Error('Missing authorization header')
+    return headers.authorization
+}
 
 function userIdMatchesJWTId(userId: string, token: string): Promise<boolean> {
-    return verifyToken(token)
+    return parseUserIdFromToken(token)
         .then(id => id === userId)
 }
 

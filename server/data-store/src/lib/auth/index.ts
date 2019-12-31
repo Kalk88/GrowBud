@@ -80,7 +80,7 @@ export async function removeUser(id: string) {
   return { status: true }
 }
 
-export async function verifyToken(token: string): Promise<userID> {
+export async function parseUserIdFromToken(token: string): Promise<userID> {
   let decodedToken = await admin.auth().verifyIdToken(token)
   return decodedToken.uid
 }
