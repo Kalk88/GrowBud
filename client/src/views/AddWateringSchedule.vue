@@ -12,12 +12,12 @@
     <div class="interval-selector">
       <q-btn-group class="interval-btn-grp">
         <q-btn
-          :class="intervalModifier <=1 ? 'selected': 'unselected' "
+          :class="intervalModifier <= 1 ? 'selected': 'unselected' "
           label="Days"
           @click="setIntervalModifier(1)"
         />
         <q-btn
-          :class="intervalModifier >1 ? 'selected': 'unselected' "
+          :class="intervalModifier > 1 ? 'selected': 'unselected' "
           label="Weeks"
           @click="setIntervalModifier(7)"
         />
@@ -36,6 +36,7 @@ import { QDate, QTime, QInput, QBtnGroup, QBtn } from "quasar";
 import IncrementerButton from "../components/IncrementerButton.vue";
 import { mapGetters } from "vuex";
 import { ADD_WATERINGSCHEDULE } from "../api/wateringschedule";
+import isEmpty from "lodash";
 
 export default {
   name: "AddWateringSchedule",
@@ -47,6 +48,7 @@ export default {
     QBtn,
     IncrementerButton
   },
+
   data() {
     return {
       date: "",
@@ -58,6 +60,17 @@ export default {
   },
 
   created() {
+    if (!_.isEmpty(this.$route.params)) {
+      const scheduleToEdit = this.$route.params;
+      const date = new Date(parseInt(scheduleToEdit.nextTimeToWater));
+
+      this.date = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`;
+      this.time = `${date.getHours()}:${
+        date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()
+      }`;
+      this.interval = scheduleToEdit.interval;
+      this.plantName = scheduleToEdit.plants[0].name;
+    }
     this.date = new Date()
       .toISOString()
       .slice(0, 10)

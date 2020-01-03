@@ -1,9 +1,10 @@
 <template>
   <ol>
     <MyWateringScheduleCard
+      @click="editSchedule"
       v-for="schedule in schedules"
       :key="schedule.id"
-      :plants="schedule.plants"
+      :schedule="schedule"
     />
   </ol>
 </template>
@@ -42,7 +43,13 @@ export default {
           }
         });
         return res.data.wateringScheduleForUser;
-      } catch (error) {}
+      } catch (error) {
+        alert("No schedules could be fetched, please try again later");
+      }
+    },
+    editSchedule() {
+      console.log("hej");
+      // this.$router.push({ name: "addWateringSchedule", params: schedule });
     }
   }
 };
