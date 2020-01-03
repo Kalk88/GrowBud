@@ -27,6 +27,9 @@ export default new Router({
         path: '/addWateringSchedule',
         name: 'addWateringSchedule',
         component: AddWateringSchedule,
+        props: {
+          schedule: {}
+        },
         beforeEnter: (to, from, next) => {
           if (store.state.userID) {
             next()

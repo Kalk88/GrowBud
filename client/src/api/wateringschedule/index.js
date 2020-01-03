@@ -14,6 +14,8 @@ export const GET_MY_WATERINGSCHEDULES = gql `
         wateringScheduleForUser(userId: $userId) {
             id
             plants { name }
+            nextTimeToWater
+            interval
         }
     }
 `
