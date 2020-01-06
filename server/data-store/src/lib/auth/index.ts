@@ -2,7 +2,6 @@ import { admin } from '../firebaseClient'
 import axios from 'axios'
 import qs from 'qs'
 import uuidv4 from 'uuid/v4'
-import { response } from 'express'
 export interface Credential {
   email: string,
   password: string
@@ -77,7 +76,7 @@ export function verifyAndDecodeToken(token: string): Promise<object> {
   return admin.auth().verifyIdToken(token)
 }
 
-export async function refreshToken(token: string): Promise<RefreshInfo> {
+export function refreshToken(token: string): Promise<RefreshInfo> {
   return axios({
     method: "POST",
     headers: { 'content-type': 'application/x-www-form-urlencoded' },
