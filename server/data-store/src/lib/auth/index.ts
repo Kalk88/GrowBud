@@ -83,29 +83,28 @@ export function verifyAndDecodeToken(token: string): Promise<object> {
 }
 
 export async function refreshToken(token: string): Promise<RefreshInfo> {
-  try {
-    const payload = {
-      grant_type: 'refresh_token',
-      refresh_token: token
-    }
-    const response: any = await axios({
-      method: "POST",
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      data: qs.stringify(payload),
-      url: `https://securetoken.googleapis.com/v1/token?key=${process.env.FIREBASEAPIKEY}`,
+  return axios({
+    method: "POST",
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    data: qs.stringify(
+      {
+        grant_type: 'refresh_token',
+        refresh_token: token
+      }
+    ),
+    url: `https://securetoken.googleapis.com/v1/token?key=${process.env.FIREBASEAPIKEY}`,
+  })
+    .then(response => response.data)
+    .then(data => {
+      return {
+        JWT: data.id_token,
+        JWTExpiry: expiresToMilliseconds(data.expires_in),
+        refreshToken: data.refresh_token
+      }
+    }).catch(error => {
+      console.error('Unable to refresh token', error.message)
+      throw (new Error('Authentication error'))
     })
-
-    const data = response.data
-    // Date.now() is milliseconds, expires_in is seconds.
-    const JWTExpiry = Date.now() + (data.expires_in * 1000)
-    return {
-      JWT: data.id_token,
-      JWTExpiry,
-      refreshToken: data.refresh_token
-    }
-  } catch (error) {
-    console.error(error.message)
-    throw (new Error('Authentication error'))
-
-  }
 }
+
+const expiresToMilliseconds = expires => Date.now() + (expires * 1000)
