@@ -2,14 +2,31 @@
   <q-toolbar>
     <q-toolbar-title>Growbud</q-toolbar-title>
     <nav>
-      <div id="addSchedule" @click="$router.push('addWateringSchedule')">Add a schedule</div>
-      <div id="mySchedules" @click="$router.push('myWateringSchedules')">My schedules</div>
+      <div id="addSchedule" @click="goToAddWateringSchedule">Add a schedule</div>
+      <div id="mySchedules" @click="goToMyWateringSchedules">My schedules</div>
     </nav>
   </q-toolbar>
 </template>
 <script>
 export default {
-  name: "LoggedinToolbar"
+  name: "LoggedinToolbar",
+
+  methods: {
+    goToAddWateringSchedule() {
+      this.$router.push("addWateringSchedule").catch(err => {
+        if (err.name !== "NavigationDuplicated") {
+          throw err;
+        }
+      });
+    },
+    goToMyWateringSchedules() {
+      this.$router.push("myWateringSchedules").catch(err => {
+        if (err.name !== "NavigationDuplicated") {
+          throw err;
+        }
+      });
+    }
+  }
 };
 </script>
 <style scoped>
