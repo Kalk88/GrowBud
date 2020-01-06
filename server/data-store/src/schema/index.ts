@@ -22,7 +22,8 @@ import {
     getWateringSchedulesForUser,
     getWateringScheduleById,
     scheduleWateringFor,
-    removeWateringScheduleById
+    removeWateringScheduleById,
+    updateWateringSchedule
 } from '../lib/db'
 
 const nonNullGqlString = { type: new GraphQLNonNull(GraphQLString) }
@@ -63,6 +64,13 @@ const WateringSchedule = new GraphQLObjectType({
         nextTimeToWater: nonNullGqlString,
         interval
     })
+})
+const plantInput = new GraphQLInputObjectType({
+    name: 'plantInput',
+    fields: {
+        id: { type: GraphQLString, description: 'uuid of the Plant' },
+        name: nonNullGqlString,
+    }
 })
 
 const Plant = new GraphQLObjectType({
@@ -192,13 +200,7 @@ const mutationType = new GraphQLObjectType({
             type: WateringSchedule,
             args: {
                 plants: {
-                    type: GraphQLList(new GraphQLInputObjectType({
-                        name: 'plantInput',
-                        fields: {
-                            id: { type: GraphQLString, description: 'uuid of the Plant' },
-                            name: nonNullGqlString,
-                        }
-                    }))
+                    type: GraphQLList(plantInput)
                 },
                 userId: nonNullGqlString,
                 timestamp: nonNullGqlString,
@@ -208,7 +210,27 @@ const mutationType = new GraphQLObjectType({
                 return parseTokenFromHeaders(context)
                     .then(verifyAndDecodeToken)
                     .then(parseUserIdFromToken)
-                    .then(userId => scheduleWateringFor(args.plant ?? {}, userId, args.timestamp, args.interval))
+                    .then(userId => scheduleWateringFor(args.plants ?? {}, userId, args.timestamp, args.interval))
+                    .catch(err => { console.error(err); throw new Error('Invalid Request') })
+            }
+        },
+        updateWateringSchedule: {
+            description: "Set up a reminder for when to water a plant next.",
+            type: WateringSchedule,
+            args: {
+                scheduleId: nonNullGqlString,
+                plants: {
+                    type: GraphQLList(plantInput)
+                },
+                userId: nonNullGqlString,
+                timestamp: nonNullGqlString,
+                interval
+            },
+            resolve: async (_root, args, context) => {
+                return parseTokenFromHeaders(context)
+                    .then(verifyAndDecodeToken)
+                    .then(parseUserIdFromToken)
+                    .then(userId => updateWateringSchedule(args.scheduleId, args.plants ?? {}, userId, args.timestamp, args.interval))
                     .catch(err => { console.error(err); throw new Error('Invalid Request') })
             }
         },

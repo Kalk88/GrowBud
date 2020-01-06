@@ -56,6 +56,23 @@ export async function scheduleWateringFor(plants: Array<object>, userId: string,
     }
 }
 
+export async function updateWateringSchedule(scheduleId: string, plants: Array<object>, userId: string, timestamp: string, interval: number): Promise<WateringSchedule> {
+    const schedule = {
+        userId,
+        plants,
+        nextTimeToWater: timestamp,
+        interval
+    }
+
+    await db.collection('wateringSchedules')
+        .doc(scheduleId)
+        .set({ schedule }, { merge: true })
+    return {
+        id: scheduleId,
+        ...schedule
+    }
+}
+
 export async function removeWateringScheduleById(id: string): Promise<object> {
     try {
         await db.collection('wateringSchedules')
