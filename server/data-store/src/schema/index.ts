@@ -14,7 +14,8 @@ import {
     Credential,
     registerUser,
     removeUser,
-    userInfo
+    userInfo,
+    verifyAndDecodeToken,
 } from '../lib/auth'
 
 import {
@@ -111,9 +112,13 @@ const queryType = new GraphQLObjectType({
                     description: 'The number of schedules to retrieve. Defaults to 10'
                 }
             },
-            resolve: async (_root, args) => {
+            resolve: async (_root, args, context) => {
                 const limit = args.limit ?? 10
-                return getWateringSchedulesForUser(args.userId, args.offset, limit)
+                return parseTokenFromHeaders(context)
+                    .then(verifyAndDecodeToken)
+                    .then(parseUserIdFromToken)
+                    .then(userId => getWateringSchedulesForUser(userId, args.offset, limit))
+                    .catch(err => { console.error(err); throw new Error('Invalid Request') })
             }
         },
     })
@@ -174,10 +179,13 @@ const mutationType = new GraphQLObjectType({
         unregister: {
             description: 'Remove a user from the application',
             type: Status,
-            args: {
-                id: nonNullGqlString
-            },
-            resolve: async (_root, args) => removeUser(args.id)
+            resolve: async (_root, _args, context) => {
+                return parseTokenFromHeaders(context)
+                    .then(verifyAndDecodeToken)
+                    .then(parseUserIdFromToken)
+                    .then(removeUser)
+                    .catch(err => { console.error(err); throw new Error('Invalid Request') })
+            }
         },
         nextWateringDateFor: {
             description: "Set up a reminder for when to water a plant next.",
@@ -196,7 +204,13 @@ const mutationType = new GraphQLObjectType({
                 timestamp: nonNullGqlString,
                 interval
             },
-            resolve: async (_root, args) => scheduleWateringFor(args.plants ?? [], args.userId, args.timestamp, args.interval)
+            resolve: async (_root, args, context) => {
+                return parseTokenFromHeaders(context)
+                    .then(verifyAndDecodeToken)
+                    .then(parseUserIdFromToken)
+                    .then(userId => scheduleWateringFor(args.plant ?? {}, userId, args.timestamp, args.interval))
+                    .catch(err => { console.error(err); throw new Error('Invalid Request') })
+            }
         },
         deleteWateringSchedule: {
             description: "Remove a schedule",
@@ -204,10 +218,34 @@ const mutationType = new GraphQLObjectType({
             args: {
                 id: nonNullGqlString,
             },
-            resolve: async (_root, args) => removeWateringScheduleById(args.id)
+            resolve: async (_root, args, context) => {
+                return parseTokenFromHeaders(context)
+                    .then(verifyAndDecodeToken)
+                    .then(_ => removeWateringScheduleById(args.id))
+                    .catch(err => { console.error(err); throw new Error('Invalid Request') })
+            }
         }
     })
 })
+
+const parseTokenFromHeaders = req => new Promise((resolve, _reject) =>
+    resolve([req]
+        .map(parseHeaders)
+        .map(parseAuthorization)
+        .map(bearer => bearer.split(' ')[1])[0]
+    ))
+
+const parseHeaders = req => {
+    if (req.headers == null) throw new Error('Missing headers')
+    return req.headers
+}
+
+const parseAuthorization = headers => {
+    if (headers.authorization == null) throw new Error('Missing authorization header')
+    return headers.authorization
+}
+
+const parseUserIdFromToken = token => token.uid
 
 export default new GraphQLSchema({
     mutation: mutationType,
