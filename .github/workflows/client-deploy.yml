@@ -8,24 +8,24 @@ on:
     paths:
       - "client/**"
 
-jobs:
-  build:
-    name: Build and Deploy
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@master
-      - name: Install Dependencies
-        run: |
-          cd client
-          npm install
-      - name: Build
-        run: |
-          cd client
-          npm run build
-      - name: Deploy to Firebase
-        run: |
-          cd client
-          npm install firebase-tools
-          firebase use --add ${{ secrets.GCLOUD_PROJECT_ID }} #same for id for firebase and gcloud
-          firebase deploy --token  ${{ secrets.FIREBASE_TOKEN }}
+#jobs:
+#  build:
+#    name: Build and Deploy
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout Repo
+#       uses: actions/checkout@master
+#      - name: Install Dependencies
+#        run: |
+#          cd client
+#          npm install
+#      - name: Build
+#        run: |
+#          cd client
+#          npm run build
+#      - name: Deploy to Firebase
+#        run: |
+#          cd client
+#          npm install firebase-tools
+#          firebase use --add ${{ secrets.GCLOUD_PROJECT_ID }} #same for id for firebase and gcloud
+#          firebase deploy --token  ${{ secrets.FIREBASE_TOKEN }}#
