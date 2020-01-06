@@ -31,7 +31,9 @@ export default {
       value: 0
     };
   },
-
+  mounted() {
+    this.value = this.$attrs.value;
+  },
   methods: {
     add() {
       if (Number.isInteger(this.value)) {
@@ -57,6 +59,7 @@ export default {
     replaceEmptyStringWithZero() {
       if (this.value === "") {
         this.value = 0;
+        this.$emit("input", this.value);
       }
     }
   }
@@ -100,5 +103,9 @@ export default {
   align-self: center;
   text-align: center;
   font-size: 28px;
+}
+
+.hide {
+  display: none;
 }
 </style>

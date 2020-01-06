@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from './store'
 import DefaultLayout from './layouts/Default.vue'
 import Home from './views/Home.vue'
 import About from './views/About.vue'
@@ -25,12 +26,29 @@ export default new Router({
       {
         path: '/addWateringSchedule',
         name: 'addWateringSchedule',
-        component: AddWateringSchedule
+        component: AddWateringSchedule,
+        props: {
+          schedule: {}
+        },
+        beforeEnter: (to, from, next) => {
+          if (store.state.userID) {
+            next()
+          } else {
+            next(false)
+          }
+        }
       },
       {
         path: '/myWateringSchedules',
         name: 'myWateringSchedules',
-        component: MyWateringSchedules
+        component: MyWateringSchedules,
+        beforeEnter: (to, from, next) => {
+          if (store.state.userID) {
+            next()
+          } else {
+            next(false)
+          }
+        }
       }
     ]
   }]

@@ -7,6 +7,7 @@ import VueApollo from 'vue-apollo'
 import {
   ApolloClient
 } from 'apollo-client'
+import { ApolloLink, concat } from 'apollo-link';
 import {
   createHttpLink
 } from 'apollo-link-http'
@@ -25,10 +26,20 @@ const httpLink = createHttpLink({
 
 const cache = new InMemoryCache()
 
+const authMiddleware = new ApolloLink((operation, forward) => {
+  // add the authorization to the headers
+  operation.setContext({
+    headers: {
+      authorization: `Bearer ${store.state.inMemoryToken.JWT}`,
+    }
+  });
+  return forward(operation);
+})
+
 const apolloClient = new ApolloClient({
-  link: httpLink,
+  link: concat(authMiddleware, httpLink),
   cache,
-  connectToDevTools: true
+  connectToDevTools: true,
 })
 
 const apolloProvider = new VueApollo({
