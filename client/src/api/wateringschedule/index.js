@@ -1,17 +1,17 @@
 import gql from 'graphql-tag';
 
 export const ADD_WATERINGSCHEDULE = gql`
-    mutation ($plants: [plantInput], $userId: String!, $timestamp: String!, $interval: Int!){
-        nextWateringDateFor(plants: $plants, timestamp: $timestamp, interval: $interval  ) {
+    mutation ($plants: [plantInput], $timestamp: String!, $interval: Int!){
+        nextWateringDateFor(plants: $plants, timestamp: $timestamp, interval: $interval) {
             id
-            plants{name}
+            plants{ name }
             nextTimeToWater
         }
     }
 `
 
 export const GET_MY_WATERINGSCHEDULES = gql`
-    query ($userId: String!){
+    query {
         wateringScheduleForUser {
             id
             plants { name }
