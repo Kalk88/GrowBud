@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import axios from 'axios'
-import store from './store'
+import store from '../../store'
 
 var API = axios.create({
     baseURL: process.env.VUE_APP_API_BASE_URL,
@@ -25,8 +25,6 @@ export function refreshToken() {
         withCredentials: true
     });
 }
-
-
 
 export const LOGIN = gql `
 mutation ($email: String!,$password: String!){
