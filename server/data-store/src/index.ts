@@ -45,10 +45,12 @@ app.post('/api/refreshToken', async (req, res) => {
   }
 })
 
-app.use('/graph/view', graphQLHTTP({
-  schema,
-  graphiql: true
-}))
+if (process.env.NODE_ENV === 'development') {
+  app.use('/graph/view', graphQLHTTP({
+    schema,
+    graphiql: true
+  }))
+}
 
 app.post('/graph', graphQLHTTP({
   schema
