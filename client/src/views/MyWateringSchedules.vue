@@ -1,7 +1,6 @@
 <template>
   <ol>
     <MyWateringScheduleCard
-      @click="editSchedule"
       v-for="schedule in schedules"
       :key="schedule.id"
       :schedule="schedule"
@@ -47,10 +46,6 @@ export default {
         alert("No schedules could be fetched, please try again later");
       }
     },
-    editSchedule() {
-      console.log("hej");
-      // this.$router.push({ name: "addWateringSchedule", params: schedule });
-    }
   }
 };
 </script>

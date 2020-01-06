@@ -26,7 +26,8 @@
     </div>
     <q-btn-group class="add-cancel-btn-grp">
       <q-btn label="Cancel" />
-      <q-btn label="Add schedule" @click="addWateringSchedule" />
+      <q-btn v-if="!scheduleToEdit" label="Add schedule" @click="addWateringSchedule" />
+      <q-btn v-if="scheduleToEdit" label="Update schedule" @click="updateWateringSchedule"/>
     </q-btn-group>
   </div>
 </template>
@@ -35,8 +36,8 @@
 import { QDate, QTime, QInput, QBtnGroup, QBtn } from "quasar";
 import IncrementerButton from "../components/IncrementerButton.vue";
 import { mapGetters } from "vuex";
-import { ADD_WATERINGSCHEDULE } from "../api/wateringschedule";
-import isEmpty from "lodash";
+import { ADD_WATERINGSCHEDULE, UPDATE_WATERINGSCHEDULE } from "../api/wateringschedule";
+import {isEmpty} from "lodash";
 
 export default {
   name: "AddWateringSchedule",
@@ -55,21 +56,22 @@ export default {
       time: "",
       interval: 0,
       intervalModifier: 1,
-      plantName: ""
+      plantName: "",
+      scheduleToEdit: null
     };
   },
 
   created() {
-    if (!_.isEmpty(this.$route.params)) {
-      const scheduleToEdit = this.$route.params;
-      const date = new Date(parseInt(scheduleToEdit.nextTimeToWater));
+    if (!isEmpty(this.$route.params)) {
+      this.scheduleToEdit = this.$route.params;
+      const date = new Date(parseInt(this.scheduleToEdit.nextTimeToWater));
 
       this.date = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`;
       this.time = `${date.getHours()}:${
         date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()
       }`;
-      this.interval = scheduleToEdit.interval;
-      this.plantName = scheduleToEdit.plants[0].name;
+      this.interval = this.scheduleToEdit.interval;
+      this.plantName = this.scheduleToEdit.plants[0].name;
     }
     this.date = new Date()
       .toISOString()
@@ -109,6 +111,24 @@ export default {
         alert("Couldn't add schedule");
       }
     },
+
+    async updateWateringSchedule() {
+      try {
+        await this.$apollo.mutate({
+          mutation: UPDATE_WATERINGSCHEDULE,
+          variables: {
+            scheduleId: this.scheduleToEdit.id, 
+            plants: [{ name: this.plantName }],
+            userId: this.getUserId,
+            timestamp: this.timestamp.toString(),
+            interval: this.calculatedInterval
+          }
+        });
+      } catch (error) {
+        alert("Couldn't add schedule");
+      }
+    },
+
     setIntervalModifier(value) {
       this.intervalModifier = value;
     }
