@@ -66,7 +66,7 @@ export async function updateWateringSchedule(scheduleId: string, plants: Array<o
 
     await db.collection('wateringSchedules')
         .doc(scheduleId)
-        .set({ schedule }, { merge: true })
+        .set(schedule, { merge: true })
     return {
         id: scheduleId,
         ...schedule
