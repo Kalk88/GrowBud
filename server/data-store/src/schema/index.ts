@@ -110,7 +110,6 @@ const queryType = new GraphQLObjectType({
             description: 'The watering schedules for a user by user id',
             type: GraphQLList(WateringSchedule),
             args: {
-                userId: nonNullGqlString,
                 offset: {
                     type: GraphQLString,
                     description: 'The document id to start from.'
@@ -202,7 +201,6 @@ const mutationType = new GraphQLObjectType({
                 plants: {
                     type: GraphQLList(plantInput)
                 },
-                userId: nonNullGqlString,
                 timestamp: nonNullGqlString,
                 interval
             },
@@ -222,7 +220,6 @@ const mutationType = new GraphQLObjectType({
                 plants: {
                     type: GraphQLList(plantInput)
                 },
-                userId: nonNullGqlString,
                 timestamp: nonNullGqlString,
                 interval
             },
