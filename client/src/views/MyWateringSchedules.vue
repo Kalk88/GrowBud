@@ -1,10 +1,6 @@
 <template>
   <ol>
-    <MyWateringScheduleCard
-      v-for="schedule in schedules"
-      :key="schedule.id"
-      :schedule="schedule"
-    />
+    <MyWateringScheduleCard v-for="schedule in schedules" :key="schedule.id" :schedule="schedule" />
   </ol>
 </template>
 
@@ -36,16 +32,13 @@ export default {
     async getMySchedules() {
       try {
         const res = await this.$apollo.query({
-          query: GET_MY_WATERINGSCHEDULES,
-          variables: {
-            userId: this.getUserId
-          }
+          query: GET_MY_WATERINGSCHEDULES
         });
         return res.data.wateringScheduleForUser;
       } catch (error) {
         alert("No schedules could be fetched, please try again later");
       }
-    },
+    }
   }
 };
 </script>

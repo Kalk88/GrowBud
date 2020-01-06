@@ -27,7 +27,7 @@
     <q-btn-group class="add-cancel-btn-grp">
       <q-btn label="Cancel" />
       <q-btn v-if="!scheduleToEdit" label="Add schedule" @click="addWateringSchedule" />
-      <q-btn v-if="scheduleToEdit" label="Update schedule" @click="updateWateringSchedule"/>
+      <q-btn v-if="scheduleToEdit" label="Update schedule" @click="updateWateringSchedule" />
     </q-btn-group>
   </div>
 </template>
@@ -36,8 +36,11 @@
 import { QDate, QTime, QInput, QBtnGroup, QBtn } from "quasar";
 import IncrementerButton from "../components/IncrementerButton.vue";
 import { mapGetters } from "vuex";
-import { ADD_WATERINGSCHEDULE, UPDATE_WATERINGSCHEDULE } from "../api/wateringschedule";
-import {isEmpty} from "lodash";
+import {
+  ADD_WATERINGSCHEDULE,
+  UPDATE_WATERINGSCHEDULE
+} from "../api/wateringschedule";
+import { isEmpty } from "lodash";
 
 export default {
   name: "AddWateringSchedule",
@@ -102,7 +105,6 @@ export default {
           mutation: ADD_WATERINGSCHEDULE,
           variables: {
             plants: [{ name: this.plantName }],
-            userId: this.getUserId,
             timestamp: this.timestamp.toString(),
             interval: this.calculatedInterval
           }
@@ -117,9 +119,8 @@ export default {
         await this.$apollo.mutate({
           mutation: UPDATE_WATERINGSCHEDULE,
           variables: {
-            scheduleId: this.scheduleToEdit.id, 
+            scheduleId: this.scheduleToEdit.id,
             plants: [{ name: this.plantName }],
-            userId: this.getUserId,
             timestamp: this.timestamp.toString(),
             interval: this.calculatedInterval
           }
