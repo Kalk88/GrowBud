@@ -2,6 +2,7 @@ import { admin } from '../firebaseClient'
 import axios from 'axios'
 import qs from 'qs'
 import uuidv4 from 'uuid/v4'
+import { response } from 'express'
 export interface Credential {
   email: string,
   password: string
@@ -19,35 +20,29 @@ export interface RefreshInfo {
   refreshToken: string
 }
 
-export async function login(credential: Credential): Promise<userInfo> {
-  try {
-    const { email, password } = credential
-    const payload = {
-      email,
-      password,
+export function login(credential: Credential): Promise<userInfo> {
+  return axios({
+    method: "POST",
+    headers: { 'content-type': 'application/json' },
+    data: {
+      email: credential.email,
+      password: credential.password,
       returnSecureToken: true
-    }
-    const response: any = await axios({
-      method: "POST",
-      headers: { 'content-type': 'application/json' },
-      data: payload,
-      url: `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.FIREBASEAPIKEY}`,
+    },
+    url: `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.FIREBASEAPIKEY}`,
+  })
+    .then(response => response.data)
+    .then(data => {
+      return {
+        id: data.localId,
+        JWT: data.idToken,
+        JWTExpiry: expiresToMilliseconds(data.expiresIn),
+        refreshToken: data.refreshToken
+      }
+    }).catch(error => {
+      console.error('Unable to authorize user: ', error.toJSON())
+      throw (new Error('Authentication error'))
     })
-
-    const { localId, idToken, expiresIn, refreshToken } = response.data
-    // Date.now() is milliseconds, expiresIn is seconds.
-    const JWTExpiry = Date.now() + (expiresIn * 1000)
-    return {
-      id: localId,
-      JWT: idToken,
-      JWTExpiry,
-      refreshToken: refreshToken
-    }
-
-  } catch (error) {
-    console.error('Unable to authorize user: ', error.toJSON())
-    throw (new Error('Authentication error'))
-  }
 }
 
 export async function registerUser(credential: Credential, userName: string): Promise<boolean> {
