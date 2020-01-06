@@ -37,6 +37,10 @@ const apolloProvider = new VueApollo({
 
 Vue.config.productionTip = false
 
+if(store.getters.getUserId === "") {
+  store.dispatch('persistLogin');
+}
+
 window.setInterval(function () {
   store.dispatch('silentTokenRefresh');
 }, 360000);
