@@ -30,19 +30,19 @@ export default new Router({
         props: {
           schedule: {}
         },
-        beforeEnter: (to, from, next) => {
+        beforeRouteUpdate (to, from, next) {
           if (store.state.isLoggedin) {
             next()
           } else {
             next(false)
           }
-        }
+        },
       },
       {
         path: '/myWateringSchedules',
         name: 'myWateringSchedules',
         component: MyWateringSchedules,
-        beforeEnter: (to, from, next) => {
+        beforeRouteUpdate (to, from, next) {
           if (store.state.isLoggedin) {
             next()
           } else {
