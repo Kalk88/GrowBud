@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
-export const ADD_WATERINGSCHEDULE = gql `
+export const ADD_WATERINGSCHEDULE = gql`
     mutation ($plants: [plantInput], $userId: String!, $timestamp: String!, $interval: Int!){
-        nextWateringDateFor(plants: $plants, userId: $userId, timestamp: $timestamp, interval: $interval  ) {
+        nextWateringDateFor(plants: $plants, timestamp: $timestamp, interval: $interval  ) {
             id
             plants{name}
             nextTimeToWater
@@ -10,9 +10,9 @@ export const ADD_WATERINGSCHEDULE = gql `
     }
 `
 
-export const GET_MY_WATERINGSCHEDULES = gql `
+export const GET_MY_WATERINGSCHEDULES = gql`
     query ($userId: String!){
-        wateringScheduleForUser(userId: $userId) {
+        wateringScheduleForUser {
             id
             plants { name }
             nextTimeToWater
@@ -21,9 +21,9 @@ export const GET_MY_WATERINGSCHEDULES = gql `
     }
 `
 
-export const UPDATE_WATERINGSCHEDULE = gql `
-    mutation($scheduleId: String!, $plants: [plantInput], $userId: String!, $timestamp: String!, $interval: Int!){
-        updateWateringSchedule(scheduleId: $scheduleId, plants: $plants, userId: $userId, timestamp: $timestamp, interval: $interval){
+export const UPDATE_WATERINGSCHEDULE = gql`
+    mutation($scheduleId: String!, $plants: [plantInput], $timestamp: String!, $interval: Int!){
+        updateWateringSchedule(scheduleId: $scheduleId, plants: $plants, timestamp: $timestamp, interval: $interval){
             id
         }
     }
