@@ -221,16 +221,19 @@ const mutationType = new GraphQLObjectType({
             resolve: async (_root, args, context) => {
                 return parseTokenFromHeaders(context)
                     .then(verifyAndDecodeToken)
-                    .then(removeWateringScheduleById(args.id))
+                    .then(_ => removeWateringScheduleById(args.id))
                     .catch(err => { console.error(err); throw new Error('Invalid Request') })
             }
         }
     })
 })
 
-const parseTokenFromHeaders = req => [req]
-    .map(parseHeaders)
-    .map(parseAuthorization)[0]
+const parseTokenFromHeaders = req => new Promise((resolve, _reject) =>
+    resolve([req]
+        .map(parseHeaders)
+        .map(parseAuthorization)
+        .map(bearer => bearer.split(' ')[1])[0]
+    ))
 
 const parseHeaders = req => {
     if (req.headers == null) throw new Error('Missing headers')
