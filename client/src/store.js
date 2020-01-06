@@ -39,6 +39,23 @@ export default new Vuex.Store({
 
   actions: {
 
+    persistLogin(context){
+      refreshToken().then((response) => {
+
+        const {
+          JWT,
+          JWTExpiry
+        } = response.data;
+
+        context.commit('setInMemoryToken', {
+          JWT,
+          JWTExpiry
+        });
+        
+        context.commit('setIsLoggedin', true)
+    })
+  },
+
     silentTokenRefresh(context) { //eslint-disable-line
       if (!this.state.inMemoryToken.JWT) {
         return false;
