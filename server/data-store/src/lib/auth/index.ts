@@ -78,6 +78,9 @@ export async function removeUser(id: string) {
   return { status: true }
 }
 
+export function verifyAndDecodeToken(token: string): Promise<object> {
+  return admin.auth().verifyIdToken(token)
+}
 
 export async function refreshToken(token: string): Promise<RefreshInfo> {
   try {
