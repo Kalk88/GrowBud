@@ -62,11 +62,12 @@ export async function registerUser(credential: Credential, userName: string): Pr
   }
 }
 
-export function removeUser(f: Function, id: string): Promise<Object> {
-  return f(id)
-    .then({ status: true })
+export function removeUser(id: string): Promise<object> {
+  return admin.auth()
+    .deleteUser(id)
+    .then(() => ({ status: true }))
     .catch(error => {
-      console.log('Error deleting user:', error)
+      console.error(error)
       return { status: false }
     })
 }
