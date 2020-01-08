@@ -21,12 +21,20 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["getUserId"])
+    ...mapGetters(["getUserId", "isLoggedin"])
   },
 
   created() {
-    this.getMySchedules().then(data => (this.schedules = data));
+    this.$store.subscribe((mutation) => {
+      if (mutation.type === 'setIsLoggedin') {
+        this.getMySchedules().then(data => (this.schedules = data));
+      }
+    });
+    if(this.isLoggedin){
+      this.getMySchedules().then(data => (this.schedules = data));
+    }
   },
+
 
   methods: {
     async getMySchedules() {

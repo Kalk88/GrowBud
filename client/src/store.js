@@ -35,6 +35,9 @@ export default new Vuex.Store({
     getUserId: state => {
       return state.userID;
     },
+    isLoggedin: state => {
+      return state.isLoggedin;
+    }
   },
 
   actions: {
