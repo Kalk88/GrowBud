@@ -2,3 +2,5 @@
 /dist
 .env
 /firebase_serviceAccount.json
+firebase-debug.log
+firestore-debug.log
