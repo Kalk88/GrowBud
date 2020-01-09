@@ -27,7 +27,7 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.11.0",
     "@vue/cli-plugin-eslint": "^3.11.0",
-    "@vue/cli-plugin-pwa": "^4.1.1",
+    "@vue/cli-plugin-pwa": "^4.1.2",
     "@vue/cli-service": "^3.11.0",
     "apollo-client": "^2.6.4",
     "babel-eslint": "^10.0.1",
