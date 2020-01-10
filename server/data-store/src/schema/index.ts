@@ -24,7 +24,7 @@ import {
     scheduleWateringFor,
     removeWateringScheduleById,
     updateWateringSchedule
-} from '../lib/db'
+} from '../lib/wateringSchedules'
 
 const nonNullGqlString = { type: new GraphQLNonNull(GraphQLString) }
 const interval = { type: GraphQLInt, description: "The schedule interval represented as a unix timestamp." }
