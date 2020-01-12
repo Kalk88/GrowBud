@@ -17,6 +17,7 @@ import {
 } from 'apollo-cache-inmemory'
 
 import './registerServiceWorker'
+import './api/notifications'
 
 
 Vue.use(VueApollo)

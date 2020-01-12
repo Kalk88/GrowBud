@@ -2,7 +2,8 @@ module.exports = {
     pwa: {
         workboxPluginMode: 'InjectManifest',
         workboxOptions: {
-          swSrc: 'src/sw.js',
+          swSrc: 'src/firebase-messaging-sw.js',
+          swDest: 'firebase-messaging-sw.js'
         }
     },
 
@@ -16,3 +17,4 @@ module.exports = {
     ]
 
   }
+  
