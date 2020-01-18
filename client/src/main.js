@@ -18,8 +18,11 @@ import {
 import './registerServiceWorker'
 import './api/notifications'
 
+<<<<<<< HEAD
 import KeenUI from 'keen-ui';
 import 'keen-ui/dist/keen-ui.css';
+=======
+>>>>>>> Install vue PWA plugin (#77)
 
 Vue.use(KeenUI)
 Vue.use(VueApollo)
