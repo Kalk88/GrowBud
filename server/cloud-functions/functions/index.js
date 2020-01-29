@@ -7,14 +7,14 @@ const firestore = admin.firestore()
 exports.notifySchedulesInRange = functions.region('europe-west1').https.onRequest((req, res) => {
     retrieveSchedules(`${Date.now() - (60 * 60 * 24)}`, `${Date.now() + (60 * 60 * 24)}`)
         .then(snapshot => {
-            console.log('docs', snapshot.docs)
+            console.log('docs', JSON.stringify(snapshot.docs))
             return snapshot.docs
                 .map(doc => doc.data())
                 .reduce(reduceSchedules, {})
                 .map(doc => Object.entries(doc).map((k, v) =>
                     retrieveNotifications(k)
                         .then(tokens => {
-                            console.log('tokens', tokens.data())
+                            console.log('tokens', JSON.stringify(tokens.data()))
                             return messaging.sendAll([tokens.data()].map(d => formatMessage(v, d.deviceToken))).then(console.log).catch(console.log)
                         }).catch(err => reject(err))
                 ))
@@ -35,7 +35,7 @@ const formatMessage = (doc, token) => ({
 
 const retrieveSchedules = (past, future) => firestore.collection('wateringSchedules')
     .where('nextTimeToWater', '>', past)
-    .where('NextTimeToWater', '<', future)
+    //.where('NextTimeToWater', '<', future)
     .get()
 
 const retrieveNotifications = userId => firestore.collection('pushNotifications')
@@ -53,4 +53,4 @@ const reduceSchedules = (accumulator, current) => {
     }
 }
 
-exports.reduceSchedules = reduceSchedules
+//exports.reduceSchedules = reduceSchedules
