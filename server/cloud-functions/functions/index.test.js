@@ -16,6 +16,6 @@ test('reduce multiple schedules on userId', t => {
             plants: [1]
         },
     ]
-    const res = schedules.reduce(f.reduceSchedules, {})
+    const res = schedules.reduce(f.reduceSchedulesOnUserId, {})
     t.is(2, res.bob.length)
 })
