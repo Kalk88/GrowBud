@@ -1,20 +1,16 @@
 module.exports = {
-    pwa: {
-        workboxPluginMode: 'InjectManifest',
-        workboxOptions: {
-          swSrc: 'src/firebase-messaging-sw.js',
-          swDest: 'firebase-messaging-sw.js'
-        }
-    },
-
-    pluginOptions: {
-      quasar: {
-        treeShake: true
+  css: {
+    loaderOptions: {
+      scss: {
+        prependData: `@import "~@/scss/variables.scss";`
       }
-    },
-    transpileDependencies: [
-      /[\\/]node_modules[\\/]quasar[\\/]/,
-    ]
-
+    }
+  },
+  pwa: {
+    workboxPluginMode: "InjectManifest",
+    workboxOptions: {
+      swSrc: "src/firebase-messaging-sw.js",
+      swDest: "firebase-messaging-sw.js"
+    }
   }
-  
+};

@@ -1,68 +1,40 @@
 <template>
-    <q-toolbar>
-    <q-toolbar-title>Growbud</q-toolbar-title>
-    <q-btn
-        class="signupbtn"
-        @click="openSignupModal()"
-        label="Sign up"
-        />
-        <q-btn
-            class="loginbtn"
-            @click="openLoginModal()"
-            label="Log in"
-        />
-        <SignupModal
-        v-on:hideSignupModal="hideSignupModal"
-        :showModal="showSignupModal"
-        />
-        <LoginModal
-        v-on:hideLoginModal="hideLoginModal"
-        :showModal="showLoginModal"
-        />
-    </q-toolbar>
+  <ui-toolbar brand="Growbud">
+    <div slot="actions">
+      <ui-button raised @click="openModal('loginModal')"> Login</ui-button>
+
+      <ui-button raised @click="openModal('signupModal')">Sign up</ui-button>
+    </div>
+    <SignupModal ref="signupModal" />
+    <LoginModal ref="loginModal" />
+  </ui-toolbar>
 </template>
 <script>
-import {
-  QBtn,
-  QToolbarTitle,
-  QToolbar,
-} from "quasar";
-import LoginModal from "../components/LoginModal";
-import SignupModal from "../components/SignupModal";
+import LoginModal from "./LoginModal";
+import SignupModal from "./SignupModal";
+import { UiToolbar, UiButton } from "keen-ui";
 
 export default {
-    name: "LoggedoutToolbar",
-    components: {
+  name: "LoggedoutToolbar",
+  components: {
     LoginModal,
     SignupModal,
-    QBtn,
-    QToolbarTitle,
-    QToolbar
+    UiToolbar,
+    UiButton
   },
-    data() {
-    return {
-      showLoginModal: false,
-      showSignupModal: false,
-    };
-  },
+
   methods: {
-    openLoginModal() {
-      this.showLoginModal = true;
+    openModal(ref) {
+      this.$refs[ref].$refs[ref].open();
     },
-    openSignupModal(){
-      this.showSignupModal = true;
-    },
-    hideLoginModal(hide) {
-      this.showLoginModal = hide;
-    },
-    hideSignupModal(hide) {
-      this.showSignupModal = hide;
+    closeModal(ref) {
+      this.$refs[ref].$refs[ref].close();
     }
-    }
-}
+  }
+};
 </script>
 <style scoped>
-.signupbtn{
+.signupbtn {
   margin-right: 1rem;
 }
 </style>
