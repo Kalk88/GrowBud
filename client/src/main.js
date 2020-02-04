@@ -2,7 +2,6 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import './quasar'
 import VueApollo from 'vue-apollo'
 import {
   ApolloClient
@@ -19,7 +18,10 @@ import {
 import './registerServiceWorker'
 import './api/notifications'
 
+import KeenUI from 'keen-ui';
+import 'keen-ui/dist/keen-ui.css';
 
+Vue.use(KeenUI)
 Vue.use(VueApollo)
 
 const httpLink = createHttpLink({
@@ -64,5 +66,8 @@ new Vue({
   router,
   store,
   apolloProvider,
+  components: {
+  
+  },
   render: h => h(App)
 }).$mount('#app')

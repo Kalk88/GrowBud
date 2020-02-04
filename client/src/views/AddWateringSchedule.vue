@@ -1,40 +1,38 @@
 <template>
   <div class="wrapper">
-    <q-input
+    <ui-textbox
       class="plantName-input"
       label="Name the plant that you are going to water"
       standout
       outlined
       v-model="plantName"
     />
-    <q-date class="calendar" v-model="date" :dark="true" today-btn color="green" />
-    <q-time v-model="time" format24h />
+    <ui-datepicker class="calendar" placeholder="Select a date" v-model="date" />
+    <TimePicker class="timepicker" v-model="time" :timeLabel="time" />
     <div class="interval-selector">
-      <q-btn-group class="interval-btn-grp">
-        <q-btn
-          :class="intervalModifier <= 1 ? 'selected': 'unselected' "
-          label="Days"
+      <div class="interval-btn-grp">
+        <ui-button
+          :class="intervalModifier <= 1 ? 'selected' : 'unselected'"
           @click="setIntervalModifier(1)"
-        />
-        <q-btn
-          :class="intervalModifier > 1 ? 'selected': 'unselected' "
-          label="Weeks"
+        >Days</ui-button>
+        <ui-button
+          :class="intervalModifier > 1 ? 'selected' : 'unselected'"
           @click="setIntervalModifier(7)"
-        />
-      </q-btn-group>
+        >Weeks</ui-button>
+      </div>
       <IncrementerButton class="incrementer-button" v-model="interval" />
     </div>
-    <q-btn-group class="add-cancel-btn-grp">
-      <q-btn label="Cancel" />
-      <q-btn v-if="!scheduleToEdit" label="Add schedule" @click="addWateringSchedule" />
-      <q-btn v-if="scheduleToEdit" label="Update schedule" @click="updateWateringSchedule" />
-    </q-btn-group>
+    <div class="add-cancel-btn-grp">
+      <ui-button>Cancel</ui-button>
+      <ui-button v-if="!scheduleToEdit" @click="addWateringSchedule">Add schedule</ui-button>
+      <ui-button v-if="scheduleToEdit" @click="updateWateringSchedule">Update schedule</ui-button>
+    </div>
   </div>
 </template>
 
 <script>
-import { QDate, QTime, QInput, QBtnGroup, QBtn } from "quasar";
 import IncrementerButton from "../components/IncrementerButton.vue";
+import TimePicker from "../components/TimePicker.vue";
 import { mapGetters } from "vuex";
 import {
   ADD_WATERINGSCHEDULE,
@@ -45,19 +43,15 @@ import { isEmpty } from "lodash";
 export default {
   name: "AddWateringSchedule",
   components: {
-    QDate,
-    QTime,
-    QInput,
-    QBtnGroup,
-    QBtn,
-    IncrementerButton
+    IncrementerButton,
+    TimePicker
   },
 
   data() {
     return {
-      date: "",
-      time: "",
-      interval: 0,
+      date: new Date(),
+      time: [],
+      interval: 1,
       intervalModifier: 1,
       plantName: "",
       scheduleToEdit: null
@@ -67,27 +61,23 @@ export default {
   created() {
     if (!isEmpty(this.$route.params)) {
       this.scheduleToEdit = this.$route.params;
-      const date = new Date(parseInt(this.scheduleToEdit.nextTimeToWater));
-
-      this.date = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`;
-      this.time = `${date.getHours()}:${
-        date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()
-      }`;
+      this.date = new Date(parseInt(this.scheduleToEdit.nextTimeToWater));
+      this.time = [
+        parseInt(this.date.getHours()),
+        parseInt(this.date.getMinutes())
+      ];
       this.interval = this.scheduleToEdit.interval;
       this.plantName = this.scheduleToEdit.plants[0].name;
     }
-    this.date = new Date()
-      .toISOString()
-      .slice(0, 10)
-      .replace(/-/g, "/");
   },
 
   computed: {
     ...mapGetters(["getUserId"]),
 
     timestamp() {
-      let dateString = this.date.replace(/\//g, "-") + "T" + this.time + ":00";
-      const timestamp = new Date(dateString);
+      this.date.setHours(this.time[0]);
+      this.date.setMinutes(this.time[1]);
+      const timestamp = new Date(this.date);
       return timestamp.getTime();
     },
 
@@ -137,7 +127,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .wrapper {
   display: grid;
   justify-items: center;
@@ -155,17 +145,26 @@ export default {
 }
 
 .calendar {
-  justify-self: end;
-  align-self: center;
+  width: 16.5rem;
+  justify-self: flex-end;
   grid-column: 1;
+  grid-row: 2;
+}
+
+.timepicker {
+  justify-self: center;
+  grid-column: 2/3;
+  grid-row: 2;
 }
 
 .interval-btn-grp {
   align-self: center;
+  margin-right: 1rem;
 }
 
 .interval-selector {
   grid-column: 3;
+  grid-row: 2;
   display: flex;
   justify-self: flex-start;
 }
@@ -181,6 +180,6 @@ export default {
 }
 
 .selected {
-  background-color: green;
+  background-color: green !important;
 }
 </style>
