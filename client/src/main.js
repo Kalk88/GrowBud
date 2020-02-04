@@ -19,10 +19,15 @@ import './registerServiceWorker'
 import './api/notifications'
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import KeenUI from 'keen-ui';
 import 'keen-ui/dist/keen-ui.css';
 =======
 >>>>>>> Install vue PWA plugin (#77)
+=======
+import KeenUI from 'keen-ui';
+import 'keen-ui/dist/keen-ui.css';
+>>>>>>> Quasar is dead (#99)
 
 Vue.use(KeenUI)
 Vue.use(VueApollo)
