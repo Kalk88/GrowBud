@@ -18,30 +18,32 @@ exports.notifySchedulesInRange = functions.region('europe-west1').https.onReques
     .then(doc => {
       console.log('then doc', JSON.stringify(doc))
       Object.entries(doc).map(([userId, v]) => {
-        retrieveDeviceTokens(userId)
+        return retrieveDeviceTokens(userId)
           .then(tokens => {
-            console.log('tokens', JSON.stringify(tokens.data()))
-            console.log('V', JSON.stringify(v))
-            return messaging.sendAll(
-              [tokens.data()].map(d => formatMessage(v, d.deviceToken))
-            )
-              .then(() => {
-                const batch = firestore.batch()
-                v.forEach(schedule => {
-                  const ref = firestore.collection('wateringSchedules').doc(schedule.docId)
-                  batch.set(ref, { nextTimeToWater: schedule.nextTimeToWater + 60 * 60 * 24 * schedule.interval })
-                })
-                return batch.commit().then(console.log).catch(console.log)
-              })
-              .catch(err => {
-                console.log(
-                  {
-                    error: 'push notification error',
-                    message: err.message
-                  })
-              })
+            if (tokens.exists) {
+              console.log('tokens', JSON.stringify(tokens.data()))
+              console.log('V', JSON.stringify(v))
+              return messaging.sendAll(
+                [tokens.data()].map(d => formatMessage(v, d.deviceToken)).then(() => v)).catch(err => console.log(JSON.stringify(err)))
+            }
+            return new Promise((resolve, reject) => resolve(v))
           })
       })
+        .then(v => {
+          const batch = firestore.batch()
+          v.forEach(schedule => {
+            const ref = firestore.collection('wateringSchedules').doc(schedule.docId)
+            batch.set(ref, { nextTimeToWater: schedule.nextTimeToWater + 60 * 60 * 24 * schedule.interval })
+          })
+          return batch.commit().then(console.log).catch(console.log)
+        })
+        .catch(err => {
+          console.log(
+            {
+              error: 'push notification error',
+              message: err.message
+            })
+        })
     })
     .then(it => { console.log(JSON.stringify(it)) })
     .then(res.status(200).send('finished'))
