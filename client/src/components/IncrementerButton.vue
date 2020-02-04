@@ -1,7 +1,7 @@
 <template>
   <div class="incrementerbutton-wrapper">
-    <button class="add_button" @click="add(), emitInputValueChange()">
-      <q-icon class="add_button__icon" name="eva-arrow-up-outline" style="font-size: 3.5rem;" />
+    <button class="sub_button" @click="subtract(), emitInputValueChange()">
+      <ui-icon class="sub_button__icon" iconSet="material-icons">remove</ui-icon>
     </button>
     <input
       class="value_input"
@@ -10,21 +10,16 @@
       @input="emitInputValueChange()"
       @blur="replaceEmptyStringWithZero()"
     />
-    <button class="sub_button" @click="subtract(), emitInputValueChange()">
-      <q-icon class="sub_button__icon" name="eva-arrow-down-outline" style="font-size: 3.5rem;" />
+    <button class="add_button" @click="add(), emitInputValueChange()">
+      <ui-icon class="add_button__icon" iconSet="material-icons">add</ui-icon>
     </button>
   </div>
 </template>
 
 <script>
-import { QIcon } from "quasar";
-
 export default {
   name: "IncrementerButton",
   prop: ["value"],
-  components: {
-    QIcon
-  },
 
   data() {
     return {
@@ -52,13 +47,13 @@ export default {
       if (pattern.test(this.value) && this.value !== "") {
         this.$emit("input", this.value);
       }
-      if (this.value < 0) {
-        this.value = 0;
+      if (this.value <= 0) {
+        this.value = 1;
       }
     },
     replaceEmptyStringWithZero() {
       if (this.value === "") {
-        this.value = 0;
+        this.value = 1;
         this.$emit("input", this.value);
       }
     }
@@ -66,43 +61,47 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .incrementerbutton-wrapper {
   display: flex;
-  flex-flow: column;
+  flex-flow: row;
   width: 3.5rem;
 }
 
 .add_button {
   display: flex;
-  justify-content: center;
+  align-items: center;
   width: 3.5rem;
-  border-top-left-radius: 25px;
+  border-top-left-radius: 5px;
   border-top-right-radius: 25px;
   border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
-  border: solid;
-  margin-bottom: 0.5rem;
+  border-bottom-right-radius: 25px;
+  margin-left: 0.5rem;
+  border: none;
 }
 
 .sub_button {
   display: flex;
-  justify-content: center;
+  align-items: center;
   width: 3.5rem;
-  border-top-left-radius: 5px;
+  border-top-left-radius: 25px;
   border-top-right-radius: 5px;
   border-bottom-left-radius: 25px;
-  border-bottom-right-radius: 25px;
-  margin-top: 0.5rem;
-  border: solid;
+  border-bottom-right-radius: 5px;
+  margin-right: 0.5rem;
+  border: none;
+}
+
+button:hover {
+  background: grey;
 }
 
 .value_input {
-  width: 3rem;
-  height: 3.5rem;
+  width: 2rem;
+  height: 2.5rem;
   align-self: center;
   text-align: center;
-  font-size: 28px;
+  font-size: 18px;
 }
 
 .hide {

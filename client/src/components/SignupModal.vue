@@ -1,64 +1,35 @@
 <template>
-<q-dialog v-model="showModal" @hide="onDialogHide">
-    <q-card>
-        <q-card-section>
-            <div class="text-h4 card-title">{{ modalTitle }}</div>
-        </q-card-section>
-        <q-card-section>
-            <q-input 
-              v-model="userName" 
-              outlined 
-              type="text"
-              label="Username" 
-              />
-            <q-input 
-              v-model="email" 
-              outlined 
-              type="email" 
-              label="Email" 
-              />
-            <q-input 
-              v-model="password" 
-              outlined 
-              type="password" 
-              label="Password" 
-              />
-        </q-card-section>
-        <q-card-section size="lg" class="button-section">
-            <q-btn 
-              class="full-width" 
-              color="amber" 
-              size="lg" 
-              @click="register" 
-              label="Sign up" 
-              v-close-popup />
-        </q-card-section>
-    </q-card>
-</q-dialog>
+  <ui-modal ref="signupModal" @hide="onDialogHide" :title="modalTitle">
+    <div>
+      <div>
+        <ui-textbox v-model="userName" outlined type="text" label="Username" />
+        <ui-textbox v-model="email" outlined type="email" label="Email" />
+        <ui-textbox
+          v-model="password"
+          outlined
+          type="password"
+          label="Password"
+        />
+        <div slot="footer" class="button-section">
+          <ui-button @click="register" size="large">
+            Sign up
+          </ui-button>
+        </div>
+      </div>
+    </div>
+  </ui-modal>
 </template>
 
 <script>
-import {
-  QDialog,
-  QCard,
-  QCardSection,
-  ClosePopup,
-  QInput
-} from "quasar";
-import {
-  REGISTER_USER
-} from "../api/auth";
+import { REGISTER_USER } from "../api/auth";
+import { UiButton, UiTextbox, UiModal } from "keen-ui";
 
 export default {
   name: "SignupCard",
   components: {
-    QDialog,
-    QCard,
-    QCardSection,
-    QInput,
-  },
-   directives: {
-    ClosePopup
+    UiButton,
+    UiTextbox,
+    UiModal
   },
 
   props: {
@@ -96,10 +67,9 @@ export default {
           email: this.email,
           password: this.password
         }
-       
       });
       const JWT = UserObject.data.register.JWT;
-      localStorage.setItem("JWT",JWT)
+      localStorage.setItem("JWT", JWT);
     }
   }
 };

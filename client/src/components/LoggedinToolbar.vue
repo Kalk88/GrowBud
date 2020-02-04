@@ -1,11 +1,14 @@
 <template>
-  <q-toolbar>
-    <q-toolbar-title>Growbud</q-toolbar-title>
-    <nav>
-      <div id="addSchedule" @click="goToAddWateringSchedule">Add a schedule</div>
-      <div id="mySchedules" @click="goToMyWateringSchedules">My schedules</div>
-    </nav>
-  </q-toolbar>
+  <ui-toolbar title="Growbud">
+    <div slot="actions">
+      <ui-button id="addSchedule" @click="goToAddWateringSchedule">
+        Add a schedule
+      </ui-button>
+      <ui-button id="mySchedules" @click="goToMyWateringSchedules">
+        My schedules
+      </ui-button>
+    </div>
+  </ui-toolbar>
 </template>
 <script>
 export default {

@@ -1,10 +1,12 @@
 <template>
   <div class="container">
-    <q-card class="text-black" @click="editSchedule">
-      <q-card-section v-for="plant in schedule.plants" :key="plant.name">{{plant.name}}</q-card-section>
-      <q-card-section>{{nextTimeToWaterAsDate}}</q-card-section>
-      <q-card-section>Interval: {{schedule.interval}}</q-card-section>
-    </q-card>
+    <div class="text-black" @click="editSchedule">
+      <div v-for="plant in schedule.plants" :key="plant.name">
+        {{ plant.name }}
+      </div>
+      <div>{{ nextTimeToWaterAsDate }}</div>
+      <div>Interval: {{ schedule.interval }}</div>
+    </div>
   </div>
 </template>
 
