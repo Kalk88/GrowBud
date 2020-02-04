@@ -124,7 +124,7 @@ const queryType = new GraphQLObjectType({
                 return parseTokenFromHeaders(context)
                     .then(verifyAndDecodeToken)
                     .then(parseUserIdFromToken)
-                    .then(userId => getWateringSchedulesForUser(userId, args.offset, limit))
+                    .then(userId => getWateringSchedulesForUser(userId, args.offset ? args.offset : null, limit))
                     .catch(err => { console.error(err); throw new Error('Invalid Request') })
             }
         },
