@@ -50,7 +50,7 @@ exports.notifySchedulesInRange = functions.region('europe-west1').https.onReques
         return Object.entries(schedule).map(([k, x]) => {
           return x.schedules.map(s => {
             const toSave = s.schedule
-            toSave.nextTimeToWater = (parseInt(s.schedule.nextTimeToWater) + (86400 * s.schedule.interval)).toString()
+            toSave.nextTimeToWater = (parseInt(s.schedule.nextTimeToWater) + (84600000 * s.schedule.interval)).toString()
             return firestore.collection('wateringSchedules').doc(s.id).set(toSave)
           })
         })
