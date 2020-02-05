@@ -1,13 +1,19 @@
 module.exports = {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> Quasar is dead (#99)
+=======
+>>>>>>> d181903ae239975aeef54a7686b788d2ccc5190f
   css: {
     loaderOptions: {
       scss: {
         prependData: `@import "~@/scss/variables.scss";`
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> d181903ae239975aeef54a7686b788d2ccc5190f
       }
     }
   },
@@ -19,6 +25,7 @@ module.exports = {
     }
   }
 };
+<<<<<<< HEAD
 =======
     pwa: {
         workboxPluginMode: 'InjectManifest',
@@ -49,3 +56,5 @@ module.exports = {
 =======
 };
 >>>>>>> Quasar is dead (#99)
+=======
+>>>>>>> d181903ae239975aeef54a7686b788d2ccc5190f

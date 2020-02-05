@@ -20,6 +20,7 @@ import './api/notifications'
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import KeenUI from 'keen-ui';
 import 'keen-ui/dist/keen-ui.css';
 =======
@@ -28,6 +29,10 @@ import 'keen-ui/dist/keen-ui.css';
 import KeenUI from 'keen-ui';
 import 'keen-ui/dist/keen-ui.css';
 >>>>>>> Quasar is dead (#99)
+=======
+import KeenUI from 'keen-ui';
+import 'keen-ui/dist/keen-ui.css';
+>>>>>>> d181903ae239975aeef54a7686b788d2ccc5190f
 
 Vue.use(KeenUI)
 Vue.use(VueApollo)
