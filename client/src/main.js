@@ -20,10 +20,6 @@ import './api/notifications'
 
 import KeenUI from 'keen-ui';
 import 'keen-ui/dist/keen-ui.css';
-import KeenUI from 'keen-ui';
-import 'keen-ui/dist/keen-ui.css';
-import KeenUI from 'keen-ui';
-import 'keen-ui/dist/keen-ui.css';
 
 Vue.use(KeenUI)
 Vue.use(VueApollo)
