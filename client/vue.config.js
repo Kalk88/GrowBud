@@ -1,19 +1,8 @@
 module.exports = {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Quasar is dead (#99)
-=======
->>>>>>> d181903ae239975aeef54a7686b788d2ccc5190f
   css: {
     loaderOptions: {
       scss: {
         prependData: `@import "~@/scss/variables.scss";`
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> d181903ae239975aeef54a7686b788d2ccc5190f
       }
     }
   },
@@ -25,8 +14,6 @@ module.exports = {
     }
   }
 };
-<<<<<<< HEAD
-=======
     pwa: {
         workboxPluginMode: 'InjectManifest',
         workboxOptions: {
@@ -38,8 +25,6 @@ module.exports = {
     pluginOptions: {
       quasar: {
         treeShake: true
-=======
->>>>>>> Quasar is dead (#99)
       }
     }
   },
@@ -50,11 +35,5 @@ module.exports = {
       swDest: "firebase-messaging-sw.js"
     }
   }
-<<<<<<< HEAD
-  
->>>>>>> Install vue PWA plugin (#77)
-=======
+
 };
->>>>>>> Quasar is dead (#99)
-=======
->>>>>>> d181903ae239975aeef54a7686b788d2ccc5190f

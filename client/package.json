@@ -19,16 +19,7 @@
     "graphql-tag": "^2.10.1",
     "keen-ui": "^1.2.1",
     "nightwatch": "^1.2.4",
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
     "quasar": "^1.0.0",
->>>>>>> Install vue PWA plugin (#77)
-=======
->>>>>>> Quasar is dead (#99)
-=======
->>>>>>> d181903ae239975aeef54a7686b788d2ccc5190f
     "register-service-worker": "^1.6.2",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",

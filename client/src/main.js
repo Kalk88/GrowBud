@@ -18,21 +18,12 @@ import {
 import './registerServiceWorker'
 import './api/notifications'
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 import KeenUI from 'keen-ui';
 import 'keen-ui/dist/keen-ui.css';
-=======
->>>>>>> Install vue PWA plugin (#77)
-=======
 import KeenUI from 'keen-ui';
 import 'keen-ui/dist/keen-ui.css';
->>>>>>> Quasar is dead (#99)
-=======
 import KeenUI from 'keen-ui';
 import 'keen-ui/dist/keen-ui.css';
->>>>>>> d181903ae239975aeef54a7686b788d2ccc5190f
 
 Vue.use(KeenUI)
 Vue.use(VueApollo)
@@ -80,7 +71,7 @@ new Vue({
   store,
   apolloProvider,
   components: {
-  
+
   },
   render: h => h(App)
 }).$mount('#app')
