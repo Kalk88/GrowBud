@@ -4,6 +4,9 @@ client:
 data-store:
   - server/data-store/**
 
+cloud-functions:
+  - server/cloud-functions/**
+
 documentation:
   - documentation/**
 
