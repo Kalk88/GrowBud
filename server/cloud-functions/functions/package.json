@@ -7,7 +7,8 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "test": "ava"
+    "test": "ava",
+    "commit": "./node_modules/.bin/git-cz"
   },
   "engines": {
     "node": "10"
@@ -26,7 +27,7 @@
   "private": true,
   "config": {
     "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
+      "path": "cz-conventional-changelog"
     }
   }
 }
