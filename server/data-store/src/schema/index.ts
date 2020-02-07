@@ -256,8 +256,14 @@ const mutationType = new GraphQLObjectType({
                 return parseTokenFromHeaders(context)
                     .then(verifyAndDecodeToken)
                     .then(parseUserIdFromToken)
-                    .then(userId => upsertDeviceToken(userId, args.deviceToken, args.deviceName, Date.now())
-                        .catch(err => { console.error(err); throw new Error('Invalid Request') })
+                    .then(userId =>
+                        upsertDeviceToken(userId,
+                            args.deviceToken,
+                            args.deviceName,
+                            Date.now()
+                        )
+                    )
+                    .catch(err => { console.error(err); throw new Error('Invalid Request') })
             }
         }
     })
