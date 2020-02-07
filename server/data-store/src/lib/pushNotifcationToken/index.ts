@@ -4,8 +4,8 @@ export interface PushNotificationToken {
     devices: Array<{
         deviceToken: string
         deviceName: string
+        createdAt: string
     }>
-    createdAt: string
 }
 
 export function upsertDeviceToken(userId: string, deviceToken: string, deviceName: string, createdAt: number): Promise<PushNotificationToken> {
@@ -13,9 +13,9 @@ export function upsertDeviceToken(userId: string, deviceToken: string, deviceNam
         devices: [
             {
                 deviceName,
-                deviceToken
-            }],
-        createdAt
+                deviceToken,
+                createdAt
+            }]
     }
     return db.collection('pushNotifications')
         .doc(userId)
