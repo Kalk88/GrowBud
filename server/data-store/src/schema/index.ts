@@ -260,7 +260,7 @@ const mutationType = new GraphQLObjectType({
                         upsertDeviceToken(userId,
                             args.deviceToken,
                             args.deviceName,
-                            Date.now()
+                            `${Date.now()}`
                         )
                     )
                     .catch(err => { console.error(err); throw new Error('Invalid Request') })

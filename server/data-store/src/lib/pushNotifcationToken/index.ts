@@ -1,25 +1,32 @@
-import { db } from '../firebaseClient'
+import { db, admin } from '../firebaseClient'
 
 export interface PushNotificationToken {
-    devices: Array<{
-        deviceToken: string
-        deviceName: string
-        createdAt: string
-    }>
+    deviceToken: string
+    deviceName: string
+    createdAt: string
 }
 
-export function upsertDeviceToken(userId: string, deviceToken: string, deviceName: string, createdAt: number): Promise<PushNotificationToken> {
+const COLLECTION = 'pushNotifications'
+
+export function upsertDeviceToken(userId: string, deviceToken: string, deviceName: string, createdAt: string): Promise<PushNotificationToken | Error> {
     const data = {
-        devices: [
-            {
                 deviceName,
                 deviceToken,
                 createdAt
-            }]
-    }
-    return db.collection('pushNotifications')
+            }
+
+    return db.collection(COLLECTION)
         .doc(userId)
-        .set(data, { merge: true })
+        .update({devices: admin.firestore.FieldValue.arrayUnion(data)})
         .then(_ => data)
-        .catch(error => error)
+        .catch(() => {
+            return db.collection(COLLECTION)
+            .doc(userId)
+            .set({devices: [data]})
+            .then(_ => data)
+                .catch(error =>{
+                    console.log(error)
+                    return new Error()
+                })
+        })
 }
