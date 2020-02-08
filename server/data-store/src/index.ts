@@ -4,6 +4,7 @@ import graphQLHTTP from 'express-graphql'
 import schema from './schema'
 import { refreshToken as rf, RefreshInfo } from './lib/auth'
 import cookieParser from 'cookie-parser'
+import * as log from './logging'
 const app = express()
 const port = process.env.PORT ? process.env.PORT : 9090
 const whitelist = process.env.WHITELIST ? process.env.WHITELIST.split(',') : []
@@ -21,10 +22,11 @@ app.use((req, res, next) => {
 })
 
 app.use((req, _res, next) => {
-  console.log('Incoming request: ', `
+  log.debug('Incoming request: ', `
     ip: ${req.ip}
     path: ${req.path}
     method: ${req.method}
+    body: ${JSON.stringify(req.body)}
   `)
   next()
 })
@@ -36,6 +38,7 @@ app.get('/', (_req, res) => {
 app.post('/api/refreshToken', async (req, res) => {
   const token = req?.cookies?.refreshToken
   if (token === null || token === undefined) {
+    log.debug('Invalid token from: ', JSON.stringify(req))
     res.status(400).send({ error: 'missing payload' })
   } else {
     const { JWT, JWTExpiry, refreshToken }: RefreshInfo = await rf(token)
@@ -43,6 +46,7 @@ app.post('/api/refreshToken', async (req, res) => {
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true
     })
+    log.debug('Refreshed token')
     res.status(200).send({ JWT, JWTExpiry })
   }
 })
@@ -63,11 +67,11 @@ app.get('/graph', graphQLHTTP({
 }))
 
 app.use((err: any, _req: any, res: any, _next: any) => {
-  console.error(err.stack)
+  log.error(err.stack)
   res.status(500).send('Something broke!')
 })
 
 // start the Express server
 app.listen(port, () => {
-  console.log(`server started at http://localhost:${port}`)
+  log.info(`server started at http://localhost:${port}`)
 })
