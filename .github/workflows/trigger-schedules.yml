@@ -1,0 +1,13 @@
+name: Trigger schedules
+
+on:
+  schedule:
+    - cron: '0 */12 * * *' # Every 12 hours
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger watering schedules
+        run: curl https://europe-west1-growbud-50ed4.cloudfunctions.net/notifySchedulesInRange
