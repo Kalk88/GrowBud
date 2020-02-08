@@ -6,6 +6,7 @@
     </nav>
     <main class="layout-body">
       <router-view />
+      <ui-snackbar-container ref="snackbarContainer"></ui-snackbar-container>
     </main>
   </div>
 </template>

@@ -1,7 +1,15 @@
 <template>
-  <ol>
-    <MyWateringScheduleCard v-for="schedule in schedules" :key="schedule.id" :schedule="schedule" />
-  </ol>
+  <div>
+    <ol>
+      <MyWateringScheduleCard
+        class="card"
+        v-for="schedule in schedules"
+        :key="schedule.id"
+        :schedule="schedule"
+      />
+    </ol>
+    <div>{{ schedules.length }}</div>
+  </div>
 </template>
 
 <script>
@@ -25,16 +33,15 @@ export default {
   },
 
   created() {
-    this.$store.subscribe((mutation) => {
-      if (mutation.type === 'setIsLoggedin') {
+    this.$store.subscribe(mutation => {
+      if (mutation.type === "setIsLoggedin") {
         this.getMySchedules().then(data => (this.schedules = data));
       }
     });
-    if(this.isLoggedin){
+    if (this.isLoggedin) {
       this.getMySchedules().then(data => (this.schedules = data));
     }
   },
-
 
   methods: {
     async getMySchedules() {
@@ -51,5 +58,12 @@ export default {
 };
 </script>
 
-<style>
+<style scoped lang="scss">
+.card {
+  margin-top: 0.5rem;
+}
+
+.card:nth-child(odd) {
+  background: #c0c0c0;
+}
 </style>
