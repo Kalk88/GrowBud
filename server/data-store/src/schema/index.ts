@@ -25,6 +25,7 @@ import {
     removeWateringScheduleById,
     updateWateringSchedule
 } from '../lib/wateringSchedules'
+import { upsertDeviceToken } from '../lib/pushNotifcationToken'
 
 const nonNullGqlString = { type: new GraphQLNonNull(GraphQLString) }
 const interval = { type: GraphQLInt, description: "The interval (in days) with which schedules should be updated where interval >= 1." }
@@ -241,6 +242,27 @@ const mutationType = new GraphQLObjectType({
                 return parseTokenFromHeaders(context)
                     .then(verifyAndDecodeToken)
                     .then(_ => removeWateringScheduleById(args.id))
+                    .catch(err => { console.error(err); throw new Error('Invalid Request') })
+            }
+        },
+        upsertDeviceToken: {
+            description: 'Add or update a users device token, for push notifications.',
+            type: Status,
+            args: {
+                deviceToken: nonNullGqlString,
+                deviceName: nonNullGqlString,
+            },
+            resolve: async (_root, args, context) => {
+                return parseTokenFromHeaders(context)
+                    .then(verifyAndDecodeToken)
+                    .then(parseUserIdFromToken)
+                    .then(userId =>
+                        upsertDeviceToken(userId,
+                            args.deviceToken,
+                            args.deviceName,
+                            `${Date.now()}`
+                        )
+                    )
                     .catch(err => { console.error(err); throw new Error('Invalid Request') })
             }
         }
