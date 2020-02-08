@@ -27,7 +27,7 @@ import {
 } from '../lib/wateringSchedules'
 
 const nonNullGqlString = { type: new GraphQLNonNull(GraphQLString) }
-const interval = { type: GraphQLInt, description: "The schedule interval represented as a unix timestamp." }
+const interval = { type: GraphQLInt, description: "The interval (in days) with which schedules should be updated where interval >= 1." }
 
 /**
  * Types
