@@ -10,9 +10,9 @@ export interface WateringSchedule {
     interval: number
 }
 
-export async function getWateringSchedulesForUser(userId: string, offsetDoc: string, limit: number): Promise<Array<WateringSchedule>> {
+export async function getWateringSchedulesForUser(userId: string, offsetDoc: string | null, limit: number): Promise<Array<WateringSchedule>> {
     let snapshot: any
-    if (offsetDoc) {
+    if (typeof offsetDoc === 'string') {
         const prevSnapshot = await db.collection('wateringSchedules').doc(offsetDoc).get()
         snapshot = await db.collection('wateringSchedules')
             .where('userId', '==', userId)
