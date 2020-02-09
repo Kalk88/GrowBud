@@ -7,25 +7,35 @@
       outlined
       v-model="plantName"
     />
-    <ui-datepicker class="calendar" placeholder="Select a date" v-model="date" />
+    <ui-datepicker
+      class="calendar"
+      placeholder="Select a date"
+      v-model="date"
+    />
     <TimePicker class="timepicker" v-model="time" :timeLabel="time" />
     <div class="interval-selector">
       <div class="interval-btn-grp">
         <ui-button
           :class="intervalModifier <= 1 ? 'selected' : 'unselected'"
           @click="setIntervalModifier(1)"
-        >Days</ui-button>
+          >Days</ui-button
+        >
         <ui-button
           :class="intervalModifier > 1 ? 'selected' : 'unselected'"
           @click="setIntervalModifier(7)"
-        >Weeks</ui-button>
+          >Weeks</ui-button
+        >
       </div>
       <IncrementerButton class="incrementer-button" v-model="interval" />
     </div>
     <div class="add-cancel-btn-grp">
       <ui-button>Cancel</ui-button>
-      <ui-button v-if="!scheduleToEdit" @click="addWateringSchedule">Add schedule</ui-button>
-      <ui-button v-if="scheduleToEdit" @click="updateWateringSchedule">Update schedule</ui-button>
+      <ui-button v-if="!scheduleToEdit" @click="addWateringSchedule"
+        >Add schedule</ui-button
+      >
+      <ui-button v-if="scheduleToEdit" @click="updateWateringSchedule"
+        >Update schedule</ui-button
+      >
     </div>
   </div>
 </template>
@@ -99,6 +109,8 @@ export default {
             interval: this.calculatedInterval
           }
         });
+        this.$router.push("/");
+        this.createSnackbar("Schedule Added");
       } catch (error) {
         alert("Couldn't add schedule");
       }
@@ -115,13 +127,23 @@ export default {
             interval: this.calculatedInterval
           }
         });
+        this.$router.push("/");
+        this.createSnackbar("Schedule Updated");
       } catch (error) {
-        alert("Couldn't add schedule");
+        alert("Couldn't update schedule");
       }
     },
 
     setIntervalModifier(value) {
       this.intervalModifier = value;
+    },
+
+    createSnackbar(title) {
+      this.$parent.$refs.snackbarContainer.createSnackbar({
+        message: title,
+        actionColor: "accent",
+        duration: 5 * 1000
+      });
     }
   }
 };
