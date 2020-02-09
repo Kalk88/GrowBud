@@ -26,6 +26,7 @@ import {
     updateWateringSchedule
 } from '../lib/wateringSchedules'
 import { upsertDeviceToken } from '../lib/pushNotifcationToken'
+import * as log from '../logging'
 
 const nonNullGqlString = { type: new GraphQLNonNull(GraphQLString) }
 const interval = { type: GraphQLInt, description: "The interval (in days) with which schedules should be updated where interval >= 1." }
@@ -104,7 +105,16 @@ const queryType = new GraphQLObjectType({
             args: {
                 id: nonNullGqlString,
             },
-            resolve: async (_root, args) => getWateringScheduleById(args.id)
+            resolve: async (_root, args, context) => {
+                return parseTokenFromHeaders(context)
+                    .then(verifyAndDecodeToken)
+                    .then(parseUserIdFromToken)
+                    .then(userId => {
+                        log.info('Retrieving schedule for user: ', userId)
+                        return getWateringScheduleById(args.id)
+                    })
+                    .catch(err => { log.error(err); throw new Error('Invalid Request') })
+            }
         },
         wateringScheduleForUser: {
             name: 'wateringScheduleForUser',
@@ -125,8 +135,13 @@ const queryType = new GraphQLObjectType({
                 return parseTokenFromHeaders(context)
                     .then(verifyAndDecodeToken)
                     .then(parseUserIdFromToken)
-                    .then(userId => getWateringSchedulesForUser(userId, args.offset ? args.offset : null, limit))
-                    .catch(err => { console.error(err); throw new Error('Invalid Request') })
+                    .then(userId => {
+                        log.info('Retrieve watering schedules for ', userId)
+                        log.debug('with offset:', args.offset, 'and limit:', limit)
+                        return getWateringSchedulesForUser(userId, args.offset ? args.offset : null, limit)
+                    }
+                        )
+                    .catch(err => { log.error(err); throw new Error('Invalid Request') })
             }
         },
     })
@@ -152,6 +167,7 @@ const mutationType = new GraphQLObjectType({
                 context.res.cookie('refreshToken', refreshToken, {
                     httpOnly: true
                 })
+                log.info('Successfully logged in', id)
                 return {
                     JWT,
                     JWTExpiry,
@@ -175,6 +191,7 @@ const mutationType = new GraphQLObjectType({
                 context.res.cookie('refreshToken', refreshToken, {
                     httpOnly: true
                 })
+                log.info('Successfully registered', cred.email)
                 return {
                     JWT,
                     JWTExpiry,
@@ -192,7 +209,7 @@ const mutationType = new GraphQLObjectType({
                     .then(verifyAndDecodeToken)
                     .then(parseUserIdFromToken)
                     .then(removeUser)
-                    .catch(err => { console.error(err); throw new Error('Invalid Request') })
+                    .catch(err => { log.error(err); throw new Error('Invalid Request') })
             }
         },
         nextWateringDateFor: {
@@ -209,8 +226,11 @@ const mutationType = new GraphQLObjectType({
                 return parseTokenFromHeaders(context)
                     .then(verifyAndDecodeToken)
                     .then(parseUserIdFromToken)
-                    .then(userId => scheduleWateringFor(args.plants ?? {}, userId, args.timestamp, args.interval))
-                    .catch(err => { console.error(err); throw new Error('Invalid Request') })
+                    .then(userId => {
+                        log.info('Adding watering schedule for: ', userId)
+                        return scheduleWateringFor(args.plants ?? {}, userId, args.timestamp, args.interval)
+                    })
+                    .catch(err => { log.error(err); throw new Error('Invalid Request') })
             }
         },
         updateWateringSchedule: {
@@ -228,8 +248,11 @@ const mutationType = new GraphQLObjectType({
                 return parseTokenFromHeaders(context)
                     .then(verifyAndDecodeToken)
                     .then(parseUserIdFromToken)
-                    .then(userId => updateWateringSchedule(args.scheduleId, args.plants ?? {}, userId, args.timestamp, args.interval))
-                    .catch(err => { console.error(err); throw new Error('Invalid Request') })
+                    .then(userId => {
+                        log.info('Updating schedule for: ', userId)
+                        return updateWateringSchedule(args.scheduleId, args.plants ?? {}, userId, args.timestamp, args.interval)
+                    })
+                    .catch(err => { log.error(err); throw new Error('Invalid Request') })
             }
         },
         deleteWateringSchedule: {
@@ -241,8 +264,12 @@ const mutationType = new GraphQLObjectType({
             resolve: async (_root, args, context) => {
                 return parseTokenFromHeaders(context)
                     .then(verifyAndDecodeToken)
-                    .then(_ => removeWateringScheduleById(args.id))
-                    .catch(err => { console.error(err); throw new Error('Invalid Request') })
+                    .then(parseUserIdFromToken)
+                    .then(userId => {
+                        log.info('Removing schedule for: ', userId)
+                        return removeWateringScheduleById(args.id)
+                    } )
+                    .catch(err => { log.error(err); throw new Error('Invalid Request') })
             }
         },
         upsertDeviceToken: {
@@ -256,14 +283,16 @@ const mutationType = new GraphQLObjectType({
                 return parseTokenFromHeaders(context)
                     .then(verifyAndDecodeToken)
                     .then(parseUserIdFromToken)
-                    .then(userId =>
+                    .then(userId => {
+                        log.info('Upserting  device token for: ', userId)
                         upsertDeviceToken(userId,
                             args.deviceToken,
                             args.deviceName,
                             `${Date.now()}`
                         )
+                    }
                     )
-                    .catch(err => { console.error(err); throw new Error('Invalid Request') })
+                    .catch(err => { log.error(err); throw new Error('Invalid Request') })
             }
         }
     })
