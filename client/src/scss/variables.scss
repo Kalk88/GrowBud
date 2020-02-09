@@ -1,1 +1,9 @@
 $primary: #ffff;
+$secondary: green;
+
+$brand-primary-color: #673ab7;
+$brand-accent-color: #ff4081;
+
+::v-deep .ui-datepicker__display {
+  height: 2.1rem;
+}

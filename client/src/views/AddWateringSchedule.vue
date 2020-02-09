@@ -1,18 +1,62 @@
 <template>
   <div class="wrapper">
-    <ui-textbox
-      class="plantName-input"
-      label="Name the plant that you are going to water"
-      standout
-      outlined
-      v-model="plantName"
-    />
-    <ui-datepicker
-      class="calendar"
-      placeholder="Select a date"
-      v-model="date"
-    />
-    <TimePicker class="timepicker" v-model="time" :timeLabel="time" />
+    <div class="plants">
+      <div class="plantInput">
+        <input
+          type="text"
+          v-model="plantName"
+          @keydown="addPlantToPlants"
+          placeholder="Enter a plant to the list"
+        />
+
+        <i class="material-icons input__icon" @click="addPlantToPlants"
+          >subdirectory_arrow_left</i
+        >
+      </div>
+      <div class="plants--list">
+        <span
+          class="validationError--text"
+          v-if="this.validationErrorMessages.plantsNoInput"
+        >
+          {{ this.validationErrorMessages.plantsNoInput }}
+        </span>
+        <div v-else-if="plants.length">
+          <ul>
+            <li v-for="(plant, index) in plants" :key="index">
+              {{ plant.name }}
+              <ui-icon-button
+                type="secondary"
+                size="mini"
+                class="icon"
+                icon="clear"
+                @click="removePlant(index)"
+              >
+              </ui-icon-button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="calendar">
+      <ui-datepicker
+        :class="
+          this.validationErrorMessages.dateBeforeNow ? 'validationError' : ''
+        "
+        placeholder="Select a date"
+        v-model="date"
+      />
+    </div>
+    <div class="timepicker">
+      <TimePicker
+        :class="
+          this.validationErrorMessages.dateBeforeNow ? 'validationError' : ''
+        "
+        v-model="time"
+        :timeLabel="time"
+      /><span class="validationError--text">{{
+        this.validationErrorMessages.dateBeforeNow
+      }}</span>
+    </div>
     <div class="interval-selector">
       <div class="interval-btn-grp">
         <ui-button
@@ -30,10 +74,16 @@
     </div>
     <div class="add-cancel-btn-grp">
       <ui-button>Cancel</ui-button>
-      <ui-button v-if="!scheduleToEdit" @click="addWateringSchedule"
+      <ui-button
+        v-if="!scheduleToEdit"
+        :disabled="isFormDisabled"
+        @click="addWateringSchedule"
         >Add schedule</ui-button
       >
-      <ui-button v-if="scheduleToEdit" @click="updateWateringSchedule"
+      <ui-button
+        v-if="scheduleToEdit"
+        :disabled="isFormDisabled"
+        @click="updateWateringSchedule"
         >Update schedule</ui-button
       >
     </div>
@@ -64,12 +114,15 @@ export default {
       interval: 1,
       intervalModifier: 1,
       plantName: "",
-      scheduleToEdit: null
+      plants: [],
+      scheduleToEdit: null,
+      validationErrorMessages: {}
     };
   },
 
   created() {
     if (!isEmpty(this.$route.params)) {
+      this.validateFields();
       this.scheduleToEdit = this.$route.params;
       this.date = new Date(parseInt(this.scheduleToEdit.nextTimeToWater));
       this.time = [
@@ -77,7 +130,9 @@ export default {
         parseInt(this.date.getMinutes())
       ];
       this.interval = this.scheduleToEdit.interval;
-      this.plantName = this.scheduleToEdit.plants[0].name;
+      this.plants = this.scheduleToEdit.plants;
+    } else {
+      this.time = [new Date().getHours() + 1, new Date().getMinutes()]; // Will lessen likelyhood of premature validation but also helps user understand ux better
     }
   },
 
@@ -85,18 +140,26 @@ export default {
     ...mapGetters(["getUserId"]),
 
     timestamp() {
-      this.date.setHours(this.time[0]);
-      this.date.setMinutes(this.time[1]);
+      if (this.time.length) {
+        this.date.setHours(this.time[0]);
+        this.date.setMinutes(this.time[1]);
+      }
       const timestamp = new Date(this.date);
       return timestamp.getTime();
     },
 
     calculatedInterval() {
       return this.interval * this.intervalModifier;
+    },
+
+    isFormDisabled() {
+      if (this.validateFields()) {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
-
-  watch: {},
 
   methods: {
     async addWateringSchedule() {
@@ -104,7 +167,7 @@ export default {
         await this.$apollo.mutate({
           mutation: ADD_WATERINGSCHEDULE,
           variables: {
-            plants: [{ name: this.plantName }],
+            plants: this.plants,
             timestamp: this.timestamp.toString(),
             interval: this.calculatedInterval
           }
@@ -134,8 +197,40 @@ export default {
       }
     },
 
+    addPlantToPlants(event) {
+      if (this.plantName.length) {
+        if (event.keyCode === 13 || event.type === "click") {
+          this.plants.push({ name: this.plantName });
+          this.plantName = "";
+        }
+      }
+    },
+    removePlant(index) {
+      this.plants.splice(index, 1);
+    },
     setIntervalModifier(value) {
       this.intervalModifier = value;
+    },
+
+    validateFields() {
+      this.validationErrorMessages = {};
+
+      let minTimeThreshold = new Date();
+      minTimeThreshold.setMinutes(minTimeThreshold.getMinutes() + 5); // Time for next reminder needs to atleast 5 min into the future
+
+      if (this.timestamp < minTimeThreshold) {
+        this.validationErrorMessages.dateBeforeNow = "Invalid timepoint";
+      }
+
+      if (!this.plants.length) {
+        this.validationErrorMessages.plantsNoInput = "You need to add a plant";
+      }
+
+      if (isEmpty(this.validationErrorMessages)) {
+        return false;
+      } else {
+        return true;
+      }
     },
 
     createSnackbar(title) {
@@ -152,31 +247,92 @@ export default {
 <style scoped lang="scss">
 .wrapper {
   display: grid;
-  justify-items: center;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: 10rem;
   grid-row-gap: 1rem;
   margin-top: 3rem;
+  height: 100%;
 }
 
-.plantName-input {
-  grid-column: span 4;
+.plantInput {
+  position: relative;
+  input {
+    padding: 0.75rem;
+    font-family: "Roboto", sans-serif;
+    border: 0px solid;
+    background-color: lightgrey;
+    border-radius: 5px;
+  }
+  input:focus {
+    border: 1px solid;
+    border-color: grey;
+  }
+  .input__icon {
+    position: absolute;
+    right: 1rem;
+    top: 0.5rem;
+  }
+
+  .input__icon:hover {
+    cursor: pointer;
+    background-color: lightgrey;
+    border-radius: 5px;
+  }
+}
+
+.plants {
+  display: flex;
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.plants--list {
+  padding: 0;
   width: 50%;
-  background-color: blanchedalmond;
-  border-radius: 5px;
+  overflow: scroll;
+
+  .validationError--text {
+    position: relative;
+    margin-left: 1rem;
+    top: 1rem;
+  }
+
+  ul {
+    list-style: none;
+    display: inline-flex;
+    flex-wrap: wrap;
+    margin: 0;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    border: 1px solid;
+    background: $secondary;
+    border-radius: 5px;
+    padding: 0.25rem;
+    margin: 0.1rem;
+  }
 }
 
 .calendar {
   width: 16.5rem;
-  justify-self: flex-end;
-  grid-column: 1;
+  grid-column: 2;
   grid-row: 2;
+  justify-self: flex-start;
 }
 
 .timepicker {
+  display: flex;
+  flex-direction: row;
   justify-self: center;
-  grid-column: 2/3;
+  margin-left: 1rem;
+  grid-column: 2;
   grid-row: 2;
+
+  span {
+    margin-left: 1rem;
+  }
 }
 
 .interval-btn-grp {
@@ -185,8 +341,8 @@ export default {
 }
 
 .interval-selector {
-  grid-column: 3;
-  grid-row: 2;
+  grid-column: 2;
+  grid-row: 3;
   display: flex;
   justify-self: flex-start;
 }
@@ -196,9 +352,19 @@ export default {
 }
 
 .add-cancel-btn-grp {
-  grid-column: 3;
-  grid-row: 3;
-  justify-self: flex-start;
+  grid-column: 2;
+  grid-row: 4;
+  justify-self: flex-end;
+}
+
+.validationError {
+  border-bottom: 1px solid;
+  border-color: red;
+}
+
+.validationError--text {
+  color: red;
+  align-self: center;
 }
 
 .selected {

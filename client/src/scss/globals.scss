@@ -1,1 +1,11 @@
+::v-deep .ui-datepicker__display {
+  height: 2.9rem;
+}
 
+.timepicker::v-deep .ui-button {
+  height: 3rem;
+}
+
+::v-deep .ui-textbox {
+  border: none;
+}
