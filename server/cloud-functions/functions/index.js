@@ -38,7 +38,12 @@ exports.notifySchedulesInRange = functions.region('europe-west1').https.onReques
     })
     .then(data => {
       return Promise.all(data.map(obj => {
-        const messages = Object.entries(obj).map(([k, v]) => v.tokens.map(d => formatMessage(v.schedules, d.deviceToken)))[0]
+        const messages = Object.entries(obj)
+          .map(
+            ([k, v]) => v.tokens.map(
+              devices => devices.map(
+                d => formatMessage(v.schedules, d.deviceToken))
+            ))[0]
         if (messages.length > 0) {
           return messaging.sendAll(messages)
             .catch(err => console.log(JSON.stringify(err)))
