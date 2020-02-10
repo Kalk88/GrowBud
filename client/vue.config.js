@@ -7,6 +7,9 @@ module.exports = {
     }
   },
   pwa: {
+    name: 'Growbud',
+    display: 'standalone',
+    start_url: '/#',
     workboxPluginMode: "InjectManifest",
     workboxOptions: {
       swSrc: "src/firebase-messaging-sw.js",
