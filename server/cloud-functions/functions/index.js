@@ -5,6 +5,7 @@ const messaging = admin.messaging()
 const firestore = admin.firestore()
 const wateringSchedules = firestore.collection('wateringSchedules')
 const pushNotifications = firestore.collection('pushNotifications')
+const { retrieveDeviceTokens, retrieveSchedulesEarlierThan, setSchedule, setTokensToUser, reduceSchedulesOnUserId } = require('./helpers')
 
 exports.notifySchedulesInRange = functions.region('europe-west1').https.onRequest((req, res) => {
   doWork()
@@ -29,7 +30,7 @@ const doWork = () => {
       return Promise.all(Object.entries(reduced).map(([userId, data]) => {
         const addToUserData = setTokensToUser(userId)(data)
         return retrieveDeviceTokens(pushNotifications)(userId)
-          .then(addToUserData)
+          .then(devices => devices.map(addToUserData))
           .catch(error => console.log(JSON.stringify(error)))
       }))
     })
@@ -69,38 +70,3 @@ const formatMessage = (doc, token) => {
     }
   }
 }
-
-const retrieveSchedulesEarlierThan = collection => time => collection.where('nextTimeToWater', '<', time).get()
-const retrieveDeviceTokens = collection => userId => collection.doc(userId).get()
-const setSchedule = collection => scheduleId => schedule => collection.doc(scheduleId).set(schedule)
-const setTokensToUser = userId => data => tokens => {
-  if (tokens.exists) {
-    return {
-      [userId]: {
-        ...data,
-        tokens: [tokens.data()]
-      }
-    }
-  }
-  return {
-    [userId]: {
-      ...data,
-      tokens: []
-    }
-  }
-}
-
-const reduceSchedulesOnUserId = (accumulator, current) => {
-  if (accumulator[current.schedule.userId]) {
-    accumulator[current.schedule.userId].schedules.push(current)
-    return accumulator
-  }
-  return {
-    ...accumulator,
-    [current.schedule.userId]: {
-      schedules: [current]
-    }
-  }
-}
-
-exports.reduceSchedulesOnUserId = reduceSchedulesOnUserId
