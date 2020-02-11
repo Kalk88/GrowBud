@@ -1,7 +1,15 @@
 <template>
-  <div>
-    <ui-button type="secondary" class="btn popover-trigger">
-      <span v-if="$attrs.value.length">{{$attrs.value[0]}}:{{$attrs.value[1]}}</span>
+  <div class="timepickerWrapper">
+    <ui-button
+      type="secondary"
+      class="btn popover-trigger"
+      @click="scrollValuesIntoView()"
+    >
+      <span v-if="$attrs.value.length"
+        >{{ formattedTime($attrs.value[0]) }}:{{
+          formattedTime($attrs.value[1])
+        }}</span
+      >
       <ui-icon class="icon" iconSet="material-icons">add_alarm</ui-icon>
     </ui-button>
     <ui-popover class="input" :readonly="true" @hide="emitInputValueChange">
@@ -12,9 +20,13 @@
             <li
               v-for="hr in hours"
               :key="hr"
-              @click="setChosenHour(hr), emitInputValueChange()"
+              @click="
+                (chosenHour = hr), setChosenHour($event), emitInputValueChange()
+              "
               :class="hr === chosenHour ? 'selected' : ''"
-            >{{ hr }}</li>
+            >
+              {{ formattedTime(hr) }}
+            </li>
           </ul>
         </div>
         <div>
@@ -23,9 +35,15 @@
             <li
               v-for="min in minutes"
               :key="min"
-              @click="setChosenMinute(min), emitInputValueChange()"
+              @click="
+                (chosenMinute = min),
+                  setChosenMinute($event),
+                  emitInputValueChange()
+              "
               :class="min === chosenMinute ? 'selected' : ''"
-            >{{ min }}</li>
+            >
+              {{ formattedTime(min) }}
+            </li>
           </ul>
         </div>
       </div>
@@ -56,7 +74,9 @@ export default {
       hours: Array.from(Array(24).keys()),
       minutes: Array.from(Array(59).keys(), x => (x = x + 1)),
       chosenHour: 0,
-      chosenMinute: 0
+      chosenMinute: 0,
+      chosenHourElem: null,
+      chosenMinuteElem: null
     };
   },
 
@@ -68,20 +88,58 @@ export default {
   },
 
   methods: {
-    setChosenHour(hr) {
-      this.chosenHour = hr;
+    setChosenHour(event) {
+      this.chosenHourElem = event.target;
     },
-    setChosenMinute(min) {
-      this.chosenMinute = min;
+    setChosenMinute(event) {
+      this.chosenMinuteElem = event.target;
     },
     emitInputValueChange() {
       this.$emit("input", this.time);
+    },
+    formattedTime(time) {
+      if (time < 10) {
+        return `0${time}`;
+      } else {
+        return time;
+      }
+    },
+    scrollValuesIntoView() {
+      setTimeout(() => {
+        if (this.chosenHourElem === null && this.chosenMinuteElem === null) {
+          const hoursChildren = Array.from(
+            document.querySelector(".hours").children
+          );
+          const minutesChildren = Array.from(
+            document.querySelector(".minutes").children
+          );
+          const hourSelectedElem = hoursChildren.filter(
+            li => li.className === "selected"
+          );
+          const minutesSelectedElem = minutesChildren.filter(
+            li => li.className === "selected"
+          );
+
+          this.chosenHourElem = hourSelectedElem[0];
+          this.chosenMinuteElem = minutesSelectedElem[0];
+
+          this.chosenHourElem.scrollIntoView({ block: "center" });
+          this.chosenMinuteElem.scrollIntoView({ block: "center" });
+        } else {
+          this.chosenHourElem.scrollIntoView({ block: "center" });
+          this.chosenMinuteElem.scrollIntoView({ block: "center" });
+        }
+      }, 50); // timeout is needed so that the dropdown can render before scroll
     }
   }
 };
 </script>
 
 <style scoped lang="scss">
+.timepickerWrapper {
+  max-height: 3rem;
+}
+
 .btn {
   border-bottom: 1px solid lightgrey;
 }
