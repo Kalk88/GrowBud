@@ -3,9 +3,19 @@ const admin = require('firebase-admin')
 admin.initializeApp()
 const messaging = admin.messaging()
 const firestore = admin.firestore()
+const wateringSchedules = firestore.collection('wateringSchedules')
+const pushNotifications = firestore.collection('pushNotifications')
 
 exports.notifySchedulesInRange = functions.region('europe-west1').https.onRequest((req, res) => {
-  return retrieveSchedules(`${Date.now()}`)
+  doWork()
+    .then(result => res.status(200).send(result))
+    .catch(error => {
+      console.log(JSON.stringify(error))
+      res.sendStatus(500)
+    })
+})
+const doWork = () => {
+  return retrieveSchedulesEarlierThan(wateringSchedules)(`${Date.now()}`)
     .then(snapshot => {
       console.log(`Found ${snapshot.docs.length} schedules to update`)
       return snapshot.docs
@@ -17,23 +27,10 @@ exports.notifySchedulesInRange = functions.region('europe-west1').https.onReques
     })
     .then(reduced => {
       return Promise.all(Object.entries(reduced).map(([userId, data]) => {
-        return retrieveDeviceTokens(userId)
-          .then(tokens => {
-            if (tokens.exists) {
-              return {
-                [userId]: {
-                  ...data,
-                  tokens: [tokens.data()]
-                }
-              }
-            }
-            return {
-              [userId]: {
-                ...data,
-                tokens: []
-              }
-            }
-          }).catch(error => console.log(JSON.stringify(error)))
+        const addToUserData = setTokensToUser(userId)(data)
+        return retrieveDeviceTokens(pushNotifications)(userId)
+          .then(addToUserData)
+          .catch(error => console.log(JSON.stringify(error)))
       }))
     })
     .then(data => {
@@ -56,21 +53,12 @@ exports.notifySchedulesInRange = functions.region('europe-west1').https.onReques
           return x.schedules.map(s => {
             const toSave = s.schedule
             toSave.nextTimeToWater = (parseInt(s.schedule.nextTimeToWater) + (84600000 * s.schedule.interval)).toString()
-            return firestore.collection('wateringSchedules').doc(s.id).set(toSave)
+            return setSchedule(pushNotifications)(s.id)(toSave)
           })
         })
-      })).then(status => status).finally(status => status)
-    })
-    .then(status => res.status(200).send(status))
-    .catch(err => {
-      console.log(JSON.stringify(
-        {
-          error: 'push notification error',
-          message: err.message
-        })
-      )
-    })
-})
+      }))
+    }).then(status => status).finally(status => status)
+}
 
 const formatMessage = (doc, token) => {
   return {
@@ -82,13 +70,25 @@ const formatMessage = (doc, token) => {
   }
 }
 
-const retrieveSchedules = time => firestore.collection('wateringSchedules')
-  .where('nextTimeToWater', '<', time)
-  .get()
-
-const retrieveDeviceTokens = userId => firestore.collection('pushNotifications')
-  .doc(userId)
-  .get()
+const retrieveSchedulesEarlierThan = collection => time => collection.where('nextTimeToWater', '<', time).get()
+const retrieveDeviceTokens = collection => userId => collection.doc(userId).get()
+const setSchedule = collection => scheduleId => schedule => collection.doc(scheduleId).set(schedule)
+const setTokensToUser = userId => data => tokens => {
+  if (tokens.exists) {
+    return {
+      [userId]: {
+        ...data,
+        tokens: [tokens.data()]
+      }
+    }
+  }
+  return {
+    [userId]: {
+      ...data,
+      tokens: []
+    }
+  }
+}
 
 const reduceSchedulesOnUserId = (accumulator, current) => {
   if (accumulator[current.schedule.userId]) {
