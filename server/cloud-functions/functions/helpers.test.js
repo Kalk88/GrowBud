@@ -32,7 +32,7 @@ test('reduce multiple schedules on userId', t => {
   t.is(2, res.bob.schedules.length)
 })
 
-test('retrieveDeviceTokens when devices exists', t => {
+test('retrieveDeviceTokens returns an array of devices tokens when devices exists', t => {
   const devices = [
     {
       deviceToken: '123sometoken',
@@ -56,4 +56,37 @@ test('retrieveDeviceTokens when devices exists', t => {
   }
 
   return retrieveDeviceTokens(collection)('bob').then(result => t.deepEqual(devices, result))
+})
+
+test('retrieveDeviceTokens returns an empty array when devices does not exists', t => {
+  const collection = {
+    data: {
+      bob: {
+        exists: false,
+        data: () => []
+      }
+    },
+    id: '',
+    doc: (id) => {
+      this.id = id
+      return collection
+    },
+    get: () => resolvePromise(collection.data[this.id])
+  }
+
+  return retrieveDeviceTokens(collection)('bob').then(result => t.deepEqual([], result))
+})
+
+test('retrieveDeviceTokens returns an empty array when collection.get rejects', t => {
+  const collection = {
+    data: { },
+    id: '',
+    doc: (id) => {
+      this.id = id
+      return collection
+    },
+    get: () => rejectPromise('error')
+  }
+
+  return retrieveDeviceTokens(collection)('bob').then(result => t.deepEqual([], result))
 })
