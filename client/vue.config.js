@@ -7,5 +7,11 @@ module.exports = {
     }
   },
   pwa: {
+    workboxPluginMode: "InjectManifest",
+    workboxOptions: {
+      swSrc: "src/sw.js",
+      swDest: "sw.js",
+      exclude: [/\.map$/, /manifest\.json$/]
+    }
   }
 };
