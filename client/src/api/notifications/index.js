@@ -29,6 +29,12 @@ messaging.onMessage((payload) => {
     console.log("Push notification received: ", payload)//eslint-disable-line
 })
 
+// Callback fired if Instance ID token is updated.
+messaging.onTokenRefresh(() => {
+    messaging.getToken().then(token =>
+        postDeviceToken(navigator.userAgent, token)
+    )
+});
 /**
  *  Posts a device token to the backend.
  * @param {string} deviceName
