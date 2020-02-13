@@ -1,6 +1,7 @@
 import * as firebase from "firebase/app";
 import "firebase/messaging"
 import gql from 'graphql-tag';
+import store from '../../store'
 
 const firebaseConfig = {
     apiKey: process.env.VUE_APP_FIREBASE_APIKEY,
@@ -45,6 +46,7 @@ function postDeviceToken(deviceName, deviceToken) {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
+          Authorization: `Bearer ${store.state.inMemoryToken.JWT}`
         },
         body: JSON.stringify({
           upsertDeviceToken,
