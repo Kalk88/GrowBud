@@ -17,15 +17,6 @@ exports.notifySchedulesInRange = functions.region('europe-west1').https.onReques
 })
 const doWork = () => {
   return retrieveSchedulesEarlierThan(wateringSchedules)(`${Date.now()}`)
-    .then(snapshot => {
-      console.log(`Found ${snapshot.docs.length} schedules to update`)
-      return snapshot.docs
-        .map(doc => ({
-          id: doc.id,
-          schedule: doc.data()
-        }))
-        .reduce(reduceSchedulesOnUserId, {})
-    })
     .then(reduced => {
       return Promise.all(Object.entries(reduced).map(([userId, data]) => {
         const addToUserData = setTokensToUser(userId)(data)

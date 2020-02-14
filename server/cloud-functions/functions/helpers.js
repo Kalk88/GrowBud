@@ -1,4 +1,24 @@
-const retrieveSchedulesEarlierThan = collection => time => collection.where('nextTimeToWater', '<', time).get()
+/**
+ *  Retrieves a firebase watering schedules from firebase.
+ * @param {*} collection A firebase collection
+ * @param time a javascript timestamp as string
+ */
+const retrieveSchedulesEarlierThan = collection => time => collection
+  .where('nextTimeToWater', '<', time)
+  .get()
+  .then(snapshot => {
+    console.log(`Found ${snapshot.docs.length} schedules to update`)
+    return snapshot.docs
+      .map(doc => ({
+        id: doc.id,
+        schedule: doc.data()
+      }))
+      .reduce(reduceSchedulesOnUserId, {})
+  }).catch(error => {
+    console.log(error)
+    return {}
+  })
+
 const retrieveDeviceTokens = collection => userId => collection
   .doc(userId)
   .get()
@@ -37,6 +57,5 @@ module.exports = {
   retrieveSchedulesEarlierThan,
   retrieveDeviceTokens,
   setSchedule,
-  setTokensToUser,
-  reduceSchedulesOnUserId
+  setTokensToUser
 }

@@ -4,32 +4,99 @@ const { retrieveDeviceTokens, retrieveSchedulesEarlierThan, setSchedule, setToke
 const resolvePromise = (arg) => new Promise((resolve, reject) => resolve(arg))
 const rejectPromise = (arg) => new Promise((resolve, reject) => reject(arg))
 
-test('reduce multiple schedules on userId', t => {
+test('retrieveSchedulesEarlierThan returns an empty object when no schedules exists', t => {
+  const collection = {
+    snapshot: [],
+    where: (operand, predicate, value) => collection,
+    get: () => resolvePromise(collection.snapshot)
+  }
+  return retrieveSchedulesEarlierThan(collection)('some date').then(res => t.deepEqual({}, res))
+})
+
+test('retrieveSchedulesEarlierThan returns an empty object on rejection', t => {
+  const collection = {
+    snapshot: [],
+    where: (operand, predicate, value) => collection,
+    get: () => rejectPromise(collection.snapshot)
+  }
+  return retrieveSchedulesEarlierThan(collection)('some date').then(res => t.deepEqual({}, res))
+})
+
+test('retrieveSchedulesEarlierThan returns an object with schedules object on resolve', t => {
   const schedules = [
     {
       id: 'asd',
-      schedule: {
+      data: () => ({
+        interval: 1,
+        nextTimeToWater: '123',
         userId: 'bob',
         plants: [2]
-      }
+      })
     },
     {
       id: 'dd',
-      schedule: {
+      data: () => ({
+        interval: 1,
+        nextTimeToWater: '123',
         userId: 'lisa',
         plants: [1]
-      }
+      })
     },
     {
       id: 'xx',
-      schedule: {
+      data: () => ({
+        interval: 1,
+        nextTimeToWater: '123',
         userId: 'bob',
         plants: [1]
-      }
+      })
     }
   ]
-  const res = schedules.reduce(reduceSchedulesOnUserId, {})
-  t.is(2, res.bob.schedules.length)
+  const collection = {
+    snapshot: {
+      docs: schedules
+    },
+    where: (operand, predicate, value) => collection,
+    get: () => resolvePromise(collection.snapshot)
+  }
+  return retrieveSchedulesEarlierThan(collection)('some date')
+    .then(res => t.deepEqual({
+      bob: {
+        schedules: [{
+          id: 'asd',
+          schedule: {
+            interval: 1,
+            nextTimeToWater: '123',
+            userId: 'bob',
+            plants: [2]
+          }
+        },
+        {
+          id: 'xx',
+          schedule: {
+            interval: 1,
+            nextTimeToWater: '123',
+            userId: 'bob',
+            plants: [1]
+          }
+        }
+        ]
+      },
+      lisa: {
+        schedules: [
+          {
+            id: 'dd',
+            schedule: {
+              interval: 1,
+              nextTimeToWater: '123',
+              userId: 'lisa',
+              plants: [1]
+            }
+          }
+        ]
+      }
+    },
+    res))
 })
 
 test('retrieveDeviceTokens returns an array of devices tokens when devices exists', t => {
