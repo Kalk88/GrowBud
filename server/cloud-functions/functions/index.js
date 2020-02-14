@@ -5,7 +5,7 @@ const messaging = admin.messaging()
 const firestore = admin.firestore()
 const wateringSchedules = firestore.collection('wateringSchedules')
 const pushNotifications = firestore.collection('pushNotifications')
-const { retrieveDeviceTokens, retrieveSchedulesEarlierThan, setSchedule, setTokensToUser, reduceSchedulesOnUserId } = require('./helpers')
+const { retrieveDeviceTokens, retrieveSchedulesEarlierThan, setSchedule, setTokensToUser } = require('./helpers')
 
 exports.notifySchedulesInRange = functions.region('europe-west1').https.onRequest((req, res) => {
   doWork()
@@ -17,8 +17,8 @@ exports.notifySchedulesInRange = functions.region('europe-west1').https.onReques
 })
 const doWork = () => {
   return retrieveSchedulesEarlierThan(wateringSchedules)(`${Date.now()}`)
-    .then(reduced => {
-      return Promise.all(Object.entries(reduced).map(([userId, data]) => {
+    .then(schedules => {
+      return Promise.all(Object.entries(schedules).map(([userId, data]) => {
         const addToUserData = setTokensToUser(userId)(data)
         return retrieveDeviceTokens(pushNotifications)(userId)
           .then(devices => devices.map(addToUserData))
