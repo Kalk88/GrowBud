@@ -1,7 +1,8 @@
 /**
- *  Retrieves a firebase watering schedules from firebase.
+ *  Retrieves watering schedules from firebase.
  * @param {*} collection A firebase collection
  * @param time a javascript timestamp as string
+ * @returns {object} map of schedules structured on userId
  */
 const retrieveSchedulesEarlierThan = collection => time => collection
   .where('nextTimeToWater', '<', time)
@@ -19,6 +20,12 @@ const retrieveSchedulesEarlierThan = collection => time => collection
     return {}
   })
 
+/**
+ *  Retrieves a device tokens from firebase.
+ * @param {*} collection A firebase collection
+ * @param time a javascript timestamp as string
+ * @returns {array} device tokens for the given user id
+ */
 const retrieveDeviceTokens = collection => userId => collection
   .doc(userId)
   .get()

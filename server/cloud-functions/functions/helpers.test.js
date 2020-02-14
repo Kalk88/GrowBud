@@ -1,5 +1,5 @@
 const test = require('ava')
-const { retrieveDeviceTokens, retrieveSchedulesEarlierThan, setSchedule, setTokensToUser, reduceSchedulesOnUserId } = require('./helpers')
+const { retrieveDeviceTokens, retrieveSchedulesEarlierThan, setSchedule, setTokensToUser } = require('./helpers')
 
 const resolvePromise = (arg) => new Promise((resolve, reject) => resolve(arg))
 const rejectPromise = (arg) => new Promise((resolve, reject) => reject(arg))
