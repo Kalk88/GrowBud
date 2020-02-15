@@ -1,29 +1,36 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
+const {
+  retrieveDeviceTokens,
+  retrieveSchedulesEarlierThan,
+  setSchedule,
+  setTokensToUser,
+  setNextTimeToWater
+} = require('./helpers')
+
 admin.initializeApp()
 const messaging = admin.messaging()
 const firestore = admin.firestore()
-const wateringSchedules = firestore.collection('wateringSchedules')
-const pushNotifications = firestore.collection('pushNotifications')
-const { retrieveDeviceTokens, retrieveSchedulesEarlierThan, setSchedule, setTokensToUser } = require('./helpers')
+const wateringSchedulesCollection = firestore.collection('wateringSchedules')
+const pushNotificationsCollection = firestore.collection('pushNotifications')
 
 exports.notifySchedulesInRange = functions.region('europe-west1').https.onRequest((req, res) => {
-  doWork()
+  doWork(wateringSchedulesCollection, pushNotificationsCollection)
     .then(result => res.status(200).send(result))
     .catch(error => {
-      console.log(JSON.stringify(error))
+      logJSON('error')(error)
       res.sendStatus(500)
     })
 })
-const doWork = () => {
+const doWork = (wateringSchedules, pushNotifications) => {
   return retrieveSchedulesEarlierThan(wateringSchedules)(`${Date.now()}`)
     .then(schedules => {
-      return Promise.all(Object.entries(schedules).map(([userId, data]) => {
-        const addToUserData = setTokensToUser(userId)(data)
-        return retrieveDeviceTokens(pushNotifications)(userId)
-          .then(devices => devices.map(addToUserData))
+      logJSON('schedules')(schedules)
+      return Promise.all(Object.entries(schedules).map(([userId, data]) =>
+        retrieveDeviceTokens(pushNotifications)(userId).then(logJSON('tokens'))
+          .then(devices => devices.map(setTokensToUser(userId)(data)))
           .catch(error => console.log(JSON.stringify(error)))
-      }))
+      ))
     })
     .then(data => {
       return Promise.all(data.map(obj => {
@@ -43,14 +50,14 @@ const doWork = () => {
       return Promise.all(v.map(schedule => {
         return Object.entries(schedule).map(([k, x]) => {
           return x.schedules.map(s => {
-            const toSave = s.schedule
-            toSave.nextTimeToWater = (parseInt(s.schedule.nextTimeToWater) + (84600000 * s.schedule.interval)).toString()
-            return setSchedule(pushNotifications)(s.id)(toSave)
+            return setSchedule(pushNotifications)(s.id)(setNextTimeToWater(s.schedule))
           })
         })
       }))
     }).then(status => status).finally(status => status)
 }
+
+const logJSON = what => thing => console.log(what, JSON.stringify(thing))
 
 const formatMessage = (doc, token) => {
   return {
@@ -61,3 +68,5 @@ const formatMessage = (doc, token) => {
     }
   }
 }
+
+exports.doWork = doWork

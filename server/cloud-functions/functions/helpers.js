@@ -16,7 +16,7 @@ const retrieveSchedulesEarlierThan = collection => time => collection
       }))
       .reduce(reduceSchedulesOnUserId, {})
   }).catch(error => {
-    console.log(error)
+    logError(error)
     return {}
   })
 
@@ -36,10 +36,37 @@ const retrieveDeviceTokens = collection => userId => collection
     return []
   })
   .catch(error => {
-    console.error(error)
+    logError(error)
     return []
   })
-const setSchedule = collection => scheduleId => schedule => collection.doc(scheduleId).set(schedule)
+
+/**
+ * Update a schedule in firebase on the given id.
+ * @param {*} collection a firebase collection
+ * @param {*} scheduleId id of the document to update
+ * @param {*} schedule the schedule to update
+ * @returns tuple [status, object]
+ */
+const setSchedule = collection => scheduleId => schedule => collection
+  .doc(scheduleId)
+  .set(schedule)
+  .then(status => [OK, {}])
+  .catch(error => {
+    logError(error)
+    return [ERROR, error]
+  })
+
+/**
+ * Takes an schedule and updates the next time to water with the schedule interval
+ * returns a new schedule object.
+ * @param {object} schedule
+ * @returns a new schedule object
+ */
+const setNextTimeToWater = schedule => ({
+  ...schedule,
+  nextTimeToWater: (parseInt(schedule.nextTimeToWater) + (84600000 * schedule.interval)).toString()
+})
+
 const setTokensToUser = userId => data => tokens => ({
   [userId]: {
     ...data,
@@ -60,9 +87,14 @@ const reduceSchedulesOnUserId = (accumulator, current) => {
   }
 }
 
+const OK = 'OK'
+const ERROR = 'ERROR'
+const logError = error => console.log(JSON.stringify(error))
+
 module.exports = {
   retrieveSchedulesEarlierThan,
   retrieveDeviceTokens,
   setSchedule,
+  setNextTimeToWater,
   setTokensToUser
 }
