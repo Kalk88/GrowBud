@@ -1,6 +1,7 @@
 {
   "projects": {
-    "default": "growbud-50ed4",
-    "growbud-prod": "growbud-production"
+    "growbud-default": "growbud-50ed4",
+    "growbud-prod": "growbud-production",
+    "growbud-master": "growbud-master"
   }
 }
