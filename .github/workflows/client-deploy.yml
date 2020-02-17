@@ -10,22 +10,39 @@ on:
 
 jobs:
   build:
-    name: Build and Deploy
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@master
+        uses: actions/checkout@2.0.0
       - name: Install Dependencies
         run: |
           cd client
-#          npm install
+          npm install
+          npm run lint
       - name: Build
         run: |
           cd client
-#          npm run build
+          npm run build-prod
+      - name: Archive Production Artifact
+        uses: actions/upload-artifact@1.0.0
+        with:
+          name: dist-master
+          path: dist
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@2.0.0
+      - name: Download Artifact
+        uses: actions/download-artifact@1.0.0
+        with:
+          name: dist-master
       - name: Deploy to Firebase
-        run: |
-          cd client
-#          npm install firebase-tools
-#          firebase use --add ${{ secrets.GCLOUD_PROJECT_ID }} #same for id for firebase and gcloud
-#          firebase deploy --token  ${{ secrets.FIREBASE_TOKEN }}#
+        uses: w9jds/firebase-action@1.3.0
+        with:
+          args: deploy --only hosting:growbud-master
+        env:
+          GCP_SA_KEY: ${{ secrets.MASTER_GCP_SA_KEY }}
