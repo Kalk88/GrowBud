@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@2.0.0
+        uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
           cd client
@@ -25,7 +25,7 @@ jobs:
           cd client
           npm run build-prod
       - name: Archive Production Artifact
-        uses: actions/upload-artifact@1.0.0
+        uses: actions/upload-artifact@v1
         with:
           name: dist-master
           path: dist
@@ -35,13 +35,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@2.0.0
+        uses: actions/checkout@v2
       - name: Download Artifact
-        uses: actions/download-artifact@1.0.0
+        uses: actions/download-artifact@v1
         with:
           name: dist-master
       - name: Deploy to Firebase
-        uses: w9jds/firebase-action@1.3.0
+        uses: w9jds/firebase-action@v1.3.0
         with:
           args: deploy --only hosting:growbud-master
         env:
