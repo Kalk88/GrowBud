@@ -23,7 +23,7 @@ jobs:
       - name: Build
         run: |
           cd client
-          npm run build-prod
+          npm run build
       - name: Archive Production Artifact
         uses: actions/upload-artifact@v1
         with:
