@@ -17,7 +17,7 @@ const retrieveSchedulesEarlierThan = collection => time => collection
       .reduce(reduceSchedulesOnUserId, {})
   }).catch(error => {
     logError(error)
-    return {}
+    return error
   })
 
 /**
@@ -33,11 +33,11 @@ const retrieveDeviceTokens = collection => userId => collection
     if (tokens.exists) {
       return tokens.data()
     }
-    return []
+    return { devices: [] }
   })
   .catch(error => {
     logError(error)
-    return []
+    return { devices: [] }
   })
 
 /**
@@ -66,11 +66,30 @@ const setNextTimeToWater = schedule => ({
   ...schedule,
   nextTimeToWater: (parseInt(schedule.nextTimeToWater) + (84600000 * schedule.interval)).toString()
 })
+/**
+ * Push all messages with the given messaging client
+ * @param {*} messaging
+ * @param {*} messages
+ */
+const sendPushNotifications = messaging => messages => messaging
+  .sendMulticast(messages)
+  .then(response => {
+    const failures = response.responses.filter(res => !res.success)
+    const successes = response.responses.filter(res => res.success)
+    return [OK, {
+      successes,
+      failures
+    }]
+  })
+  .catch(error => {
+    logError(error)
+    return [ERROR, error]
+  })
 
 const setTokensToUser = userId => data => tokens => ({
   [userId]: {
     ...data,
-    tokens
+    tokens: tokens
   }
 })
 
@@ -96,5 +115,6 @@ module.exports = {
   retrieveDeviceTokens,
   setSchedule,
   setNextTimeToWater,
-  setTokensToUser
+  setTokensToUser,
+  sendPushNotifications
 }

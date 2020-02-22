@@ -106,18 +106,21 @@ test('retrieveSchedulesEarlierThan returns an object with schedules object on re
 })
 
 test('retrieveDeviceTokens returns an array of devices tokens when devices exists', t => {
-  const devices = [
-    {
-      deviceToken: '123sometoken',
-      deviceName: 'bobs brave browser',
-      createdAt: 'some date'
-    }
-  ]
+  const deviceTokens = {
+    devices: [
+      {
+        deviceToken: '123sometoken',
+        deviceName: 'bobs brave browser',
+        createdAt: 'some date'
+      }
+    ]
+  }
+
   const collection = {
     data: {
       bob: {
         exists: true,
-        data: () => devices
+        data: () => deviceTokens
       }
     },
     id: '',
@@ -128,7 +131,7 @@ test('retrieveDeviceTokens returns an array of devices tokens when devices exist
     get: () => resolvePromise(collection.data[this.id])
   }
 
-  return retrieveDeviceTokens(collection)('bob').then(result => t.deepEqual(devices, result))
+  return retrieveDeviceTokens(collection)('bob').then(result => t.deepEqual(deviceTokens, result))
 })
 
 test('retrieveDeviceTokens returns an empty array when devices does not exists', t => {
@@ -136,7 +139,7 @@ test('retrieveDeviceTokens returns an empty array when devices does not exists',
     data: {
       bob: {
         exists: false,
-        data: () => []
+        data: () => { devices: [] }
       }
     },
     id: '',
@@ -147,7 +150,7 @@ test('retrieveDeviceTokens returns an empty array when devices does not exists',
     get: () => resolvePromise(collection.data[this.id])
   }
 
-  return retrieveDeviceTokens(collection)('bob').then(result => t.deepEqual(result, []))
+  return retrieveDeviceTokens(collection)('bob').then(result => t.deepEqual(result, { devices: [] }))
 })
 
 test('retrieveDeviceTokens returns an empty array when collection.get rejects', t => {
@@ -161,7 +164,7 @@ test('retrieveDeviceTokens returns an empty array when collection.get rejects', 
     get: () => rejectPromise('error')
   }
 
-  return retrieveDeviceTokens(collection)('bob').then(result => t.deepEqual(result, []))
+  return retrieveDeviceTokens(collection)('bob').then(result => t.deepEqual(result, { devices: [] }))
 })
 
 test('setsSchedule returns OK on successful update', t => {
@@ -173,9 +176,9 @@ test('setsSchedule returns OK on successful update', t => {
     },
     set: (item) => resolvePromise({})
   }
-  const res = setSchedule(collection, 1, {})
-  console.log(res)
-  t.deepEqual(['OK', {}], res)
+  return setSchedule(collection)(1)({}).then(res => {
+    t.deepEqual(['OK', {}], res)
+  })
 })
 
 test('setSchedule returns ERROR on unsuccessful update', t => {
@@ -187,7 +190,9 @@ test('setSchedule returns ERROR on unsuccessful update', t => {
     },
     set: (item) => rejectPromise('set schedule error')
   }
-  t.deepEqual(['ERROR', {}], setSchedule(collection, 1, {}))
+  return setSchedule(collection)(1)({}).then(res => {
+    t.deepEqual(['ERROR', 'set schedule error'], res)
+  })
 })
 
 test('setNextTimeToWater returns a new schedule', t => {

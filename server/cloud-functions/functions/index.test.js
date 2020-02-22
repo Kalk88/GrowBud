@@ -52,9 +52,18 @@ const pushCollection = {
   set: (item) => resolvePromise({})
 }
 
+const messagingClient = {
+  sendMulticast: (messages) => resolvePromise({
+    responses: [
+      { success: true },
+      { success: false }
+    ]
+  })
+}
+
 test('doWork', t => {
   console.log(doWork)
-  return doWork(schedulesCollection, pushCollection).then(res => {
+  return doWork(schedulesCollection, pushCollection, messagingClient).then(res => {
     console.log('do work', res)
     t.pass()
   })

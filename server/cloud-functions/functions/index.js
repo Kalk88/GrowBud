@@ -5,7 +5,8 @@ const {
   retrieveSchedulesEarlierThan,
   setSchedule,
   setTokensToUser,
-  setNextTimeToWater
+  setNextTimeToWater,
+  sendPushNotifications
 } = require('./helpers')
 
 admin.initializeApp()
@@ -15,46 +16,28 @@ const wateringSchedulesCollection = firestore.collection('wateringSchedules')
 const pushNotificationsCollection = firestore.collection('pushNotifications')
 
 exports.notifySchedulesInRange = functions.region('europe-west1').https.onRequest((req, res) => {
-  doWork(wateringSchedulesCollection, pushNotificationsCollection)
+  doWork(wateringSchedulesCollection, pushNotificationsCollection, messaging)
     .then(result => res.status(200).send(result))
     .catch(error => {
-      logJSON('error')(error)
+      logJSON('do work error')(error)
       res.sendStatus(500)
     })
 })
-const doWork = (wateringSchedules, pushNotifications) => {
+const doWork = (wateringSchedules, pushNotifications, messagingClient) => {
   return retrieveSchedulesEarlierThan(wateringSchedules)(`${Date.now()}`)
-    .then(schedules => {
-      logJSON('schedules')(schedules)
-      return Promise.all(Object.entries(schedules).map(([userId, data]) =>
-        retrieveDeviceTokens(pushNotifications)(userId).then(logJSON('tokens'))
-          .then(devices => devices.map(setTokensToUser(userId)(data)))
-          .catch(error => console.log(JSON.stringify(error)))
-      ))
-    })
-    .then(data => {
-      return Promise.all(data.map(obj => {
-        const messages = Object.entries(obj)
-          .map(
-            ([k, v]) => v.tokens.map(
-              devices => devices.map(
-                d => formatMessage(v.schedules, d.deviceToken))
-            ))[0]
-        if (messages.length > 0) {
-          return messaging.sendAll(messages)
-            .catch(err => console.log(JSON.stringify(err)))
-        }
-      })).then(() => data).finally(() => data)
-    })
     .then(v => {
+      logJSON('update schedules', v)
       return Promise.all(v.map(schedule => {
         return Object.entries(schedule).map(([k, x]) => {
           return x.schedules.map(s => {
-            return setSchedule(pushNotifications)(s.id)(setNextTimeToWater(s.schedule))
+            return setSchedule(pushNotifications)(s.id)(setNextTimeToWater(s.schedule)).then(logJSON)
           })
         })
       }))
-    }).then(status => status).finally(status => status)
+    })
+    .then(status => status)
+    .catch(logJSON('final error'))
+    .finally(status => status)
 }
 
 const logJSON = what => thing => console.log(what, JSON.stringify(thing))
@@ -68,5 +51,34 @@ const formatMessage = (doc, token) => {
     }
   }
 }
+/*
+    .then(schedules => {
+      logJSON('schedules')(schedules)
+      return Promise.all(Object.entries(schedules).map(([userId, data]) =>
+        retrieveDeviceTokens(pushNotifications)(userId)
+          .then(tokens => tokens.devices)
+          .then(setTokensToUser(userId)(data))
+      ))
+    })
+
+    .then(data => {
+      logJSON('data', data)
+      return Promise.all(data.map(obj => {
+        const messages = Object.entries(obj)
+          .map(
+            ([k, v]) => v.tokens.map(
+              devices => devices.map(
+                d => formatMessage(v.schedules, d.deviceToken))
+            ))[0]
+        logJSON('messages', messages)
+        if (messages.length > 0) {
+          return sendPushNotifications(messagingClient)(messages)
+            .then(res => {
+              logJSON(res)
+            })
+        }
+      })).then(() => { logJSON('returning')(data); return data })
+    })
+    */
 
 exports.doWork = doWork
