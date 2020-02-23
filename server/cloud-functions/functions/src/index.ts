@@ -28,7 +28,7 @@ exports.notifySchedulesInRange = functions.region('europe-west1').https.onReques
         )
     })
     .then((status: any) => {
-        logJSON('Succesfull update of schedules')(status)
+        logJSON('Successful update of schedules')(status)
         res.status(200).send(status)
     })
     .catch((error: any) => {
