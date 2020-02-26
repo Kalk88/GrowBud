@@ -23,7 +23,7 @@ messaging.usePublicVapidKey(process.env.VUE_APP_FIREBASE_PUBLICVAPIDKEY);
 //eslint-disable-nextline
 messaging.onTokenRefresh(() => {
     messaging.getToken()
-        .then(token => postDeviceToken(navigator.userAgent, token))
+        .then(token => postDeviceToken(navigator.appName, token))
         .catch(error => console.log(error));
 });
 
@@ -36,11 +36,11 @@ messaging.onMessage((payload) => {
  * with the given credentials.
  * @param {*} credentials
  */
-export function upsertPushTokenOnLogin(credentials) {
+export function upsertPushTokenOnLogin() {
     //eslint-disable-nextline
     return messaging.getToken()
-        .then(token => postDeviceToken(credentials, navigator.appName, token))
-        .catch(error => console.log(error));
+        .then(token => postDeviceToken(navigator.appName, token))
+        .catch(error => console.log(error)); //eslint-disable-line
 }
 
 export function deleteTokenOnLogout() {
@@ -48,23 +48,22 @@ export function deleteTokenOnLogout() {
     .then(token => messaging.deleteToken(token)
         .catch(error => console.log(error))//eslint-disable-line
     )
-    .catch(error => console.log(error))//eslint-disable-line
+    .catch(error => console.log(error));//eslint-disable-line
 }
 
 /**
  *  Posts a device token to the backend.
- * @param {string} credentials user credentials to be sent in the headers.
  * @param {string} deviceName
  * @param {string} deviceToken token from firebase
  */
-function postDeviceToken(credentials, deviceName, deviceToken) {
+function postDeviceToken(deviceName, deviceToken) {
     return axios({
         url: `${process.env.VUE_APP_API_BASE_URL}/api/deviceTokens`,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           accept: 'application/json',
-          authorization: `Bearer ${credentials}`
+          authorization: `Bearer ${store.state.inMemoryToken.JWT}`,
         },
         withCredentials:true,
         data: {
@@ -72,5 +71,5 @@ function postDeviceToken(credentials, deviceName, deviceToken) {
             deviceToken
             }
       })
-        .then(data => console.log('data returned:', data.data)).catch(error => console.log(error)); //eslint-disable-line
+        .catch(error => console.log(error)); //eslint-disable-line
 }

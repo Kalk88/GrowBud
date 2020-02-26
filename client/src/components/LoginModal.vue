@@ -80,10 +80,6 @@ export default {
       } catch (error) {
         console.log(error); //eslint-disable-line
       }
-      try {
-      } catch (error) {
-        console.log(error); //eslint-disable-line
-      }
     }
   }
 };
