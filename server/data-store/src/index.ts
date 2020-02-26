@@ -38,7 +38,7 @@ app.get('/', (_req, res) => {
 app.post('/api/refreshToken', async (req, res) => {
   const token = req?.cookies?.refreshToken
   if (token === null || token === undefined) {
-    log.debug('Invalid token from: ', JSON.stringify(req))
+    log.debug('Invalid token')
     res.status(400).send({ error: 'missing payload' })
   } else {
     const { JWT, JWTExpiry, refreshToken }: RefreshInfo = await rf(token)
@@ -73,5 +73,5 @@ app.use((err: any, _req: any, res: any, _next: any) => {
 
 // start the Express server
 app.listen(port, () => {
-  log.info(`server started at http://localhost:${port}`)
+  log.info(`server started.`)
 })
