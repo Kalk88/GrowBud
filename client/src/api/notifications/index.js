@@ -1,6 +1,7 @@
 import * as firebase from "firebase/app";
 import "firebase/messaging"
 import axios from 'axios'
+import store from '../../store'
 
 const firebaseConfig = {
     apiKey: process.env.VUE_APP_FIREBASE_APIKEY,
