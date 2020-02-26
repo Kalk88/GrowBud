@@ -21,11 +21,10 @@ const messaging = firebase.messaging();
 messaging.usePublicVapidKey(process.env.VUE_APP_FIREBASE_PUBLICVAPIDKEY);
 
 // Callback fired if Instance ID token is updated.
-//eslint-disable-nextline
 messaging.onTokenRefresh(() => {
     messaging.getToken()
         .then(token => postDeviceToken(navigator.appName, token))
-        .catch(error => console.log(error));
+        .catch(error => console.log(error));//eslint-disable-line
 });
 
 messaging.onMessage((payload) => {
