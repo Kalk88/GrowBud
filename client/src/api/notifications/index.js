@@ -1,7 +1,6 @@
 import * as firebase from "firebase/app";
 import "firebase/messaging"
-import gql from 'graphql-tag';
-import store from '../../store'
+import axios from 'axios'
 
 const firebaseConfig = {
     apiKey: process.env.VUE_APP_FIREBASE_APIKEY,
@@ -13,52 +12,65 @@ const firebaseConfig = {
     appId: process.env.VUE_APP_FIREBASE_APPID,
     measurementId: process.env.VUE_APP_FIREBASE_MEASEUREMENTID
 };
-
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 // Retrieve Firebase Messaging object.
 const messaging = firebase.messaging();
 // Add the public key generated from the console here.
 messaging.usePublicVapidKey(process.env.VUE_APP_FIREBASE_PUBLICVAPIDKEY);
+
+// Callback fired if Instance ID token is updated.
 //eslint-disable-nextline
-messaging.getToken().then(token =>
-    postDeviceToken(navigator.userAgent, token)
-)
+messaging.onTokenRefresh(() => {
+    messaging.getToken()
+        .then(token => postDeviceToken(navigator.userAgent, token))
+        .catch(error => console.log(error));
+});
 
 messaging.onMessage((payload) => {
     console.log("Push notification received: ", payload)//eslint-disable-line
 })
 
-// Callback fired if Instance ID token is updated.
-messaging.onTokenRefresh(() => {
-    messaging.getToken().then(token =>
-        postDeviceToken(navigator.userAgent, token)
+/**
+ * Retrieve a FCM token and register it with the backend for the user
+ * with the given credentials.
+ * @param {*} credentials
+ */
+export function upsertPushTokenOnLogin(credentials) {
+    //eslint-disable-nextline
+    return messaging.getToken()
+        .then(token => postDeviceToken(credentials, navigator.appName, token))
+        .catch(error => console.log(error));
+}
+
+export function deleteTokenOnLogout() {
+    messaging.getToken()
+    .then(token => messaging.deleteToken(token)
+        .catch(error => console.log(error))//eslint-disable-line
     )
-});
+    .catch(error => console.log(error))//eslint-disable-line
+}
+
 /**
  *  Posts a device token to the backend.
+ * @param {string} credentials user credentials to be sent in the headers.
  * @param {string} deviceName
- * @param {string} deviceToken
+ * @param {string} deviceToken token from firebase
  */
-function postDeviceToken(deviceName, deviceToken) {
-    const upsertDeviceToken = gql`
-        mutation upsertDeviceToken($name: String, $token: String)
-        upsertDeviceToken(deviceName: $name, deviceToken: $token) {
-        status
-    }
-    `
-    fetch(process.env.VUE_APP_API_BASE_URL + '/graph', {
+function postDeviceToken(credentials, deviceName, deviceToken) {
+    return axios({
+        url: `${process.env.VUE_APP_API_BASE_URL}/api/deviceTokens`,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Accept: 'application/json',
-          Authorization: `Bearer ${store.state.inMemoryToken.JWT}`
+          accept: 'application/json',
+          authorization: `Bearer ${credentials}`
         },
-        body: JSON.stringify({
-          upsertDeviceToken,
-          variables: { deviceName, deviceToken },
-        }),
+        withCredentials:true,
+        data: {
+            deviceName,
+            deviceToken
+            }
       })
-        .then(r => r.json())
-        .then(data => console.log('data returned:', data)); //eslint-disable-line
+        .then(data => console.log('data returned:', data.data)).catch(error => console.log(error)); //eslint-disable-line
 }
