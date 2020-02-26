@@ -280,6 +280,7 @@ const mutationType = new GraphQLObjectType({
                 deviceName: nonNullGqlString,
             },
             resolve: async (_root, args, context) => {
+                log.info('Upserting device token')
                 return parseTokenFromHeaders(context)
                     .then(verifyAndDecodeToken)
                     .then(parseUserIdFromToken)

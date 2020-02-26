@@ -1,4 +1,5 @@
 import { admin } from '../firebaseClient'
+import * as log from '../../logging'
 import axios from 'axios'
 import qs from 'qs'
 import uuidv4 from 'uuid/v4'
@@ -74,6 +75,11 @@ export async function removeUser(id: string) {
 
 export function verifyAndDecodeToken(token: string): Promise<object> {
   return admin.auth().verifyIdToken(token)
+  .then(res => res)
+  .catch(error => {
+    log.error(error)
+     throw new Error('invalid token')
+    })
 }
 
 export function refreshToken(token: string): Promise<RefreshInfo> {
