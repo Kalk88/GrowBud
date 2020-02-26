@@ -1,5 +1,5 @@
 import { admin } from '../firebaseClient'
-import * as log from '../logging'
+import * as log from '../../logging'
 import axios from 'axios'
 import qs from 'qs'
 import uuidv4 from 'uuid/v4'
