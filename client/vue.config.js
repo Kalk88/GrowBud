@@ -7,6 +7,12 @@ module.exports = {
     }
   },
   pwa: {
+    name: "Growbud",
+    manifestOptions: {
+      name: "Growbud",
+      display: "standalone",
+      start_url: "/#/",
+    },
     workboxPluginMode: "InjectManifest",
     workboxOptions: {
       swSrc: "src/sw.js",
