@@ -2,7 +2,9 @@ require('dotenv').config()
 import express from 'express'
 import graphQLHTTP from 'express-graphql'
 import schema from './schema'
-import { refreshToken as rf, RefreshInfo } from './lib/auth'
+import { refreshToken as rf, RefreshInfo, verifyAndDecodeToken } from './lib/auth'
+import { parseTokenFromHeaders, parseUserIdFromToken } from './lib/http'
+import { upsertDeviceToken } from './lib/pushNotifcationToken'
 import cookieParser from 'cookie-parser'
 import * as log from './logging'
 const app = express()
@@ -49,6 +51,21 @@ app.post('/api/refreshToken', async (req, res) => {
     log.debug('Refreshed token')
     res.status(200).send({ JWT, JWTExpiry })
   }
+})
+
+app.post('/api/deviceTokens', (req, res) => {
+  log.info('Registering device token')
+  const {deviceToken, deviceName } = req.body
+  parseTokenFromHeaders(req)
+    .then(verifyAndDecodeToken)
+    .then(parseUserIdFromToken)
+    .then(userId => upsertDeviceToken(userId, deviceToken, deviceName, `${Date.now()}`))
+    .then(status=> res.status(201).send(status))
+    .catch(error =>{
+      log.error(error)
+       res.status(400)
+       .send({error: 'Token registration error'})
+    })
 })
 
 if (process.env.NODE_ENV === 'development') {

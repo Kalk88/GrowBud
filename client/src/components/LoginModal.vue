@@ -28,6 +28,7 @@
 
 <script>
 import { LOGIN } from "../api/auth";
+import { upsertPushTokenOnLogin } from '../api/notifications'
 import { UiButton, UiTextbox, UiModal } from "keen-ui";
 
 export default {
@@ -75,6 +76,7 @@ export default {
         this.$store.commit("setUserID", userID);
         this.$store.commit("setIsLoggedin", true);
         this.$store.commit("setInMemoryToken", { JWT, JWTExpiry });
+        upsertPushTokenOnLogin(JWT);
       } catch (error) {
         console.log(error); //eslint-disable-line
       }

@@ -25,8 +25,11 @@ import {
     removeWateringScheduleById,
     updateWateringSchedule
 } from '../lib/wateringSchedules'
-import { upsertDeviceToken } from '../lib/pushNotifcationToken'
 import * as log from '../logging'
+import {
+    parseTokenFromHeaders,
+    parseUserIdFromToken
+} from '../lib/http'
 
 const nonNullGqlString = { type: new GraphQLNonNull(GraphQLString) }
 const interval = { type: GraphQLInt, description: "The interval (in days) with which schedules should be updated where interval >= 1." }
@@ -271,52 +274,9 @@ const mutationType = new GraphQLObjectType({
                     } )
                     .catch(err => { log.error(err); throw new Error('Invalid Request') })
             }
-        },
-        upsertDeviceToken: {
-            description: 'Add or update a users device token, for push notifications.',
-            type: Status,
-            args: {
-                deviceToken: nonNullGqlString,
-                deviceName: nonNullGqlString,
-            },
-            resolve: async (_root, args, context) => {
-                log.info('Upserting device token')
-                return parseTokenFromHeaders(context)
-                    .then(verifyAndDecodeToken)
-                    .then(parseUserIdFromToken)
-                    .then(userId => {
-                        log.info('Upserting  device token for: ', userId)
-                        upsertDeviceToken(userId,
-                            args.deviceToken,
-                            args.deviceName,
-                            `${Date.now()}`
-                        )
-                    }
-                    )
-                    .catch(err => { log.error(err); throw new Error('Invalid Request') })
-            }
         }
     })
 })
-
-const parseTokenFromHeaders = req => new Promise((resolve, _reject) =>
-    resolve([req]
-        .map(parseHeaders)
-        .map(parseAuthorization)
-        .map(bearer => bearer.split(' ')[1])[0]
-    ))
-
-const parseHeaders = req => {
-    if (req.headers == null) throw new Error('Missing headers')
-    return req.headers
-}
-
-const parseAuthorization = headers => {
-    if (headers.authorization == null) throw new Error('Missing authorization header')
-    return headers.authorization
-}
-
-const parseUserIdFromToken = token => token.uid
 
 export default new GraphQLSchema({
     mutation: mutationType,

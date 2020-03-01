@@ -77,7 +77,7 @@ export function verifyAndDecodeToken(token: string): Promise<object> {
   return admin.auth().verifyIdToken(token)
   .then(res => res)
   .catch(error => {
-    log.error(error)
+    log.error('Token verification error', JSON.stringify(error))
      throw new Error('invalid token')
     })
 }
