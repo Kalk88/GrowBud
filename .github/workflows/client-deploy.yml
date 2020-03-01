@@ -27,7 +27,7 @@ jobs:
       - name: Archive Production Artifact
         uses: actions/upload-artifact@v1
         with:
-          name: client-$GITUB_REF
+          name: client-$GITHUB_REF
           path: client/dist
   deploy:
     name: Deploy
