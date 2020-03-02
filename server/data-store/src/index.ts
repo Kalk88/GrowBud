@@ -52,7 +52,7 @@ app.post('/api/refreshToken', async (req, res) => {
   }
 })
 
-app.use('api/deviceTokens', deviceTokensRoutes)
+app.use('/api/deviceTokens', deviceTokensRoutes)
 
 if (process.env.NODE_ENV === 'development') {
   app.use('/graph/view', graphQLHTTP({
