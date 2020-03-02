@@ -19,7 +19,7 @@ export function insertDeviceToken(userId: string, deviceToken: string, deviceNam
 
     return db.collection(COLLECTION)
         .doc(userId)
-        .set({[deviceToken]: data})
+        .set({[deviceToken]: data}, {merge: true})
         .then(_ => data)
             .catch(error =>{
                 log.error('Could not insert device token', error)
