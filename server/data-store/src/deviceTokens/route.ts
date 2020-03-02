@@ -1,4 +1,4 @@
-import Router from 'express'
+import  express from 'express'
 import {
     parseTokenFromHeaders,
     parseUserIdFromToken
@@ -8,14 +8,14 @@ import * as log from '../logging'
 import {
   insertDeviceToken,
   removeDeviceToken
-} from '../lib/pushNotifcationToken'
+} from '../lib/pushNotificationToken'
 import {
   badRequestResponse,
   createdResponse,
   noContentResponse
 } from '../../express-helpers'
 
-const router = new Router()
+const router = express.Router()
 const removeTokenError = badRequestResponse({error: 'Token de-registration error'})
 
 router.use((req, res, next) => {
@@ -24,7 +24,7 @@ router.use((req, res, next) => {
     .then(parseUserIdFromToken)
     .then(userId => res.locals.userId = userId)
     .catch(error => log.error(error))
-    .finally(next())
+    .finally(() => next())
 })
 
 
