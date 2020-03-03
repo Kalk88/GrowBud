@@ -19,15 +19,29 @@ jobs:
           cd server/data-store
           npm install
           npm run tsc-build
-      - name: Push
+      - name: Push default
         env:
           FIREBASEAPIKEY: ${{secrets.FIREBASEAPIKEY}}
         run: |
           cd server/data-store
-          sed -i "s/fbapikey/$FIREBASEAPIKEY/g" app.yaml
+          cp app.yaml app.default.yaml
+          sed -i "s/fbapikey/$FIREBASEAPIKEY/g" app.default.yaml
       - uses: actions-hub/gcloud@master
         env:
           PROJECT_ID: ${{secrets.GCLOUD_PROJECT_ID}}
           APPLICATION_CREDENTIALS: ${{secrets.GOOGLE_APPLICATION_CREDENTIALS}}
         with:
-          args: app deploy server/data-store/app.yaml
+          args: app deploy server/data-store/app.default.yaml
+      - name: Push master
+        env:
+          FIREBASEAPIKEY: ${{secrets.MASTER_FIREBASE_APIKEY}}
+        run: |
+          cd server/data-store
+          cp app.yaml app.master.yaml
+          sed -i "s/fbapikey/$FIREBASEAPIKEY/g" app.master.yaml
+      - uses: actions-hub/gcloud@master
+        env:
+          PROJECT_ID: ${{secrets.MASTER_GCLOUD_PROJECT_ID}}
+          APPLICATION_CREDENTIALS: ${{secrets.MASTER_GOOGLE_APPLICATION_CREDENTIALS}}
+        with:
+          args: app deploy server/data-store/app.master.yaml
