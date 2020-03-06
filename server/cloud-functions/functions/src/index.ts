@@ -49,18 +49,16 @@ exports.notifySchedulesInRange = functions.region(region).https.onRequest((req, 
 })
 
 exports.pushNotifications = functions.region(region).pubsub.topic('send-push-notifications').onPublish((message) => {
+    return retrieveTokensByUserId(pushNotificationsCollection)(message.json.userId).then((tokens: []) => {
+        if (tokens.length > 0) {
+            const toPush = {
+                data: {hello: message.json.payload},
+                tokens
+            }
+            messaging.sendMulticast(toPush).then(logJSON('success')).catch(logJSON('error'))
 
-    logJSON('userId')(message.json.userId)
-    const registrationTokens = retrieveTokensByUserId(pushNotificationsCollection)(message.json.userId)
-    if (registrationTokens.length > 0) {
-        const toPush = {
-            data: {hello: message.json.payload},
-            tokens: registrationTokens,
         }
-
-        messaging.sendMulticast(toPush).then(logJSON('success')).catch(logJSON('error'))
-
-    }
+    })
 })
 
 /**
@@ -73,14 +71,15 @@ const formatMessage = (doc: any) => ({
 const retrieveTokensByUserId = (collection: FirebaseFirestore.CollectionReference): Function => (userId: string): Promise<Array<PushNotificationsToken>> => collection
     .doc(userId)
     .get()
-    .then(doc => {
+    .then((doc: FirebaseFirestore.DocumentSnapshot) => {
         if(doc.exists) {
-            return doc.data()
+            const data = doc.data()
+            if(data !== undefined) {
+                return Object.keys(data)
+            }
         }
-        return {}
+        return []
     })
-    .then(res => {logJSON('tokens'); return res})
-    .then(res => Object.keys(!!res))
     .catch(err => {
         logJSON('RetrieveTokensByUserId: ')(err)
         return []
