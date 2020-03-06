@@ -1,11 +1,16 @@
-import * as functions from 'firebase-functions';
+import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
+
+//import { PubSub } from '@google-cloud/pubsub'
 
 admin.initializeApp()
 const firestore = admin.firestore()
+const messaging = admin.messaging()
 const wateringSchedulesCollection = firestore.collection('wateringSchedules')
+const pushNotificationsCollection = firestore.collection('pushNotifications')
+const region = 'europe-west1'
 
-exports.notifySchedulesInRange = functions.region('europe-west1').https.onRequest((req, res) => {
+exports.notifySchedulesInRange = functions.region(region).https.onRequest((req, res) => {
     retrieveSchedulesEarlierThan(wateringSchedulesCollection)(`${Date.now()}`)
     .then((schedulesByUser: UserSchedules) => {
         logJSON('schedulesByUser')(schedulesByUser)
@@ -23,6 +28,12 @@ exports.notifySchedulesInRange = functions.region('europe-west1').https.onReques
                     return doc
                 }))
             .reduce((accumulator, current) => accumulator.concat(current))
+            /*
+        s.forEach(schedule => {
+            const payload = formatMessage(schedule)
+
+        })
+        */
         return Promise.all(
             s.map((doc: ScheduleDocument) => setSchedule(wateringSchedulesCollection)(doc.id)(doc.schedule))
         )
@@ -36,6 +47,44 @@ exports.notifySchedulesInRange = functions.region('europe-west1').https.onReques
         res.status(500).send({error: 'Something broke'})
     })
 })
+
+exports.pushNotifications = functions.region(region).pubsub.topic('send-push-notifications').onPublish((message) => {
+
+    logJSON('userId')(message.json.userId)
+    const registrationTokens = retrieveTokensByUserId(pushNotificationsCollection)(message.json.userId)
+    if (registrationTokens.length > 0) {
+        const toPush = {
+            data: {hello: message.json.payload},
+            tokens: registrationTokens,
+        }
+
+        messaging.sendMulticast(toPush).then(logJSON('success')).catch(logJSON('error'))
+
+    }
+})
+
+/**
+const formatMessage = (doc: any) => ({
+    title: 'Time to water!',
+    body: `${doc.map((item: any) => item.schedule.plants.map((plant: any) => plant.name).join(', '))} needs watering.`
+})
+*/
+
+const retrieveTokensByUserId = (collection: FirebaseFirestore.CollectionReference): Function => (userId: string): Promise<Array<PushNotificationsToken>> => collection
+    .doc(userId)
+    .get()
+    .then(doc => {
+        if(doc.exists) {
+            return doc.data()
+        }
+        return {}
+    })
+    .then(res => {logJSON('tokens'); return res})
+    .then(res => Object.keys(!!res))
+    .catch(err => {
+        logJSON('RetrieveTokensByUserId: ')(err)
+        return []
+    })
 
 /**
  *  Retrieves watering schedules from firebase.
@@ -105,9 +154,11 @@ interface UserSchedules {
 }
 
 type ScheduleDocument = {
-        id: DocumentId,
-        schedule: WateringSchedule
-    }
+    id: DocumentId,
+    schedule: WateringSchedule
+}
+
+type PushNotificationsToken = string
 type UserId = string
 type DocumentId = string
 type WateringSchedule = {
