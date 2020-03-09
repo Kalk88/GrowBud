@@ -46,3 +46,4 @@ jobs:
           args: deploy --only hosting:growbud-master
         env:
           GCP_SA_KEY: ${{ secrets.MASTER_GCP_SA_KEY }}
+          PROJECT-PATH: ./client
