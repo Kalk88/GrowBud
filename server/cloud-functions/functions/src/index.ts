@@ -1,7 +1,8 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 
-//import { PubSub } from '@google-cloud/pubsub'
+import { PubSub } from '@google-cloud/pubsub'
+const pubSubClient = new PubSub()
 
 admin.initializeApp()
 const firestore = admin.firestore()
@@ -9,6 +10,7 @@ const messaging = admin.messaging()
 const wateringSchedulesCollection = firestore.collection('wateringSchedules')
 const pushNotificationsCollection = firestore.collection('pushNotifications')
 const region = 'europe-west1'
+const NOTIFICATIONS_TOPIC = 'send-push-notifications'
 
 exports.notifySchedulesInRange = functions.region(region).https.onRequest((req, res) => {
     retrieveSchedulesEarlierThan(wateringSchedulesCollection)(`${Date.now()}`)
@@ -28,12 +30,19 @@ exports.notifySchedulesInRange = functions.region(region).https.onRequest((req, 
                     return doc
                 }))
             .reduce((accumulator, current) => accumulator.concat(current))
-            /*
         s.forEach(schedule => {
             const payload = formatMessage(schedule)
-
+            const message = Buffer.from(
+              JSON.stringify({
+                userId: schedule.schedule.userId,
+                payload
+              })
+            )
+            pubSubClient.topic(NOTIFICATIONS_TOPIC)
+            .publish(message)
+            .catch((error: any) => logJSON('Publish message error:')(error))
         })
-        */
+
         return Promise.all(
             s.map((doc: ScheduleDocument) => setSchedule(wateringSchedulesCollection)(doc.id)(doc.schedule))
         )
@@ -42,7 +51,7 @@ exports.notifySchedulesInRange = functions.region(region).https.onRequest((req, 
         logJSON('Successful update of schedules')(status)
         res.status(200).send(status)
     })
-    .catch((error: any) => {
+    .cyatch((error: any) => {
         logJSON('Error: ')(error)
         res.status(500).send({error: 'Something broke'})
     })
@@ -61,12 +70,10 @@ exports.pushNotifications = functions.region(region).pubsub.topic('send-push-not
     })
 })
 
-/**
 const formatMessage = (doc: any) => ({
     title: 'Time to water!',
     body: `${doc.map((item: any) => item.schedule.plants.map((plant: any) => plant.name).join(', '))} needs watering.`
 })
-*/
 
 const retrieveTokensByUserId = (collection: FirebaseFirestore.CollectionReference): Function => (userId: string): Promise<Array<PushNotificationsToken>> => collection
     .doc(userId)
