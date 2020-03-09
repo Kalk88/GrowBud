@@ -71,8 +71,15 @@
         >
       </div>
       <IncrementerButton class="incrementer-button" v-model="interval" />
+      
     </div>
     <div class="add-cancel-btn-grp">
+      <ui-button
+        v-if="scheduleToEdit"
+        :disabled="isFormDisabled"
+        @click="deleteWateringSchedule"
+        >Remove Schedule</ui-button
+      >
       <ui-button>Cancel</ui-button>
       <ui-button
         v-if="!scheduleToEdit"
@@ -96,7 +103,8 @@ import TimePicker from "../components/TimePicker.vue";
 import { mapGetters } from "vuex";
 import {
   ADD_WATERINGSCHEDULE,
-  UPDATE_WATERINGSCHEDULE
+  UPDATE_WATERINGSCHEDULE,
+  DELETE_WATERINGSCHEDULE
 } from "../api/wateringschedule";
 import { isEmpty } from "lodash";
 
@@ -194,6 +202,21 @@ export default {
         this.createSnackbar("Schedule Updated");
       } catch (error) {
         alert("Couldn't update schedule");
+      }
+    },
+
+    async deleteWateringSchedule() {
+      try{
+        await this.$apollo.mutate({
+          mutation: DELETE_WATERINGSCHEDULE,
+          variables:  {
+            scheduleId: this.scheduleToEdit.id
+          }
+        });
+        this.$router.push("/");
+        this.createSnackbar("Schedule Deleted");
+      } catch (error) {
+        alert("Couldn't delete schedule");
       }
     },
 
