@@ -51,7 +51,7 @@ exports.notifySchedulesInRange = functions.region(region).https.onRequest((req, 
         logJSON('Successful update of schedules')(status)
         res.status(200).send(status)
     })
-    .cyatch((error: any) => {
+    .catch((error: any) => {
         logJSON('Error: ')(error)
         res.status(500).send({error: 'Something broke'})
     })
