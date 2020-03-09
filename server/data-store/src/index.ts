@@ -2,11 +2,10 @@ require('dotenv').config()
 import express from 'express'
 import graphQLHTTP from 'express-graphql'
 import schema from './schema'
-import { refreshToken as rf, RefreshInfo, verifyAndDecodeToken } from './lib/auth'
-import { parseTokenFromHeaders, parseUserIdFromToken } from './lib/http'
-import { upsertDeviceToken } from './lib/pushNotifcationToken'
+import { refreshToken as rf, RefreshInfo} from './lib/auth'
 import cookieParser from 'cookie-parser'
 import * as log from './logging'
+import { deviceTokensRoutes } from './deviceTokens'
 const app = express()
 const port = process.env.PORT ? process.env.PORT : 9090
 const whitelist = process.env.WHITELIST ? process.env.WHITELIST.split(',') : []
@@ -53,20 +52,7 @@ app.post('/api/refreshToken', async (req, res) => {
   }
 })
 
-app.post('/api/deviceTokens', (req, res) => {
-  log.info('Registering device token')
-  const {deviceToken, deviceName } = req.body
-  parseTokenFromHeaders(req)
-    .then(verifyAndDecodeToken)
-    .then(parseUserIdFromToken)
-    .then(userId => upsertDeviceToken(userId, deviceToken, deviceName, `${Date.now()}`))
-    .then(status=> res.status(201).send(status))
-    .catch(error =>{
-      log.error(error)
-       res.status(400)
-       .send({error: 'Token registration error'})
-    })
-})
+app.use('/api/deviceTokens', deviceTokensRoutes)
 
 if (process.env.NODE_ENV === 'development') {
   app.use('/graph/view', graphQLHTTP({
