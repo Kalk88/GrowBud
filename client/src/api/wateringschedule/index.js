@@ -28,3 +28,11 @@ export const UPDATE_WATERINGSCHEDULE = gql`
         }
     }
 `
+
+export const DELETE_WATERINGSCHEDULE = gql`
+    mutation($scheduleId: String!){
+        deleteWateringSchedule(id: $scheduleId){
+            status
+        }
+    }
+`
