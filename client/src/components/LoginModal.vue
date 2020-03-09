@@ -2,7 +2,7 @@
   <div>
     <ui-modal ref="loginModal" :title="modalTitle">
       <div>
-        <div>
+        <div @keydown.enter="login">
           <ui-textbox
             class="login-email"
             v-model="authDetails.email"
