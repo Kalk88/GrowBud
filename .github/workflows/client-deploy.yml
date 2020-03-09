@@ -27,7 +27,7 @@ jobs:
       - name: Archive Production Artifact
         uses: actions/upload-artifact@v1
         with:
-          name: client-$GITHUB_REF
+          name: client-${GITHUB_REF}
           path: client/dist
   deploy:
     name: Deploy
@@ -39,7 +39,7 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@v1
         with:
-          name: client-$GITHUB_REF
+          name: client-${GITHUB_REF}
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@v1.3.0
         with:
