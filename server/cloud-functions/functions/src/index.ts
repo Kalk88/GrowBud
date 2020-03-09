@@ -15,7 +15,6 @@ const NOTIFICATIONS_TOPIC = 'send-push-notifications'
 exports.notifySchedulesInRange = functions.region(region).https.onRequest((req, res) => {
     retrieveSchedulesEarlierThan(wateringSchedulesCollection)(`${Date.now()}`)
     .then((schedulesByUser: UserSchedules) => {
-        logJSON('schedulesByUser')(schedulesByUser)
         if(Object.keys(schedulesByUser).length === 0) {
             return {
                 status: "No schedules to update"
@@ -28,24 +27,21 @@ exports.notifySchedulesInRange = functions.region(region).https.onRequest((req, 
                     data.schedules.map(doc => {
                         doc.schedule = setNextTimeToWater(doc.schedule)
                     return doc
-                }))
+                })
+            )
             .reduce((accumulator, current) => accumulator.concat(current))
+
         s.forEach(schedule => {
             const payload = formatMessage(schedule)
-            const message = Buffer.from(
-              JSON.stringify({
+            const message = JSON.stringify({
                 userId: schedule.schedule.userId,
                 payload
-              })
-            )
-            pubSubClient.topic(NOTIFICATIONS_TOPIC)
-            .publish(message)
-            .catch((error: any) => logJSON('Publish message error:')(error))
+            })
+            sendMessage(pubSubClient)(message).then(logJSON('success')).catch(logJSON('error'))
         })
-
         return Promise.all(
-            s.map((doc: ScheduleDocument) => setSchedule(wateringSchedulesCollection)(doc.id)(doc.schedule))
-        )
+                s.map((doc: ScheduleDocument) => setSchedule(wateringSchedulesCollection)(doc.id)(doc.schedule))
+            )
     })
     .then((status: any) => {
         logJSON('Successful update of schedules')(status)
@@ -57,22 +53,21 @@ exports.notifySchedulesInRange = functions.region(region).https.onRequest((req, 
     })
 })
 
-exports.pushNotifications = functions.region(region).pubsub.topic('send-push-notifications').onPublish((message) => {
+exports.pushNotifications = functions.region(region).pubsub.topic(NOTIFICATIONS_TOPIC).onPublish((message) => {
     return retrieveTokensByUserId(pushNotificationsCollection)(message.json.userId).then((tokens: []) => {
         if (tokens.length > 0) {
             const toPush = {
-                data: {hello: message.json.payload},
+                data: message.json.payload,
                 tokens
             }
             messaging.sendMulticast(toPush).then(logJSON('success')).catch(logJSON('error'))
-
         }
     })
 })
 
 const formatMessage = (doc: any) => ({
     title: 'Time to water!',
-    body: `${doc.map((item: any) => item.schedule.plants.map((plant: any) => plant.name).join(', '))} needs watering.`
+    body: `${doc.schedule.plants.map((plant: any) => plant.name).join(', ')} needs watering.`
 })
 
 const retrieveTokensByUserId = (collection: FirebaseFirestore.CollectionReference): Function => (userId: string): Promise<Array<PushNotificationsToken>> => collection
@@ -142,6 +137,7 @@ const setSchedule = (collection: FirebaseFirestore.CollectionReference): Functio
         status: error
     }
   })
+
 /**
  * Takes an schedule and updates the next time to water with the schedule interval
  * returns a new schedule object.
@@ -150,6 +146,17 @@ const setNextTimeToWater = (toUpdate: WateringSchedule): WateringSchedule => ({
     ...toUpdate,
     nextTimeToWater: (parseInt(toUpdate.nextTimeToWater) + (84600000 * toUpdate.interval)).toString()
 })
+
+const sendMessage = (client: any) => (message: string) => client
+    .topic(NOTIFICATIONS_TOPIC)
+    .publish(Buffer.from(message))
+    .then((res: any) => logJSON('res')(res))
+    .then(() => ({status: 'OK'}))
+    .catch((err: any) => {
+        logJSON('publish Error')(err)
+        return {status: 'ERROR'}
+    })
+
 
 const logJSON = (title: string) => (obj: object) => console.log(title, JSON.stringify(obj))
 
