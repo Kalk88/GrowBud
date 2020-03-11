@@ -1,6 +1,8 @@
 # compiled output
 **/dist
 **/build
+**/*.log
+**/.env
 
 # dependencies
 **/node_modules
