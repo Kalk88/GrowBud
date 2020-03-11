@@ -9,7 +9,7 @@ echo "Deploying all projects to $PROJECT_ID abort now if unsure!..."
 #Deploy data-store
 echo "Deploying data-store"
 cd server/data-store
-echo "$(pwd)"
+pwd
 npm install
 npm run build
 cp example.app.yaml $PROJECT_ID.app.yaml
@@ -22,7 +22,7 @@ cd ../../
 #Deploy client
 echo "Deploying client"
 cd client
-echo "$(pwd)"
+pwd
 npm install
 npm run build
 echo y | firebase deploy --only hosting:$PROJECT_ID
@@ -31,7 +31,7 @@ cd ../
 #Deploy cloud-functions
 echo "Deploying cloud functions"
 cd server/cloud-functions/functions
-echo "$(pwd)"
+pwd
 npm install
 npm run build
 echo y | firebase deploy --only functions --project=$PROJECT_ID
