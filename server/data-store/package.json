@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 0",
     "standard": "./node_modules/standard/bin/cmd.js --fix",
     "tsc-watch": "./node_modules/typescript/bin/tsc -w",
-    "tsc": "./node_modules/typescript/bin/tsc ",
+    "build": "tsc",
     "tsc-build": "./node_modules/typescript/bin/tsc -p tsconfig.json",
     "commit": "git-cz"
   },

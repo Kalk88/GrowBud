@@ -1,0 +1,5 @@
+runtime: nodejs12
+
+env_variables:
+  FIREBASEAPIKEY: "fbapikey"
+  WHITELIST: "https://growbud-master.web.app,https://growbud-master.firebaseapp.com"
