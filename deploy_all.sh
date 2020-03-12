@@ -13,8 +13,8 @@ pwd
 npm install
 npm run build
 cp example.app.yaml $PROJECT_ID.app.yaml
- sed -i "s/fbapikey/$FIREBASEAPIKEY/g" app.default.yaml
- sed -i "s/prjectId/$PROJECT_ID/g" app.default.yaml
+ sed -i "s/fbapikey/$FIREBASEAPIKEY/g" $PROJECT_ID.app.yaml
+ sed -i "s/prjectId/$PROJECT_ID/g" $PROJECT_ID.app.yaml
 echo y | gcloud app deploy $PROJECT_ID.app.yaml --project=$PROJECT_ID --promote
 rm $PROJECT_ID.app.yaml
 cd ../../

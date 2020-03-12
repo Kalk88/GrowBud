@@ -27,7 +27,7 @@ jobs:
           cd server/data-store
           cp example.app.yaml app.master.yaml
           sed -i "s/fbapikey/$FIREBASEAPIKEY/g" app.master.yaml
-          sed -i "s/prjectId/$PROJECT_ID/g" app.default.yaml
+          sed -i "s/projectId/$PROJECT_ID/g" app.master.yaml
       - uses: actions-hub/gcloud@master
         env:
           PROJECT_ID: ${{secrets.MASTER_GCLOUD_PROJECT_ID}}
