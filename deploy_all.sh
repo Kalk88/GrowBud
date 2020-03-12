@@ -3,6 +3,7 @@
 set -euo pipefail
 
 PROJECT_ID=$1
+FIREBASEAPIKEY=$2
 
 echo "Deploying all projects to $PROJECT_ID abort now if unsure!..."
 
