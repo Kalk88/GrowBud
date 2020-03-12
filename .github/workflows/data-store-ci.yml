@@ -31,7 +31,7 @@ jobs:
         run: |
           cd server/data-store
           npm install
-          npm run tsc
+          npm run build
           npm test
         env:
           CI: true
