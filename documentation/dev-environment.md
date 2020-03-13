@@ -10,6 +10,9 @@ All 3 projects should have the same project id e.g growbud-developer.
 # How to setup
 * Create a new firebase project and add an hosting app. Save the config variables in client/.env. Copy the example.env as a base
 * Create a new google cloud project
+    * enable cloud build for the project
+    * run ```gcloud app deploy --project=growbud-developer``` and select a region
+
 
 # Deploying
 Run the deploy_all.sh script with the environment name and firebase api key as arguments
