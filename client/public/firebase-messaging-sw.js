@@ -12,11 +12,10 @@ const messaging = firebase.messaging();//eslint-disable-line
 // implement this optional method.
 // [START background_handler]
 messaging.setBackgroundMessageHandler(function(payload) {
-  console.log('[firebase-messaging-sw.js] Received background message ', payload);//eslint-disable-line
   // Customize notification here
-  const notificationTitle = 'Background Message Title';
+  const notificationTitle = payload.data.title;
   const notificationOptions = {
-    body: 'Background Message body.',
+    body: payload.data.body,
     icon: '/firebase-logo.png'
   };
 
