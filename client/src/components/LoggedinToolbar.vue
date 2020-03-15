@@ -32,7 +32,7 @@ export default {
   }
 };
 </script>
-<style scoped>
+<style scoped lang="scss">
 nav {
   display: flex;
   flex-direction: row;
@@ -40,6 +40,7 @@ nav {
 
 nav > div {
   padding: 10px;
+  background: linear-gradient($primary, $secondary);
 }
 
 #addSchedule:hover {

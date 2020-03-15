@@ -273,7 +273,6 @@ export default {
   grid-template-columns: 1fr 2fr 1fr;
   grid-template-rows: 10rem;
   grid-row-gap: 1rem;
-  margin-top: 3rem;
   height: 100%;
 }
 
