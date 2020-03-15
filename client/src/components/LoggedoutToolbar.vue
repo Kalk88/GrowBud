@@ -33,8 +33,13 @@ export default {
   }
 };
 </script>
-<style scoped>
+<style scoped lang="scss">
 .signupbtn {
   margin-right: 1rem;
+}
+
+nav > div {
+  padding: 10px;
+  background: linear-gradient($primary, $secondary);
 }
 </style>
