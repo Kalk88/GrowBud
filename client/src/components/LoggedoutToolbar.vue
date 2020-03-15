@@ -1,5 +1,5 @@
 <template>
-  <ui-toolbar brand="Growbud">
+  <ui-toolbar :removeNavIcon="true" brand="Growbud">
     <div slot="actions">
       <ui-button raised @click="openModal('loginModal')"> Login</ui-button>
 
@@ -41,5 +41,6 @@ export default {
 nav > div {
   padding: 10px;
   background: linear-gradient($primary, $secondary);
+  
 }
 </style>

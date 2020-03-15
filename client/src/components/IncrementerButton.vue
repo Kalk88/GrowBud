@@ -1,6 +1,6 @@
 <template>
   <div class="incrementerbutton-wrapper">
-    <button class="sub_button" @click="subtract(), emitInputValueChange()">
+    <button class="sub_button primary-button" @click="subtract(), emitInputValueChange()">
       <ui-icon class="sub_button__icon" iconSet="material-icons">remove</ui-icon>
     </button>
     <input
@@ -10,7 +10,7 @@
       @input="emitInputValueChange()"
       @blur="replaceEmptyStringWithZero()"
     />
-    <button class="add_button" @click="add(), emitInputValueChange()">
+    <button class="add_button primary-button" @click="add(), emitInputValueChange()">
       <ui-icon class="add_button__icon" iconSet="material-icons">add</ui-icon>
     </button>
   </div>
@@ -65,13 +65,13 @@ export default {
 .incrementerbutton-wrapper {
   display: flex;
   flex-flow: row;
-  width: 3.5rem;
 }
 
 .add_button {
   display: flex;
   align-items: center;
-  width: 3.5rem;
+  justify-content: center;
+  width: 3rem;
   border-top-left-radius: 5px;
   border-top-right-radius: 25px;
   border-bottom-left-radius: 5px;
@@ -83,7 +83,8 @@ export default {
 .sub_button {
   display: flex;
   align-items: center;
-  width: 3.5rem;
+  justify-content: center;
+  width: 3rem;
   border-top-left-radius: 25px;
   border-top-right-radius: 5px;
   border-bottom-left-radius: 25px;
@@ -97,11 +98,14 @@ button:hover {
 }
 
 .value_input {
-  width: 2rem;
+  width: 3rem;
   height: 2.5rem;
   align-self: center;
   text-align: center;
   font-size: 18px;
+  border-radius: 15px;
+  border: 3px solid $secondary;
+  background: $body-warm;
 }
 
 .hide {

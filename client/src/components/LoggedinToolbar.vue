@@ -1,7 +1,7 @@
 <template>
-  <ui-toolbar title="Growbud">
+  <ui-toolbar :removeNavIcon="true" title="Growbud">
     <div slot="actions">
-      <ui-button id="addSchedule" @click="goToAddWateringSchedule">
+      <ui-button id="addSchedule primary-button" @click="goToAddWateringSchedule">
         Add a schedule
       </ui-button>
       <ui-button id="mySchedules" @click="goToMyWateringSchedules">
@@ -40,7 +40,7 @@ nav {
 
 nav > div {
   padding: 10px;
-  background: linear-gradient($primary, $secondary);
+  background: linear-gradient($secondary,$primary);
 }
 
 #addSchedule:hover {
