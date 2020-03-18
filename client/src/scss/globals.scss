@@ -2,10 +2,24 @@
   height: 2.9rem;
 }
 
-.timepicker::v-deep .ui-button {
-  height: 3rem;
+.primary-button{
+  background: linear-gradient($primary, $secondary);
+  border-radius: 15px;
 }
+
+::v-deep .ui-button.ui-button--type-secondary{
+  background: linear-gradient(45deg,$body-cold, $body-warm);
+  border-radius: 15px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: black;
+}
+
 
 ::v-deep .ui-textbox {
   border: none;
+}
+
+body{
+  background: linear-gradient($body-warm, $body-cold);
 }

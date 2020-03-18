@@ -1,5 +1,12 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper" @click="$emit('hide')">
+    <ui-button class="removeSchedule-btn"
+        v-if="scheduleToEdit"
+        :disabled="isFormDisabled"
+        @click="deleteWateringSchedule"
+        >Remove Schedule</ui-button
+      >
+      
     <div class="plants">
       <div class="plantInput">
         <input
@@ -39,6 +46,7 @@
     </div>
     <div class="calendar">
       <ui-datepicker
+      pickerType="modal"
         :class="
           this.validationErrorMessages.dateBeforeNow ? 'validationError' : ''
         "
@@ -60,12 +68,12 @@
     <div class="interval-selector">
       <div class="interval-btn-grp">
         <ui-button
-          :class="intervalModifier <= 1 ? 'selected' : 'unselected'"
+          :class="intervalModifier <= 1 ? 'selected-interval' : 'unselected-interval'"
           @click="setIntervalModifier(1)"
           >Days</ui-button
         >
         <ui-button
-          :class="intervalModifier > 1 ? 'selected' : 'unselected'"
+          :class="intervalModifier > 1 ? 'selected-interval' : 'unselected-interval'"
           @click="setIntervalModifier(7)"
           >Weeks</ui-button
         >
@@ -74,20 +82,16 @@
       
     </div>
     <div class="add-cancel-btn-grp">
-      <ui-button
-        v-if="scheduleToEdit"
-        :disabled="isFormDisabled"
-        @click="deleteWateringSchedule"
-        >Remove Schedule</ui-button
-      >
-      <ui-button>Cancel</ui-button>
-      <ui-button
+      
+      <ui-button type="secondary" @click="cancel" >Cancel</ui-button>
+      
+      <ui-button class="primary-button"
         v-if="!scheduleToEdit"
         :disabled="isFormDisabled"
         @click="addWateringSchedule"
         >Add schedule</ui-button
       >
-      <ui-button
+      <ui-button class="primary-button"
         v-if="scheduleToEdit"
         :disabled="isFormDisabled"
         @click="updateWateringSchedule"
@@ -180,7 +184,7 @@ export default {
             interval: this.calculatedInterval
           }
         });
-        this.$router.push("/");
+        this.$router.push("/myWateringSchedules");
         this.createSnackbar("Schedule Added");
       } catch (error) {
         alert("Couldn't add schedule");
@@ -198,7 +202,7 @@ export default {
             interval: this.calculatedInterval
           }
         });
-        this.$router.push("/");
+        this.$router.push("/myWateringSchedules");
         this.createSnackbar("Schedule Updated");
       } catch (error) {
         alert("Couldn't update schedule");
@@ -235,6 +239,10 @@ export default {
       this.intervalModifier = value;
     },
 
+    cancel(){
+      this.$router.push("/myWateringSchedules")
+    },
+
     validateFields() {
       this.validationErrorMessages = {};
 
@@ -268,26 +276,30 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
 .wrapper {
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  grid-template-rows: 10rem;
-  grid-row-gap: 1rem;
+  display: flex;
+  flex-direction: column;
   height: 100%;
+  overflow: hidden;
 }
 
 .plantInput {
   position: relative;
+  flex: 0 0 auto;
   input {
     padding: 0.75rem;
     font-family: "Roboto", sans-serif;
-    border: 0px solid;
-    background-color: lightgrey;
-    border-radius: 5px;
+    border: 1px solid;
+    background-color: $body-cold;
+    border-color: $dark;
+    border-radius: 12px;
+    width: 100%;
+    box-sizing: border-box;
   }
   input:focus {
     border: 1px solid;
-    border-color: grey;
+    border-color: $secondary;
   }
   .input__icon {
     position: absolute;
@@ -303,27 +315,32 @@ export default {
 }
 
 .plants {
-  display: flex;
-  grid-column: 2;
-  grid-row: 1;
+  display:flex;
+  flex-direction: column;
+  margin: 1rem 1rem 0;
 }
 
 .plants--list {
-  padding: 0;
-  width: 50%;
-  overflow: scroll;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  margin-top: 1rem;
+  min-height: 5rem;
+  max-height: 10rem;
+  align-self: center;
 
   .validationError--text {
     position: relative;
-    margin-left: 1rem;
     top: 1rem;
   }
 
   ul {
     list-style: none;
-    display: inline-flex;
+    display: flex;
     flex-wrap: wrap;
     margin: 0;
+    padding: 0;
+    justify-content: space-between;
+
   }
 
   li {
@@ -338,20 +355,34 @@ export default {
 }
 
 .calendar {
-  width: 16.5rem;
-  grid-column: 2;
-  grid-row: 2;
-  justify-self: flex-start;
+  margin-top: 1rem;
+  align-self: center;
+  width: 55%;
+
+  ::v-deep .ui-datepicker-calendar__header{
+    background-color: $secondary;
 }
+
+::v-deep .ui-calendar-week__date.is-selected{
+    background-color: $primary;
+}
+::v-deep .ui-calendar-week__date.is-today{
+  color: $secondary;
+}
+  
+}
+
+
 
 .timepicker {
   display: flex;
-  flex-direction: row;
-  justify-self: center;
-  margin-left: 1rem;
-  grid-column: 2;
-  grid-row: 2;
+  flex-direction: column;
+  align-self: center;
+  margin-top: 1rem;
 
+::v-deep .ui-button{
+  width: 10rem;
+}
   span {
     margin-left: 1rem;
   }
@@ -359,14 +390,20 @@ export default {
 
 .interval-btn-grp {
   align-self: center;
-  margin-right: 1rem;
+  justify-content: space-around;
+  display: flex;
+  flex-direction: column;
+  flex: 0;
+
+  ::v-deep .ui-button:nth-child(2){
+    margin-top: 0.5rem;
+  }
 }
 
 .interval-selector {
-  grid-column: 2;
-  grid-row: 3;
   display: flex;
-  justify-self: flex-start;
+  margin-top: 2rem;
+  justify-content: space-around;
 }
 .incrementer-button {
   justify-self: start;
@@ -374,9 +411,32 @@ export default {
 }
 
 .add-cancel-btn-grp {
-  grid-column: 2;
-  grid-row: 4;
-  justify-self: flex-end;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  position: absolute;
+  bottom: 1rem;
+  width: 100%;
+}
+
+.removeSchedule-btn{
+  margin-top: 1rem;
+  margin-left: auto;
+  width: 40%;
+  border-radius: 15px;
+  background-color: $warning !important;
+
+}
+
+
+@media (min-width: $medium-viewport) {
+.wrapper {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: 10rem;
+  grid-row-gap: 1rem;
+  height: 100%;
+}
 }
 
 .validationError {
@@ -389,7 +449,16 @@ export default {
   align-self: center;
 }
 
-.selected {
-  background-color: green !important;
+.selected-interval{
+  background: linear-gradient($primary, $secondary);
+  border-radius: 15px;
+}
+
+.unselected-interval {
+  background: linear-gradient(45deg,$body-cold, $body-warm);
+  border-radius: 15px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: black;
 }
 </style>

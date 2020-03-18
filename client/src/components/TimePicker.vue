@@ -1,9 +1,7 @@
 <template>
   <div class="timepickerWrapper">
-    <ui-button
-      type="secondary"
-      class="btn popover-trigger"
-      @click="scrollValuesIntoView()"
+    <ui-button class="primary-button"
+      @click.stop="scrollValuesIntoView(), showDropdown=!showDropdown"
     >
       <span v-if="$attrs.value.length"
         >{{ formattedTime($attrs.value[0]) }}:{{
@@ -12,15 +10,14 @@
       >
       <ui-icon class="icon" iconSet="material-icons">add_alarm</ui-icon>
     </ui-button>
-    <ui-popover class="input" :readonly="true" @hide="emitInputValueChange">
-      <div class="dropdown">
-        <div>
+      <div v-if="showDropdown" class="dropdown">
+        <div class="list">
           <span class="listheader">Hours</span>
           <ul class="hours">
             <li
               v-for="hr in hours"
               :key="hr"
-              @click="
+              @click.stop="
                 (chosenHour = hr), setChosenHour($event), emitInputValueChange()
               "
               :class="hr === chosenHour ? 'selected' : ''"
@@ -29,13 +26,13 @@
             </li>
           </ul>
         </div>
-        <div>
+        <div class="list">
           <span class="listheader">Minutes</span>
           <ul class="minutes">
             <li
               v-for="min in minutes"
               :key="min"
-              @click="
+              @click.stop="
                 (chosenMinute = min),
                   setChosenMinute($event),
                   emitInputValueChange()
@@ -47,7 +44,6 @@
           </ul>
         </div>
       </div>
-    </ui-popover>
   </div>
 </template>
 
@@ -67,10 +63,20 @@ export default {
       this.chosenHour = this.$attrs.value[0];
       this.chosenMinute = this.$attrs.value[1];
     }
+    this.scrollValuesIntoView()
+  },
+
+  mounted() {
+    this.$parent.$on('hide', ()=>{
+      if(this.showDropdown === true){
+        this.showDropdown = false;
+      }
+    })
   },
 
   data() {
     return {
+      showDropdown: false,
       hours: Array.from(Array(24).keys()),
       minutes: Array.from(Array(59).keys(), x => (x = x + 1)),
       chosenHour: 0,
@@ -104,32 +110,33 @@ export default {
         return time;
       }
     },
+
     scrollValuesIntoView() {
       setTimeout(() => {
-        if (this.chosenHourElem === null && this.chosenMinuteElem === null) {
-          const hoursChildren = Array.from(
-            document.querySelector(".hours").children
-          );
-          const minutesChildren = Array.from(
-            document.querySelector(".minutes").children
-          );
-          const hourSelectedElem = hoursChildren.filter(
-            li => li.className === "selected"
-          );
-          const minutesSelectedElem = minutesChildren.filter(
-            li => li.className === "selected"
-          );
-
-          this.chosenHourElem = hourSelectedElem[0];
-          this.chosenMinuteElem = minutesSelectedElem[0];
-
-          this.chosenHourElem.scrollIntoView({ block: "center" });
-          this.chosenMinuteElem.scrollIntoView({ block: "center" });
-        } else {
-          this.chosenHourElem.scrollIntoView({ block: "center" });
-          this.chosenMinuteElem.scrollIntoView({ block: "center" });
+        if(!this.showDropdown){
+          return
         }
-      }, 50); // timeout is needed so that the dropdown can render before scroll
+       
+        const hoursChildren = Array.from(
+          document.querySelector(".hours").children
+        );
+        const minutesChildren = Array.from(
+          document.querySelector(".minutes").children
+        );
+        const hourSelectedElem = hoursChildren.filter(
+          li => li.className === "selected"
+        );
+        const minutesSelectedElem = minutesChildren.filter(
+          li => li.className === "selected"
+        );
+
+        this.chosenHourElem = hourSelectedElem[0];
+        this.chosenMinuteElem = minutesSelectedElem[0];
+
+        this.chosenHourElem.scrollIntoView({behavior: 'smooth' , block: 'center'});
+        this.chosenMinuteElem.scrollIntoView({ behavior: 'smooth' , block: 'center'});
+          
+      }, 10); // timeout is needed so that the dropdown can render before scroll
     }
   }
 };
@@ -140,6 +147,10 @@ export default {
   max-height: 3rem;
 }
 
+::v-deep .ui-button{
+  height: 3rem;
+}
+
 .btn {
   border-bottom: 1px solid lightgrey;
 }
@@ -147,10 +158,20 @@ export default {
   margin-left: 1rem;
 }
 
+::v-deep .ui-popover{
+  border-radius: 25px;
+}
+
 .dropdown {
+  position: absolute;
   display: flex;
   flex-direction: row;
-  height: 10rem;
+  max-height: 12rem;
+  background: $body-cold;
+  border:2px solid black;
+  z-index: 100;
+  border-radius: 15px;
+  overflow: hidden;
 
   div {
     overflow-y: scroll;
@@ -162,7 +183,7 @@ export default {
     .listheader {
       position: sticky;
       display: block;
-      background: white;
+      background: $body-cold;
       padding-top: 0.5rem;
       top: 0px;
       z-index: 10;

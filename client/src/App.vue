@@ -31,9 +31,7 @@ body {
   font-family: "Roboto", sans-serif;
 }
 .layout-body {
-  background: linear-gradient($body-cold, $body-warm);
   width: 100%;
-  height: 100vh;
   @media screen and (max-width: 600px) {
     padding-left: 0;
   }

@@ -1,8 +1,9 @@
 $primary: #66a842;
 $secondary: #00b05d;
+$warning: #b01700;
 
-$body-cold: #f6edd9;
-$body-warm: #f6fbf2;
+$body-warm: #f6edd9;
+$body-cold: #f6fbf2;
 
 $shade-primary: #e9c563;
 $shade-secondary: #ffd38a;
@@ -15,3 +16,14 @@ $brand-accent-color: #ff4081;
 ::v-deep .ui-datepicker__display {
   height: 2.1rem;
 }
+
+$mobile-viewport: 37.5rem;
+$medium-viewport: 62rem;
+$desktop-viewport: 75rem;
+
+// @custom-media --small-viewport (min-width: 37.5rem); /* 600px */
+// @custom-media --medium-viewport (min-width: 56.25rem); /* 900px */
+// @custom-media --large-viewport (min-width: 62rem); /* 992px */
+// @custom-media --huge-viewport (min-width: 70rem); /* 1120px */
+// @custom-media --enormous-viewport (min-width: 75rem); /* 1200px */
+// @custom-media --ludicrous-viewport (min-width: 88rem); /* 1408px */
