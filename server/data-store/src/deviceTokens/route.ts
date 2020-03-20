@@ -23,7 +23,7 @@ router.use((req, res, next) => {
     .then(verifyAndDecodeToken)
     .then(parseUserIdFromToken)
     .then(userId => res.locals.userId = userId)
-    .catch(error => log.error(error))
+    .catch(log.error)
     .finally(() => next())
 })
 
@@ -34,7 +34,7 @@ router.post('/', (req, res) => {
   log.info('Registering device token for user: ', userId)
   return insertDeviceToken(userId, deviceToken, deviceName, `${Date.now()}`)
     .then(status=> createdResponse(status)(res))
-    .catch(error =>{
+    .catch(error => {
       log.error(error)
        badRequestResponse({error: 'Token registration error'})(res)
     })
