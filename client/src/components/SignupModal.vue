@@ -1,5 +1,5 @@
 <template>
-  <ui-modal ref="signupModal" @hide="onDialogHide" :title="modalTitle">
+  <ui-modal ref="signupModal" :title="modalTitle">
     <div>
       <div>
         <ui-textbox v-model="userName" outlined type="text" label="Username" />
@@ -22,16 +22,10 @@
 
 <script>
 import { REGISTER_USER } from "../api/auth";
-import { UiButton, UiTextbox, UiModal } from "keen-ui";
 
 export default {
   name: "SignupCard",
-  components: {
-    UiButton,
-    UiTextbox,
-    UiModal
-  },
-
+ 
   props: {
     showModal: {
       type: Boolean,
@@ -55,9 +49,6 @@ export default {
   },
 
   methods: {
-    onDialogHide() {
-      this.$emit("hideSignupModal", false);
-    },
 
     async register() {
       let UserObject = await this.$apollo.mutate({
@@ -68,6 +59,7 @@ export default {
           password: this.password
         }
       });
+      this.$refs["signupModal"].close();
       const JWT = UserObject.data.register.JWT;
       localStorage.setItem("JWT", JWT);
     }
@@ -76,21 +68,5 @@ export default {
 </script>
 
 <style scoped>
-.q-dialog {
-  max-width: 20rem;
-  float: right;
-}
-.q-card {
-  padding: 2rem;
-  background: cornsilk;
-}
 
-.card-title {
-  margin-bottom: 1rem;
-}
-.q-input {
-  width: 20rem;
-  margin-bottom: 1rem;
-  background-color: whitesmoke;
-}
 </style>

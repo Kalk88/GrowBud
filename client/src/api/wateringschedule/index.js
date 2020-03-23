@@ -12,7 +12,7 @@ export const ADD_WATERINGSCHEDULE = gql`
 
 export const GET_MY_WATERINGSCHEDULES = gql`
     query {
-        wateringScheduleForUser {
+        schedules: wateringScheduleForUser {
             id
             plants { name }
             nextTimeToWater

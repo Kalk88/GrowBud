@@ -1,17 +1,28 @@
-$primary: #66a842;
+$primary: #00b05d;
+$primary-light: #50aa8d;
+$primary-dark: #189b4a;
+
 $secondary: #00b05d;
 $warning: #b01700;
 
-$body-warm: #f6edd9;
-$body-cold: #f6fbf2;
+$body-warm: #2F5E4E;
+$body-cold: #50aa8d;
 
-$shade-primary: #e9c563;
-$shade-secondary: #ffd38a;
+$shade-primary: #D8FF99;
+$shade-secondary: #F4FF99;
 
-$dark: #001d00;
+$dark: #020024;
 
 $brand-primary-color: #673ab7;
 $brand-accent-color: #ff4081;
+
+
+$forest-primary: #50aa8d;
+$forest-secondary: #2F5E4E;
+
+$standard-border-radius: 6px;
+
+//#F4FF99 #EFFF99
 
 ::v-deep .ui-datepicker__display {
   height: 2.1rem;

@@ -1,12 +1,25 @@
 <template>
-  <div>OOOGABOOGA</div>
+  <div>
+    <AuthButtonsAndModals v-if="!isLoggedin" />
+  </div>
 </template>
 
 <style>
 </style>
 
 <script>
+
+import AuthButtonsAndModals from '../components/AuthButtonsAndModals';
+import {mapState} from 'vuex'
+
 export default {
-  name: "PageHome"
+  name: "Home",
+  components: {
+    AuthButtonsAndModals
+  },
+
+  computed: mapState(["isLoggedin"]),
+
+
 };
 </script>

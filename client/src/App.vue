@@ -1,8 +1,7 @@
 <template>
   <div>
     <nav class="layout-header">
-      <LoggedoutToolbar v-if="!isLoggedin" />
-      <LoggedinToolbar v-else-if="isLoggedin" />
+      <Toolbar />
     </nav>
     <main class="layout-body">
       <router-view />
@@ -12,17 +11,13 @@
 </template>
 
 <script>
-import LoggedoutToolbar from "./components/LoggedoutToolbar.vue";
-import LoggedinToolbar from "./components/LoggedinToolbar.vue";
-import { mapState } from "vuex";
+import Toolbar from "./components/Toolbar.vue";
 
 export default {
   name: "MyLayout",
   components: {
-    LoggedoutToolbar,
-    LoggedinToolbar
+    Toolbar
   },
-  computed: mapState(["isLoggedin"])
 };
 </script>
 

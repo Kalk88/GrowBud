@@ -1,12 +1,5 @@
 <template>
   <div class="wrapper" @click="$emit('hide')">
-    <ui-button class="removeSchedule-btn"
-        v-if="scheduleToEdit"
-        :disabled="isFormDisabled"
-        @click="deleteWateringSchedule"
-        >Remove Schedule</ui-button
-      >
-      
     <div class="plants">
       <div class="plantInput">
         <input
@@ -108,7 +101,6 @@ import { mapGetters } from "vuex";
 import {
   ADD_WATERINGSCHEDULE,
   UPDATE_WATERINGSCHEDULE,
-  DELETE_WATERINGSCHEDULE
 } from "../api/wateringschedule";
 import { isEmpty } from "lodash";
 
@@ -206,21 +198,6 @@ export default {
         this.createSnackbar("Schedule Updated");
       } catch (error) {
         alert("Couldn't update schedule");
-      }
-    },
-
-    async deleteWateringSchedule() {
-      try{
-        await this.$apollo.mutate({
-          mutation: DELETE_WATERINGSCHEDULE,
-          variables:  {
-            scheduleId: this.scheduleToEdit.id
-          }
-        });
-        this.$router.push("/");
-        this.createSnackbar("Schedule Deleted");
-      } catch (error) {
-        alert("Couldn't delete schedule");
       }
     },
 
@@ -346,8 +323,8 @@ export default {
   li {
     display: flex;
     align-items: center;
-    border: 1px solid;
-    background: $secondary;
+    background: $primary;
+    border: 2px solid $secondary;
     border-radius: 5px;
     padding: 0.25rem;
     margin: 0.1rem;
@@ -417,15 +394,6 @@ export default {
   position: absolute;
   bottom: 1rem;
   width: 100%;
-}
-
-.removeSchedule-btn{
-  margin-top: 1rem;
-  margin-left: auto;
-  width: 40%;
-  border-radius: 15px;
-  background-color: $warning !important;
-
 }
 
 
