@@ -1,6 +1,6 @@
 <template>
   <ui-toolbar :removeNavIcon="true" title="Growbud">
-    <div slot="actions">
+    <div slot="actions" v-if="isLoggedin">
       <ui-button class="mySchedules navbar-button" @click="goToMyWateringSchedules">
         My schedules
       </ui-button>
@@ -8,9 +8,13 @@
   </ui-toolbar>
 </template>
 <script>
-export default {
-  name: "LoggedinToolbar",
+import { mapState } from "vuex";
 
+export default {
+  name: "Toolbar",
+
+  computed: mapState(["isLoggedin"]),
+  
   methods: {
     goToMyWateringSchedules() {
       this.$router.push("myWateringSchedules").catch(err => {

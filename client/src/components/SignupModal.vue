@@ -59,6 +59,7 @@ export default {
           password: this.password
         }
       });
+      this.$refs["signupModal"].close();
       const JWT = UserObject.data.register.JWT;
       localStorage.setItem("JWT", JWT);
     }

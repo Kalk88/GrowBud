@@ -59,6 +59,7 @@ export default {
   created() {
     this.authDetails.email = "";
     this.authDetails.password = "";
+
   },
 
   methods: {
@@ -76,6 +77,10 @@ export default {
         this.$store.commit("setUserID", userID);
         this.$store.commit("setIsLoggedin", true);
         this.$store.commit("setInMemoryToken", { JWT, JWTExpiry });
+       
+        this.$refs["loginModal"].close();
+        this.$router.push("/myWateringSchedules")
+
         upsertPushTokenOnLogin(JWT);
       } catch (error) {
         console.log(error); //eslint-disable-line
@@ -86,10 +91,7 @@ export default {
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.q-dialog {
-  max-width: 20rem;
-  float: right;
-}
+
 .ui-card {
   padding: 2rem;
   background: cornsilk;
