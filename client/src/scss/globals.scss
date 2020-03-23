@@ -3,13 +3,18 @@
 }
 
 .primary-button{
-  background: linear-gradient($primary, $secondary);
-  border-radius: 15px;
+  background: linear-gradient($primary, $secondary 100%);
+  border-radius: 6px;
+}
+
+.navbar-button{
+  background: linear-gradient($primary-light);
+  border-radius: 6px;
 }
 
 ::v-deep .ui-button.ui-button--type-secondary{
   background: linear-gradient(45deg,$body-cold, $body-warm);
-  border-radius: 15px;
+  border-radius: 6px;
   border-width: 2px;
   border-style: solid;
   border-color: black;

@@ -40,7 +40,7 @@ export default {
 
 nav > div {
   padding: 10px;
-  background: linear-gradient($primary, $secondary);
+  background: linear-gradient(165deg, $primary-dark 0%, $primary 60%, $primary-light 100%);
   
 }
 </style>

@@ -1,20 +1,24 @@
 <template>
   <div>
-    <ol>
-      <MyWateringScheduleCard
+     <ui-button class="addSchedule-btn primary-button" @click="goToAddWateringSchedule">
+        Add a schedule
+      </ui-button>
+    <ul style="list-style:none;" v-if="schedules.length && !$apollo.loading">
+      <MyWateringScheduleCard 
         class="card"
         v-for="schedule in schedules"
         :key="schedule.id"
         :schedule="schedule"
+        @scheduleDeleted="deleteWateringSchedule(schedule.id)"
       />
-    </ol>
+    </ul>
     <div>{{ schedules.length }}</div>
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-import { GET_MY_WATERINGSCHEDULES } from "../api/wateringschedule";
+import { GET_MY_WATERINGSCHEDULES, DELETE_WATERINGSCHEDULE } from "../api/wateringschedule";
 import MyWateringScheduleCard from "../components/MyWateringScheduleCard.vue";
 export default {
   name: "MyWateringSchedules",
@@ -23,37 +27,55 @@ export default {
     MyWateringScheduleCard
   },
 
+   apollo: {
+    schedules: {
+      query: GET_MY_WATERINGSCHEDULES,
+    }
+  },
+
+
   data() {
     return {
       schedules: []
-    };
+    }
   },
+  
   computed: {
-    ...mapGetters(["getUserId", "isLoggedin"])
+    ...mapGetters(["getUserId", "isLoggedin"]),
   },
 
-  created() {
-    this.$store.subscribe(mutation => {
-      if (mutation.type === "setIsLoggedin") {
-        this.getMySchedules().then(data => (this.schedules = data));
-      }
-    });
-    if (this.isLoggedin) {
-      this.getMySchedules().then(data => (this.schedules = data));
-    }
-  },
-
-  methods: {
-    async getMySchedules() {
-      try {
-        const res = await this.$apollo.query({
-          query: GET_MY_WATERINGSCHEDULES
+  methods:{
+     async deleteWateringSchedule(id) {
+     try{
+        const res = await this.$apollo.mutate({
+          mutation: DELETE_WATERINGSCHEDULE,
+          variables:  {
+            scheduleId: id
+          }
         });
-        return res.data.wateringScheduleForUser;
+        if(res.data.deleteWateringSchedule.status){
+          this.createSnackbar("Schedule Deleted");
+          this.$apollo.queries.schedules.refetch();
+        }
       } catch (error) {
-        alert("No schedules could be fetched, please try again later");
+        alert("Couldn't delete schedule");
       }
-    }
+    },
+    
+    createSnackbar(title) {
+      this.$parent.$refs.snackbarContainer.createSnackbar({
+        message: title,
+        actionColor: "accent",
+        duration: 5 * 1000
+      });
+    },
+    goToAddWateringSchedule() {
+      this.$router.push("addWateringSchedule").catch(err => {
+        if (err.name !== "NavigationDuplicated") {
+          throw err;
+        }
+      });
+    },
   }
 };
 </script>
@@ -63,7 +85,26 @@ export default {
   margin-top: 0.5rem;
 }
 
-.card:nth-child(odd) {
-  background: #c0c0c0;
+
+.card:nth-child(even){
+  background: $shade-primary;
+}
+
+.card:nth-child(odd){
+  background: $shade-secondary;
+}
+
+.addSchedule-btn{
+  margin: 1rem;
+}
+
+.addSchedule-btn:hover{
+  background: linear-gradient($secondary, $primary 100%);
+}
+
+ul{
+  list-style: none;
+  margin: 0;
+  padding: 0 1rem 1rem;
 }
 </style>

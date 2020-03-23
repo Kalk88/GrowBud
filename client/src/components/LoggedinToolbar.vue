@@ -1,10 +1,7 @@
 <template>
   <ui-toolbar :removeNavIcon="true" title="Growbud">
     <div slot="actions">
-      <ui-button id="addSchedule primary-button" @click="goToAddWateringSchedule">
-        Add a schedule
-      </ui-button>
-      <ui-button id="mySchedules" @click="goToMyWateringSchedules">
+      <ui-button class="mySchedules navbar-button" @click="goToMyWateringSchedules">
         My schedules
       </ui-button>
     </div>
@@ -15,13 +12,6 @@ export default {
   name: "LoggedinToolbar",
 
   methods: {
-    goToAddWateringSchedule() {
-      this.$router.push("addWateringSchedule").catch(err => {
-        if (err.name !== "NavigationDuplicated") {
-          throw err;
-        }
-      });
-    },
     goToMyWateringSchedules() {
       this.$router.push("myWateringSchedules").catch(err => {
         if (err.name !== "NavigationDuplicated") {
@@ -40,13 +30,11 @@ nav {
 
 nav > div {
   padding: 10px;
-  background: linear-gradient($secondary,$primary);
+  background: linear-gradient(165deg, $primary-dark 0%, $primary 60%, $primary-light 100%);
 }
 
-#addSchedule:hover {
-  color: black;
-}
-#mySchedules:hover {
+
+.mySchedules:hover {
   color: black;
 }
 </style>
