@@ -24,9 +24,6 @@ export default {
     openModal(ref) {
       this.$refs[ref].$refs[ref].open();
     },
-    closeModal(ref) {
-      this.$refs[ref].$refs[ref].close();
-    }
   }
 };
 </script>
@@ -36,14 +33,14 @@ export default {
   display:flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 20%;
+  margin-top: 20vh;
 }
 
 .btn {
   font-size: 26px;
-  padding: 4rem 6rem;
   margin-top: 3rem;
-  width: 40%;
+  width: 80%;
+  height: 12vh;
   border-radius: 6px;
   box-shadow: 2px 5px 0px 0px #50aa8d;
 
