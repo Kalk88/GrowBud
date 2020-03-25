@@ -8,16 +8,18 @@
             v-model="authDetails.email"
             type="email"
             label="Email"
+            :floatingLabel="true"
           />
           <ui-textbox
             class="login-password"
             v-model="authDetails.password"
             type="password"
             label="Password"
+            :floatingLabel="true"
           />
         </div>
         <div slot="footer">
-          <ui-button size="large" @click="login">
+          <ui-button size="large primary-button btn" @click="login">
             Login
           </ui-button>
         </div>
@@ -29,15 +31,9 @@
 <script>
 import { LOGIN } from "../api/auth";
 import { upsertPushTokenOnLogin } from '../api/notifications'
-import { UiButton, UiTextbox, UiModal } from "keen-ui";
 
 export default {
   name: "AuthModal",
-  components: {
-    UiButton,
-    UiTextbox,
-    UiModal
-  },
 
   props: {
     show: {
@@ -90,19 +86,30 @@ export default {
 };
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 
-.ui-card {
-  padding: 2rem;
-  background: cornsilk;
-}
 
 .login-card-header {
   margin-bottom: 1rem;
 }
+
+::v-deep .ui-modal__body{
+  overflow-y: initial;
+}
+
+::v-deep .ui-modal__header{
+  background: $header-gradient;
+  box-shadow: 0 2px 2px 1px $body-warm;
+}
+
+::v-deep .ui-modal__container{
+  background-color: $primary-light;
+  width: 90%;
+  border-radius: $standard-border-radius;
+}
 .ui-textbox {
-  width: 20rem;
   margin-bottom: 1rem;
-  background-color: whitesmoke;
+  background-color: $shade-primary;
+  border-radius: $standard-border-radius;
 }
 </style>

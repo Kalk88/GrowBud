@@ -76,13 +76,13 @@ export default {
   justify-content: center;
   border-radius: 6px;
   padding: 0.5rem;
-  box-shadow: 1px 3px 0px 0px #50aa8d;
+  box-shadow: 1px 3px 0 0 #50aa8d;
 }
 
 .container:hover {
-  -webkit-box-shadow: inset 0px 0px 6px 2px #50aa8d;
-     -moz-box-shadow: inset 0px 0px 6px 2px #50aa8d;
-          box-shadow: inset 0px 0px 6px 2px #50aa8d;
+  -webkit-box-shadow: inset 0 0 6px 2px #50aa8d;
+     -moz-box-shadow: inset 0 0 6px 2px #50aa8d;
+          box-shadow: inset 0 0 6px 2px #50aa8d;
    outline: none;
 }
 
