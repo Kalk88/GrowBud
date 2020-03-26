@@ -42,15 +42,15 @@ export default {
   width: 80%;
   height: 12vh;
   border-radius: 6px;
-  box-shadow: 2px 5px 0px 0px #50aa8d;
+  box-shadow: 2px 5px 0 0 #50aa8d;
 
  
 }
 
 .btn:hover {
-  -webkit-box-shadow: inset 0px 0px 6px 2px #50aa8d;
-     -moz-box-shadow: inset 0px 0px 6px 2px #50aa8d;
-          box-shadow: inset 0px 0px 6px 2px #50aa8d;
+  -webkit-box-shadow: inset 0 0 6px 2px #50aa8d;
+     -moz-box-shadow: inset 0 0 6px 2px #50aa8d;
+          box-shadow: inset 0 0 6px 2px #50aa8d;
    outline: none;
 }
 
@@ -64,7 +64,7 @@ export default {
 
 nav > div {
   padding: 10px;
-  background: linear-gradient(165deg, $primary-dark 0%, $primary 60%, $primary-light 100%);
+  background: linear-gradient(165deg, $primary-light 0%, $primary-light 60%, $secondary 100%);
   
 }
 </style>

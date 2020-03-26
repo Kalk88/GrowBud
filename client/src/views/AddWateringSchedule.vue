@@ -286,7 +286,7 @@ export default {
 
   .input__icon:hover {
     cursor: pointer;
-    background-color: lightgrey;
+    background-color: $shade-primary;
     border-radius: 5px;
   }
 }

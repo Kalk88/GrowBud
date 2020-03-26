@@ -185,7 +185,7 @@ export default {
       display: block;
       background: $body-cold;
       padding-top: 0.5rem;
-      top: 0px;
+      top: 0;
       z-index: 10;
       width: 5rem;
     }

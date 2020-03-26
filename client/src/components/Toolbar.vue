@@ -34,7 +34,7 @@ nav {
 
 nav > div {
   padding: 10px;
-  background: linear-gradient(165deg, $primary-dark 0%, $primary 60%, $primary-light 100%);
+  background: $header-gradient;
 }
 
 
