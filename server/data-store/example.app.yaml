@@ -1,0 +1,5 @@
+runtime: nodejs12
+
+env_variables:
+  FIREBASEAPIKEY: "fbapikey"
+  WHITELIST: "https://projectId.web.app,https://projectId.firebaseapp.com"
