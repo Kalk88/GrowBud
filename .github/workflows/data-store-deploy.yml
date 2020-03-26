@@ -21,11 +21,13 @@ jobs:
           npm run tsc-build
       - name: Push default
         env:
+          PROJECT_ID: ${{secrets.GCLOUD_PROJECT_ID}}
           FIREBASEAPIKEY: ${{secrets.FIREBASEAPIKEY}}
         run: |
           cd server/data-store
-          cp app.yaml app.default.yaml
-          sed -i "s/fbapikey/$FIREBASEAPIKEY/g" app.default.yaml
+          cp example.app.yaml app.yaml
+          sed -i "s/projectId/$PROJECT_ID/g" app.yaml
+          sed -i "s/fbapikey/$FIREBASEAPIKEY/g" app.yaml
       - uses: actions-hub/gcloud@master
         env:
           PROJECT_ID: ${{secrets.GCLOUD_PROJECT_ID}}
@@ -34,10 +36,12 @@ jobs:
           args: app deploy server/data-store/app.default.yaml
       - name: Push master
         env:
+          PROJECT_ID: ${{secrets.MASTER_GCLOUD_PROJECT_ID}}
           FIREBASEAPIKEY: ${{secrets.MASTER_FIREBASE_APIKEY}}
         run: |
           cd server/data-store
-          cp app.yaml app.master.yaml
+          cp example.app.yaml app.master.yaml
+          sed -i "s/projectId/$PROJECT_ID/g" app.master.yaml
           sed -i "s/fbapikey/$FIREBASEAPIKEY/g" app.master.yaml
       - uses: actions-hub/gcloud@master
         env:
