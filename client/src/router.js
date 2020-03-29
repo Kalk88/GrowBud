@@ -5,10 +5,12 @@ import Home from "./views/Home.vue";
 import About from "./views/About.vue";
 import AddWateringSchedule from "./views/AddWateringSchedule.vue";
 import MyWateringSchedules from "./views/MyWateringSchedules.vue";
+import Profile from "./views/Profile.vue";
 
 Vue.use(Router);
 
 export default new Router({
+
   routes: [
     {
       path: "/",
@@ -27,25 +29,45 @@ export default new Router({
       props: {
         schedule: {}
       },
-      beforeRouteUpdate(to, from, next) {
-        if (store.state.isLoggedin) {
+      beforeRouteEnter(to, from, next){
+        if (store.getters.isLoggedin) {      
           next();
-        } else {
+        } else if (to !== '/'){
           next(false);
+        } else {
+          next('/')
         }
-      }
+      },
+    
     },
     {
       path: "/myWateringSchedules",
       name: "myWateringSchedules",
       component: MyWateringSchedules,
-      beforeRouteUpdate(to, from, next) {
-        if (store.state.isLoggedin) {
+      beforeRouteEnter(to, from, next){
+        if (store.getters.isLoggedin) {      
           next();
-        } else {
+        } else if (to !== '/'){
           next(false);
+        } else {
+          next('/')
         }
-      }
+      },
+
+    },
+    {
+      path: "/profile",
+      name: "profile",
+      component: Profile,
+      beforeRouteEnter(to, from, next){
+        if (store.getters.isLoggedin) {      
+          next();
+        } else if (to !== '/'){
+          next(false);
+        } else {
+          next('/')
+        }
+      },
     }
   ]
 });

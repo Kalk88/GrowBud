@@ -76,7 +76,9 @@ export default {
        
         this.$refs["loginModal"].close();
         this.$router.push("/myWateringSchedules")
-
+        if ( Notification.permission !="granted"){
+          Notification.requestPermission()
+        }
         upsertPushTokenOnLogin(JWT);
       } catch (error) {
         console.log(error); //eslint-disable-line

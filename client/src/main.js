@@ -62,6 +62,7 @@ window.setInterval(function () {
   store.dispatch('silentTokenRefresh');
 }, 360000);
 
+
 new Vue({
   router,
   store,

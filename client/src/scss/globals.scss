@@ -3,11 +3,16 @@
 }
 
 .primary-button{
-  background: radial-gradient($primary, $secondary);
+  background: radial-gradient($primary, $secondary) !important;
   border-radius: $standard-border-radius;
   -webkit-box-shadow: 2px 5px 0 0 $primary-dark;
   -moz-box-shadow: 2px 5px 0 0 $primary-dark;
   box-shadow: 2px 5px 0 0 $primary-dark;
+}
+
+.disabled-btn{
+  background: radial-gradient($primary, $secondary) !important;
+  color: $dark !important;
 }
 
 .primary-button:hover{
@@ -33,11 +38,16 @@
 }
 
 ::v-deep .ui-button.ui-button--type-secondary{
-  background: linear-gradient(45deg,$body-cold, $body-warm);
-  border-radius: 6px;
-  border-width: 2px;
-  border-style: solid;
-  border-color: black;
+  background: transparent;
+  border: 2px solid transparent;
+  
+}
+
+::v-deep .ui-button.ui-button--type-secondary:hover{
+  background-color: transparent !important;
+  border-radius: $standard-border-radius;
+  border: 2px solid $dark;
+  
 }
 
 
@@ -46,7 +56,7 @@
 }
 
 body{
-  background: linear-gradient($body-warm, $body-cold);
+  background: linear-gradient($body-cold, $body-warm);
 }
 
 ::v-deep .ui-textbox.is-active:not(.is-disabled) .ui-textbox__input{
