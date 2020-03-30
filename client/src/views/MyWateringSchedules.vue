@@ -3,7 +3,8 @@
      <ui-button class="addSchedule-btn primary-button" @click="goToAddWateringSchedule">
         Add a schedule
       </ui-button>
-    <ul style="list-style:none;" v-if="schedules.length && !$apollo.loading">
+    <div v-if="!$apollo.loading">
+    <ul style="list-style:none;" v-if="schedules.length">
       <MyWateringScheduleCard 
         class="card"
         v-for="schedule in schedules"
@@ -13,6 +14,9 @@
       />
     </ul>
     <div>{{ schedules.length }}</div>
+    </div>
+  <ui-progress-circular v-else></ui-progress-circular>
+    
   </div>
 </template>
 
@@ -27,12 +31,16 @@ export default {
     MyWateringScheduleCard
   },
 
-   apollo: {
+  apollo:{
     schedules: {
       query: GET_MY_WATERINGSCHEDULES,
     }
   },
 
+  created(){
+    
+    this.$apollo.queries.schedules.refetch();
+  },
 
   data() {
     return {
@@ -41,7 +49,7 @@ export default {
   },
   
   computed: {
-    ...mapGetters(["getUserId", "isLoggedin"]),
+    ...mapGetters(["isLoggedin"]),
   },
 
   methods:{

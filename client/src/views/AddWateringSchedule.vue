@@ -97,7 +97,6 @@
 <script>
 import IncrementerButton from "../components/IncrementerButton.vue";
 import TimePicker from "../components/TimePicker.vue";
-import { mapGetters } from "vuex";
 import {
   ADD_WATERINGSCHEDULE,
   UPDATE_WATERINGSCHEDULE,
@@ -141,7 +140,6 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["getUserId"]),
 
     timestamp() {
       if (this.time.length) {

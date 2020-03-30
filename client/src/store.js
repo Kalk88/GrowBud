@@ -32,8 +32,8 @@ export default new Vuex.Store({
   },
 
   getters: {
-    getUserId: state => {
-      return state.userID;
+    getJWT: state => {
+      return state.inMemoryToken.JWT;
     },
     isLoggedin: state => {
       return state.isLoggedin;
@@ -42,22 +42,25 @@ export default new Vuex.Store({
 
   actions: {
 
-    persistLogin(context){
-      refreshToken().then((response) => {
+    async persistLogin(context){
+      try{
+      const response = await refreshToken()
 
-        const {
-          JWT,
-          JWTExpiry
-        } = response.data;
+      const {
+        JWT,
+        JWTExpiry
+      } = response.data;
 
-        context.commit('setInMemoryToken', {
-          JWT,
-          JWTExpiry
-        });
+      context.commit('setInMemoryToken', {
+        JWT,
+        JWTExpiry
+      });
         
-        context.commit('setIsLoggedin', true)
-    })
-  },
+      context.commit('setIsLoggedin', true)
+    }catch(e){
+      console.error(e) //eslint-disable-line
+    }
+    },
 
     silentTokenRefresh(context) { //eslint-disable-line
       if (!this.state.inMemoryToken.JWT) {
