@@ -1,6 +1,7 @@
 import gql from 'graphql-tag';
 import axios from 'axios'
 import store from '../../store'
+import router from '../../router'
 
 var API = axios.create({
     baseURL: process.env.VUE_APP_API_BASE_URL,
@@ -14,7 +15,9 @@ API.interceptors.response.use((response) => {
     return response;
 }, (error) => {
     if (error.response && error.response.data) {
-        this.$router.push('home');
+        if(router.app._route.path !=='/'){
+            router.push('/');
+        }
         return Promise.reject(error.response.data);
     }
     return Promise.reject(error.message);
