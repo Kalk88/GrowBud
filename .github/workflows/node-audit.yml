@@ -24,7 +24,7 @@ jobs:
           npm audit
       - name: npm audit cloud-functions
         run: |
-          cd server/cloud-functions/functions
+          cd server/functions
           npm audit
       - name: npm audit data-store
         run: |
