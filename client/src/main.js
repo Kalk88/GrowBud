@@ -54,14 +54,17 @@ const apolloProvider = new VueApollo({
 
 Vue.config.productionTip = false
 
-if(store.getters.getUserId === "") {
-  store.dispatch('persistLogin');
-}
-
 window.setInterval(function () {
   store.dispatch('silentTokenRefresh');
 }, 360000);
 
+router.beforeEach((to,from,next) => {
+  if(!store.getters.getJWT.length){
+    store.dispatch('persistLogin').then(() => next())
+  }else{
+    next();
+  }
+})
 
 new Vue({
   router,
