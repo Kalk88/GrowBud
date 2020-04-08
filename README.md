@@ -3,6 +3,7 @@
 ## Run locally
 Install [firebase cli](https://firebase.google.com/docs/cli/) then ``` firebase serve ```.
 You might have to run npm install in sub folders such as client and server/functions.
+To serve cloud functions you need to run ```npm run build``` in the server/functions directory.
 
 ### Setup (Deprecated)
 Install [Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/) and [Docker compose](https://docs.docker.com/compose/install/).
