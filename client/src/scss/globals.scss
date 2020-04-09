@@ -56,7 +56,7 @@
 }
 
 body{
-  background: linear-gradient($body-cold, $body-warm);
+  background: $body;
 }
 
 ::v-deep .ui-textbox.is-active:not(.is-disabled) .ui-textbox__input{

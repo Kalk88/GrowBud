@@ -101,11 +101,12 @@ export default {
 
 ::v-deep .ui-modal__header{
   background: $header-gradient;
-  box-shadow: 0 2px 2px 1px $body-warm;
+  box-shadow: none;
+  border-bottom: 2px solid $primary-dark;
 }
 
 ::v-deep .ui-modal__container{
-  background-color: $primary-light;
+  background-color: $body-modal;
   width: 90%;
   border-radius: $standard-border-radius;
 }

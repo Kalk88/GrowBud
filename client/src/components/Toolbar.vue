@@ -1,5 +1,5 @@
 <template>
-  <ui-toolbar :removeNavIcon="true" title="Growbud">
+  <ui-toolbar :removeNavIcon="true" title="Growbud" type="colored" :raised="false" >
     <div class="navbar-buttons" slot="actions" v-if="isLoggedin">
       <ui-button class="mySchedules navbar-button" @click="goToMyWateringSchedules">
         My schedules
@@ -46,6 +46,7 @@ nav {
 nav > div {
   padding: 10px;
   background: $header-gradient;
+  border-bottom: 4px solid $body-warm;
 }
 
 ::v-deep .ui-icon{
