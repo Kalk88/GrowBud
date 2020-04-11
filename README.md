@@ -1,5 +1,9 @@
 # GrowBud
 
+## First time setup
+Install node and firebase CLI
+Run ``` install.sh ``` it will install npm packages.
+
 ## Run locally
 Install [firebase cli](https://firebase.google.com/docs/cli/) then ``` firebase serve ```.
 You might have to run npm install in sub folders such as client and server/functions.
