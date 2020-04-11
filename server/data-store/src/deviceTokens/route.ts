@@ -13,7 +13,7 @@ import {
   badRequestResponse,
   createdResponse,
   noContentResponse
-} from '../../express-helpers'
+} from '../express-helpers'
 
 const router = express.Router()
 const removeTokenError = badRequestResponse({error: 'Token de-registration error'})
