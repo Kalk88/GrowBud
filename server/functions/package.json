@@ -1,6 +1,7 @@
 {
   "name": "functions",
   "scripts": {
+    "lint": "standard",
     "serve": "firebase serve --only functions",
     "shell": "firebase functions:shell",
     "start": "npm run shell",
@@ -19,7 +20,8 @@
     "grpc": "^1.24.2"
   },
   "devDependencies": {
-    "firebase-functions-test": "^0.1.6"
+    "firebase-functions-test": "^0.1.6",
+    "standard": "^14.3.3"
   },
   "private": true
 }
