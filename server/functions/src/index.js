@@ -12,19 +12,19 @@ const NOTIFICATIONS_TOPIC = 'send-push-notifications'
 const logJSON = message => obj => console.log(message, JSON.stringify(obj))
 
 exports.notifySchedulesInRange = functions.region(region).https.onRequest((req, res) => {
-    return notifications.notifySchedulesInRange(wateringSchedulesCollection, NOTIFICATIONS_TOPIC)
+  return notifications.notifySchedulesInRange(wateringSchedulesCollection, NOTIFICATIONS_TOPIC)
     .then((status) => {
-        logJSON('Successful update of schedules')(status)
-        res.status(200).send(status)
+      logJSON('Successful update of schedules')(status)
+      res.status(200).send(status)
     })
     .catch((error) => {
-        logJSON('Error: ')(error)
-        res.status(500).send({error: 'Something broke'})
+      logJSON('Error: ')(error)
+      res.status(500).send({ error: 'Something broke' })
     })
 })
 
 exports.pushNotifications = functions.region(region).pubsub.topic(NOTIFICATIONS_TOPIC).onPublish((message) => {
-    return notifications.pushNotifications(pushNotificationsCollection, message)
- })
+  return notifications.pushNotifications(pushNotificationsCollection, message)
+})
 
- exports.dataStore = functions.region(region).https.onRequest(dataStore.app)
+exports.dataStore = functions.region(region).https.onRequest(dataStore.app)
