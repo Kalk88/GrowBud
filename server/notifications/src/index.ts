@@ -1,19 +1,13 @@
-import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
-
 import { PubSub } from '@google-cloud/pubsub'
 const pubSubClient = new PubSub()
 
 admin.initializeApp()
 const firestore = admin.firestore()
 const messaging = admin.messaging()
-const wateringSchedulesCollection = firestore.collection('wateringSchedules')
-const pushNotificationsCollection = firestore.collection('pushNotifications')
-const region = 'europe-west1'
-const NOTIFICATIONS_TOPIC = 'send-push-notifications'
 
-exports.notifySchedulesInRange = functions.region(region).https.onRequest((req, res) => {
-    retrieveSchedulesEarlierThan(wateringSchedulesCollection)(`${Date.now()}`)
+exports.notifySchedulesInRange = (collection: FirebaseFirestore.CollectionReference, notificationTopic: string) => {
+    return retrieveSchedulesEarlierThan(collection)(`${Date.now()}`)
     .then((schedulesByUser: UserSchedules) => {
         if(Object.keys(schedulesByUser).length === 0) {
             return {
@@ -37,24 +31,16 @@ exports.notifySchedulesInRange = functions.region(region).https.onRequest((req, 
                 userId: schedule.schedule.userId,
                 payload
             })
-            sendMessage(pubSubClient)(message).then(logJSON('success')).catch(logJSON('error'))
+            sendMessage(pubSubClient)(notificationTopic)(message).then(logJSON('success')).catch(logJSON('error'))
         })
         return Promise.all(
-                s.map((doc: ScheduleDocument) => setSchedule(wateringSchedulesCollection)(doc.id)(doc.schedule))
+                s.map((doc: ScheduleDocument) => setSchedule(collection)(doc.id)(doc.schedule))
             )
     })
-    .then((status: any) => {
-        logJSON('Successful update of schedules')(status)
-        res.status(200).send(status)
-    })
-    .catch((error: any) => {
-        logJSON('Error: ')(error)
-        res.status(500).send({error: 'Something broke'})
-    })
-})
+}
 
-exports.pushNotifications = functions.region(region).pubsub.topic(NOTIFICATIONS_TOPIC).onPublish((message) => {
-    return retrieveTokensByUserId(pushNotificationsCollection)(message.json.userId).then((tokens: []) => {
+exports.pushNotifications = (collection: FirebaseFirestore.CollectionReference, message:any) => {
+    return retrieveTokensByUserId(collection)(message.json.userId).then((tokens: []) => {
         if (tokens.length > 0) {
             const toPush = {
                 data: message.json.payload,
@@ -63,7 +49,7 @@ exports.pushNotifications = functions.region(region).pubsub.topic(NOTIFICATIONS_
             messaging.sendMulticast(toPush).then(logJSON('success')).catch(logJSON('error'))
         }
     })
-})
+}
 
 const formatMessage = (doc: any) => ({
     title: 'Time to water!',
@@ -147,8 +133,8 @@ const setNextTimeToWater = (toUpdate: WateringSchedule): WateringSchedule => ({
     nextTimeToWater: (parseInt(toUpdate.nextTimeToWater) + (84600000 * toUpdate.interval)).toString()
 })
 
-const sendMessage = (client: any) => (message: string) => client
-    .topic(NOTIFICATIONS_TOPIC)
+const sendMessage = (client: any) => (topic: string) => (message: string) => client
+    .topic(topic)
     .publish(Buffer.from(message))
     .then((res: any) => logJSON('res')(res))
     .then(() => ({status: 'OK'}))
