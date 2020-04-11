@@ -1,13 +1,14 @@
 require('dotenv').config()
 import express from 'express'
+
 import graphQLHTTP from 'express-graphql'
 import schema from './schema'
 import { refreshToken as rf, RefreshInfo} from './lib/auth'
 import cookieParser from 'cookie-parser'
 import * as log from './logging'
 import { deviceTokensRoutes } from './deviceTokens'
+
 const app = express()
-const port = process.env.PORT ? process.env.PORT : 9090
 const whitelist = process.env.WHITELIST ? process.env.WHITELIST.split(',') : []
 
 app.use(express.json())
@@ -74,7 +75,4 @@ app.use((err: any, _req: any, res: any, _next: any) => {
   res.status(500).send('Something broke!')
 })
 
-// start the Express server
-app.listen(port, () => {
-  log.info(`server started.`)
-})
+exports.app = app
