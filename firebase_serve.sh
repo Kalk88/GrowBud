@@ -15,6 +15,6 @@ npm --prefix server/notifications run build
 npm --prefix server/data-store run tsc-build
 # If all builds pass copy to functions src folder
 cp -r server/notifications/lib server/functions/src/notifications
-cp -r server/data-store/dist server/functions/src/data-store
+cp -r server/data-store/dist/src server/functions/src/data-store
 
 firebase serve
