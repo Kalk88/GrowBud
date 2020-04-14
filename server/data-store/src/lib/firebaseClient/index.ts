@@ -4,9 +4,8 @@ import * as admin from 'firebase-admin'
 admin.initializeApp({
     credential: admin.credential.applicationDefault(),
     databaseURL: "https://growbud-50ed4.firebaseio.com"
-})
+}, 'datastore')
 const db = admin.firestore()
-
 
 export {
     admin,

@@ -1,9 +1,9 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
-const notifications = require('../../notifications/lib/index')
-const dataStore = require('../../data-store/dist/src/index')
+const notifications = require('./notifications/lib/index')
+const dataStore = require('./data-store/dist/src/index')
 
-admin.initializeApp()
+admin.initializeApp({}, 'func')
 const firestore = admin.firestore()
 const wateringSchedulesCollection = firestore.collection('wateringSchedules')
 const pushNotificationsCollection = firestore.collection('pushNotifications')
