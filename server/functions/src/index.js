@@ -1,7 +1,7 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
-const notifications = require('./notifications/lib/index')
-const dataStore = require('./data-store/dist/src/index')
+const notifications = require('./notifications/index')
+const dataStore = require('./data-store/index')
 
 admin.initializeApp({}, 'func')
 const firestore = admin.firestore()

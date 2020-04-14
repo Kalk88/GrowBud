@@ -23,11 +23,17 @@
   "functions": {
     "source": "server/functions",
     "predeploy": [
+      "rm -rf server/functions/src/data-store",
+      "rm -rf server/functions/src/notifications",
       "npm --prefix \"server/functions\" run lint",
       "npm --prefix \"server/data-store\" run tsc-build",
       "npm --prefix \"server/notifications\" run build",
-      "cp -r server/data-store/dist server/functions/src/data-store",
+      "cp -r server/data-store/dist/src server/functions/src/data-store",
       "cp -r server/notifications/lib server/functions/src/notifications"
+    ],
+    "postdeploy": [
+      "rm -rf server/functions/src/data-store",
+      "rm -rf server/functions/src/notifications"
     ]
   }
 }

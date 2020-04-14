@@ -11,3 +11,5 @@ package.json
 
 # editors
 .vscode
+
+.firebase/
