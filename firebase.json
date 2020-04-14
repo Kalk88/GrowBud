@@ -24,7 +24,10 @@
     "source": "server/functions",
     "predeploy": [
       "npm --prefix \"server/functions\" run lint",
-      "npm --prefix \"server/functions\" run build"
+      "npm --prefix \"server/data-store\" run tsc-build",
+      "npm --prefix \"server/notifications\" run build",
+      "cp -r server/data-store/dist server/functions/src/data-store",
+      "cp -r server/notifications/lib server/functions/src/notifications"
     ]
   }
 }
