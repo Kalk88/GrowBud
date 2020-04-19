@@ -20,13 +20,9 @@ jobs:
           cd client
           npm install
           npm run lint
-      - name: Build
-        run: |
-          cd client
-          npm run build
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@v1.3.0
         with:
-          args: deploy --only hosting:growbud-master
+          args: deploy --only hosting
         env:
-          GCP_SA_KEY: ${{ secrets.MASTER_GCP_SA_KEY }}
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
