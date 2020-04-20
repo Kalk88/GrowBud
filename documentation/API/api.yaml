@@ -15,7 +15,7 @@ paths:
   /auth/login:
     post:
       tags:
-       - auth
+       - Authentication
       description: Login a user to Growbud. On successful authentication a refresh token header is alo returned.
       requestBody:
        content:
@@ -29,15 +29,27 @@ paths:
 
   /auth/logout:
     post:
+      tags:
+       - Authentication
+      description: Log out a user form Growbud.
       parameters:
         - authorization:
           $ref: '#/components/parameters/AuthenticationToken'
-      tags:
-       - auth
-      description: Log out a user form Growbud.
       responses:
         '204':
           $ref: '#/components/responses/NoContent'
+
+  /auth/refreshToken:
+    post:
+      tags:
+        - Authentication
+      description: Use a refresh token to retrieve a new authentication token without supplying username and password.
+      parameters:
+        - authorization:
+          $ref: '#/components/parameters/RefreshToken'
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatedJWT'
 
 components:
   schemas:
@@ -79,6 +91,13 @@ components:
       required: true
       schema:
         type: string
+    RefreshToken:
+      name: Refresh token
+      in: cookie
+      description: Token to be passed as a cookie.
+      required: true
+      schema:
+        type: string
 
   securitySchemes:
     JWT:
@@ -87,5 +106,5 @@ components:
       scheme: bearer
       bearerFormat: JWT
 tags:
-  - name: auth
-    description: Authentication
+  - name: Authentication
+    description: Authentication routes.
