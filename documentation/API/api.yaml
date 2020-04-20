@@ -12,6 +12,21 @@ servers:
   description: Local Development server
 
 paths:
+  /auth/login:
+    post:
+      tags:
+       - auth
+      description: Login a user to Growbud. On successful authentication a refresh token header is alo returned.
+      requestBody:
+       content:
+         'application/json':
+           schema:
+             $ref: '#/components/schemas/LoginWithUsernameAndPassword'
+      responses:
+       '201':
+         $ref: '#/components/responses/CreatedJWT'
+
+
   /auth/logout:
     post:
       parameters:
@@ -25,9 +40,36 @@ paths:
           $ref: '#/components/responses/NoContent'
 
 components:
+  schemas:
+    LoginWithUsernameAndPassword:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    SuccessfulAuthentication:
+      type: object
+      properties:
+        JWT:
+          type: string
+        JWTExpiry:
+          type: string
+
   responses:
     NoContent:
       description: No Content
+    CreatedJWT:
+      description: Created
+      content:
+        'application/json':
+          schema:
+           $ref: '#/components/schemas/SuccessfulAuthentication'
+      headers:
+          Set-Cookie:
+            schema:
+              type: string
+              example: refreshToken=abcde12345; Path=/; HttpOnly
 
   parameters:
     AuthenticationToken:
