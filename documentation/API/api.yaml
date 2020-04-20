@@ -25,6 +25,13 @@ components:
   responses:
     NoContent:
       description: No Content
+
+  securitySchemes:
+    JWT:
+      description: Authorization header
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 tags:
   - name: auth
     description: Authentication
