@@ -1,31 +1,30 @@
-title: Growbud API
-description: Growbud REST API documentation
+openapi: "3.0.0"
+info:
+  title: Growbud API
+  description: Growbud REST API documentation
+  license:
+    name: Apache 2.0
+    url: https://github.com/OAI/OpenAPI-Specification/blob/master/https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
 
 servers:
-- url: https://localhost:9090
+- url: https://localhost:5001
   description: Local Development server
 
-/deviceTokens:
-  post:
-    description: Register a Firebase cloud messaging notification token for a device.
-    responses:
-      '201':
-        description: Created
-        content:
-          application/json:
-            schema:
-             type: object
-             properties:
-              deviceToken:
-                type: string
-              deviceName:
-                type: string
-              createdAt:
-                type: string
+paths:
+  /auth/logout:
+    post:
+      tags:
+       - auth
+      description: Log out a user form Growbud.
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
 
-/deviceTokens/{id}:
-  delete:
-    description: Remove a Firebase cloud messaging notification token for a device
-    responses:
-      '204':
-        description: No Content
+components:
+  responses:
+    NoContent:
+      description: No Content
+tags:
+  - name: auth
+    description: Authentication
