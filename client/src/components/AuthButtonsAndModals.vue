@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="login-signup-btns">
-      <ui-button class="btn login" @click="openModal('loginModal')"> Login</ui-button>
+      <ui-button class="btn login" @click="openModal('loginModal')">Login</ui-button>
 
       <ui-button class="btn signup" @click="openModal('signupModal')">Sign up</ui-button>
     </div>
@@ -42,24 +42,33 @@ export default {
   width: 80%;
   height: 12vh;
   border-radius: 6px;
-  box-shadow: 2px 5px 0 0 #50aa8d;
-
  
 }
 
-.btn:hover {
-  -webkit-box-shadow: inset 0 0 6px 2px #50aa8d;
-     -moz-box-shadow: inset 0 0 6px 2px #50aa8d;
-          box-shadow: inset 0 0 6px 2px #50aa8d;
+.signup{
+  background: $primary-light !important;
+  box-shadow: 3px 6px 0 0 darken($primary-light, 25%);
+}
+
+.signup:hover{
+  -webkit-box-shadow: inset 0 0 2px 1px  darken($primary-light, 25%);
+     -moz-box-shadow: inset 0 0 2px 1px  darken($primary-light, 25%);
+          box-shadow: inset 0 0 2px 1px  darken($primary-light, 25%);
    outline: none;
+   cursor: pointer;
 }
 
 .login{
-  background-color: $shade-secondary !important; 
+  background-color: $primary !important;
+  box-shadow: 3px 6px 0 0 darken($shade-secondary-accent, 40%);
 }
 
-.signup{
-  background: $shade-primary !important;
+.login:hover{
+  -webkit-box-shadow: inset 0 0 2px 1px  darken($shade-secondary-accent, 25%);
+     -moz-box-shadow: inset 0 0 2px 1px  darken($shade-secondary-accent, 25%);
+          box-shadow: inset 0 0 2px 1px darken($shade-secondary-accent, 25%);
+   outline: none;
+   cursor: pointer;
 }
 
 nav > div {
