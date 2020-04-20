@@ -15,11 +15,8 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-          cd client
-          npm install
-          npm run lint
+      - name: Install Client
+        run: ./install-client.sh
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@v1.3.0
         with:
