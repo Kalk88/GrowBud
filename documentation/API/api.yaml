@@ -16,6 +16,7 @@ paths:
     post:
       tags:
        - Authentication
+      summary: Login
       description: Login a user to Growbud. On successful authentication a refresh token header is alo returned.
       requestBody:
        content:
@@ -31,6 +32,7 @@ paths:
     post:
       tags:
        - Authentication
+      summary: Logout
       description: Log out a user form Growbud.
       parameters:
         - authorization:
@@ -43,6 +45,7 @@ paths:
     post:
       tags:
         - Authentication
+      summary: Refresh token
       description: Use a refresh token to retrieve a new authentication token without supplying username and password.
       parameters:
         - authorization:
