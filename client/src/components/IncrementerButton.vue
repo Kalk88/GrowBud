@@ -105,7 +105,7 @@ button:hover {
   font-size: 18px;
   border-radius: 15px;
   border: 3px solid $secondary;
-  background: $body-warm;
+  background: lighten($primary-light, 25);
 }
 
 .hide {

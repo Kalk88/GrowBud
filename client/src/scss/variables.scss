@@ -7,12 +7,14 @@ $warning: #b01700;
 
 $body-warm: #2F5E4E;
 $body-cold: #50aa8d;
-$body: #fbffd9;
+$body: #f8fae2;
 
 $body-modal: #008d3e;
 
 $shade-primary: #D8FF99;
+$shade-primary-accent: #b1e65c;
 $shade-secondary: #F4FF99;
+$shade-secondary-accent: #d8e65c;
 
 $dark: #020024;
 
@@ -24,7 +26,7 @@ $forest-primary: #50aa8d;
 $forest-secondary: #2F5E4E;
 
 $standard-border-radius: 6px;
-$header-gradient: linear-gradient(to right bottom, #00b05d, #3bc054, #60cf47, #83de34, #a8eb12);
+$header-gradient: linear-gradient(to right bottom, #27ae60, #29b564, #2abd68, #2cc46d, #2ecc71);
 //#F4FF99 #EFFF99
 
 ::v-deep .ui-datepicker__display {

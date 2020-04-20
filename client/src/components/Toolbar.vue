@@ -1,10 +1,9 @@
 <template>
   <ui-toolbar :removeNavIcon="true" title="Growbud" type="colored" :raised="false" >
     <div class="navbar-buttons" slot="actions" v-if="isLoggedin">
-      <ui-button class="mySchedules navbar-button" @click="goToMyWateringSchedules">
-        My schedules
-      </ui-button>
-      <ui-icon-button @click="goToProfile" class="profile-icon-btn" icon="account_box" type="secondary"></ui-icon-button>
+      <ui-icon-button class="mySchedules icon-btn" icon="calendar_today" type="secondary" @click="goToMyWateringSchedules">
+      </ui-icon-button>
+      <ui-icon-button @click="goToProfile" class="icon-btn" icon="account_box" type="secondary"></ui-icon-button>
     </div>
   </ui-toolbar>
 </template>
@@ -43,6 +42,12 @@ nav {
   flex-direction: row;
 }
 
+::v-deep .ui-toolbar__title{
+  padding-left: 1rem;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
 nav > div {
   padding: 10px;
   background: $header-gradient;
@@ -50,7 +55,7 @@ nav > div {
 }
 
 ::v-deep .ui-icon{
-  font-size: 2.5rem;
+  font-size: 2rem;
 }
 
 ::v-deep .ui-icon-button{
@@ -58,18 +63,30 @@ nav > div {
   height: 2.5rem !important;
 }
 
-.profile-icon-btn{
+.icon-btn{
   border-radius: 6px;
   color: $dark !important;
   margin-left: 2rem;
   margin-right:1rem;
+  cursor: pointer;
 }
 
-.profile-icon-btn:hover{
-  -webkit-box-shadow: inset 0 0 4px 1px $forest-secondary;
-     -moz-box-shadow: inset 0 0 4px 1px $forest-secondary;
-          box-shadow: inset 0 0 4px 1px $forest-secondary;
-   outline: none;
+.icon-btn:hover::after{
+  opacity: 1;
+}
+
+.icon-btn::after{
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  content: '';
+  -webkit-box-shadow: inset 0 0 4px 1px $primary-dark;
+  -moz-box-shadow: inset 0 0 4px 1px $primary-dark;
+    box-shadow: inset 0 0 4px 1px $primary-dark;
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
 

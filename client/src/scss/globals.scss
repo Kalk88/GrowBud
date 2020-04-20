@@ -3,38 +3,42 @@
 }
 
 .primary-button{
+  position: relative;
   background: radial-gradient($primary, $secondary) !important;
   border-radius: $standard-border-radius;
-  -webkit-box-shadow: 2px 5px 0 0 $primary-dark;
-  -moz-box-shadow: 2px 5px 0 0 $primary-dark;
-  box-shadow: 2px 5px 0 0 $primary-dark;
+  -webkit-box-shadow: 1px 3px 0 1px $primary-dark;
+  -moz-box-shadow: 1px 3px 0 1px $primary-dark;
+  box-shadow: 1px 3px 0 1px $primary-dark;
+  cursor: pointer;
+  transition: box-shadow 0.3s;
+}
+
+.primary-button:hover{
+  box-shadow: none;
+}
+
+.primary-button::after{
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  content: '';
+  -webkit-box-shadow: inset 0 0 4px 1px $primary-dark;
+  -moz-box-shadow: inset 0 0 4px 1px $primary-dark;
+    box-shadow: inset 0 0 4px 1px $primary-dark;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.primary-button:hover::after{
+  opacity: 1;
+
 }
 
 .disabled-btn{
   background: radial-gradient($primary, $secondary) !important;
   color: $dark !important;
-}
-
-.primary-button:hover{
-  -webkit-box-shadow: inset 0 0 6px 2px $primary-dark;
-     -moz-box-shadow: inset 0 0 6px 2px $primary-dark;
-          box-shadow: inset 0 0 6px 2px $primary-dark;
-   outline: none;
-}
-
-.navbar-button{
-  background: radial-gradient($shade-primary, $shade-secondary);
-  border-radius: 6px;
-  -webkit-box-shadow: 2px 5px 0 0 $forest-secondary;
-  -moz-box-shadow: 2px 5px 0 0 $forest-secondary;
-  box-shadow: 2px 5px 0 0 $forest-secondary;
-}
-
-.navbar-button:hover{
-  -webkit-box-shadow: inset 0 0 4px 1px $forest-secondary;
-     -moz-box-shadow: inset 0 0 4px 1px $forest-secondary;
-          box-shadow: inset 0 0 4px 1px $forest-secondary;
-   outline: none;
 }
 
 ::v-deep .ui-button.ui-button--type-secondary{
@@ -48,6 +52,10 @@
   border-radius: $standard-border-radius;
   border: 2px solid $dark;
   
+}
+
+::v-deep .ui-modal__mask{
+  height: 100vh;
 }
 
 

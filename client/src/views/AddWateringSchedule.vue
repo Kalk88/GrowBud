@@ -78,13 +78,13 @@
       
       <ui-button type="secondary" @click="cancel" >Cancel</ui-button>
       
-      <ui-button class="primary-button"
+      <ui-button :class="isFormDisabled? 'addBtnDisabled':'primary-button'"
         v-if="!scheduleToEdit"
         :disabled="isFormDisabled"
         @click="addWateringSchedule"
         >Add schedule</ui-button
       >
-      <ui-button class="primary-button"
+      <ui-button :class="isFormDisabled? 'addBtnDisabled':'primary-button'"
         v-if="scheduleToEdit"
         :disabled="isFormDisabled"
         @click="updateWateringSchedule"
@@ -255,8 +255,11 @@ export default {
 .wrapper {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow: hidden;
+  min-height: 90vh;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  justify-content: space-evenly;
+  position: relative;
 }
 
 .plantInput {
@@ -266,7 +269,7 @@ export default {
     padding: 0.75rem;
     font-family: "Roboto", sans-serif;
     border: 1px solid;
-    background-color: $body-cold;
+    background-color: lighten($primary-light, 25);
     border-color: $dark;
     border-radius: 12px;
     width: 100%;
@@ -278,14 +281,16 @@ export default {
   }
   .input__icon {
     position: absolute;
+    padding: 0.25rem;
     right: 1rem;
-    top: 0.5rem;
+    top: 0.35rem;
   }
 
   .input__icon:hover {
     cursor: pointer;
-    background-color: $shade-primary;
-    border-radius: 5px;
+    background-color: lighten($primary-light, 35);
+    padding: 0.25rem;
+    border-radius: 25px;
   }
 }
 
@@ -336,14 +341,14 @@ export default {
 
   ::v-deep .ui-datepicker-calendar__header{
     background-color: $secondary;
-}
+  }
 
-::v-deep .ui-calendar-week__date.is-selected{
-    background-color: $primary;
-}
-::v-deep .ui-calendar-week__date.is-today{
-  color: $secondary;
-}
+  ::v-deep .ui-calendar-week__date.is-selected{
+      background-color: $primary;
+  }
+  ::v-deep .ui-calendar-week__date.is-today{
+    color: $secondary;
+  }
   
 }
 
@@ -389,9 +394,15 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  position: absolute;
-  bottom: 1rem;
   width: 100%;
+}
+
+.addBtnDisabled{
+  background: radial-gradient($primary, $secondary) !important;
+  border-radius: $standard-border-radius;
+  -webkit-box-shadow: 1px 3px 0 1px $primary-dark;
+  -moz-box-shadow: 1px 3px 0 1px $primary-dark;
+  box-shadow: 1px 3px 0 1px $primary-dark;
 }
 
 

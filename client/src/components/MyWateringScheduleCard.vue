@@ -1,10 +1,10 @@
 <template>
-  <div class="container" @click="showExpandCard = !showExpandCard">
+  <div class="container" @click="setExpandCard">
     <div v-if="!showExpandCard" class="text-black" >
       <div>Next reminder: {{ `${time} ${nextTimeToWaterAsDate.toLocaleDateString({ weekday: 'long' })} 
         `}}</div>
     </div>
-    <div v-else-if="showExpandCard" class="card-expanded">
+    <div v-else-if="showExpandCard" class="expanded">
       <h3>Plants</h3>
       <div v-for="(plant,index) in schedule.plants" :key="index" class="plant">
         {{ plant.name }}
@@ -64,6 +64,11 @@ export default {
 
     deleteWateringSchedule(){
       this.$emit("scheduleDeleted");
+    },
+
+    setExpandCard() {
+      this.showExpandCard = !this.showExpandCard
+      this.$emit('cardExpanded', this)
     }
    
   }
@@ -74,20 +79,11 @@ export default {
 .container {
   display: flex;
   justify-content: center;
-  border-radius: 6px;
-  padding: 0.5rem;
-  box-shadow: 1px 3px 0 0 #50aa8d;
 }
 
-.container:hover {
-  -webkit-box-shadow: inset 0 0 6px 2px #50aa8d;
-     -moz-box-shadow: inset 0 0 6px 2px #50aa8d;
-          box-shadow: inset 0 0 6px 2px #50aa8d;
-   outline: none;
-}
-
-.card-expanded{
-  width: 100%
+.expanded{
+  width: 100%;
+  padding: 1rem;
 }
 
 h3{
@@ -109,13 +105,20 @@ h3{
   align-items: baseline;
 
   .removeSchedule-btn{
-    margin-top: 1rem;
     margin-left: auto;
-    width: 40%;
     border-radius: $standard-border-radius;
+    box-shadow: 1px 3px 0 1px darken($warning, 25%);
     color:honeydew;
     background-color: $warning !important;
+    cursor: pointer;
 
+  }
+
+  .removeSchedule-btn:hover{
+    -webkit-box-shadow: inset 0 0 4px 1px darken($warning, 25%);
+     -moz-box-shadow: inset 0 0 4px 1px darken($warning, 25%);
+          box-shadow: inset 0 0 4px 1px darken($warning, 25%);
+   outline: none;
   }
 }
 
