@@ -14,6 +14,9 @@ servers:
 paths:
   /auth/logout:
     post:
+      parameters:
+        - authorization:
+          $ref: '#/components/parameters/AuthenticationToken'
       tags:
        - auth
       description: Log out a user form Growbud.
@@ -26,9 +29,18 @@ components:
     NoContent:
       description: No Content
 
+  parameters:
+    AuthenticationToken:
+      name: Authentication token
+      in: header
+      description: JWT to be passed as a header.
+      required: true
+      schema:
+        type: string
+
   securitySchemes:
     JWT:
-      description: Authorization header
+      description: Authorization header.
       type: http
       scheme: bearer
       bearerFormat: JWT
