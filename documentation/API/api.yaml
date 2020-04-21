@@ -58,7 +58,7 @@ paths:
     post:
       tags:
         - Notifications
-      summary: Register device token
+      summary: Register device token.
       parameters:
         - authorization:
           $ref: '#/components/parameters/AuthenticationToken'
@@ -71,7 +71,19 @@ paths:
         '201':
           $ref: '#/components/responses/RegisteredDeviceToken'
 
-
+  /deviceTokens/{ResourceId}:
+    delete:
+      tags:
+        - Notifications
+      summary: Unregister a device token
+      parameters:
+        - authorization:
+          $ref: '#/components/parameters/AuthenticationToken'
+        - id:
+          $ref: '#/components/parameters/ResourceId'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
 components:
   schemas:
     LoginWithUsernameAndPassword:
@@ -140,6 +152,14 @@ components:
       required: true
       schema:
         type: string
+    ResourceId:
+      name: ResourceId
+      in: path
+      description: Id of the resource
+      required: true
+      schema:
+        type: string
+
 
   securitySchemes:
     JWT:
