@@ -54,6 +54,24 @@ paths:
         '201':
           $ref: '#/components/responses/CreatedJWT'
 
+  /deviceTokens:
+    post:
+      tags:
+        - Notifications
+      summary: Register device token
+      parameters:
+        - authorization:
+          $ref: '#/components/parameters/AuthenticationToken'
+      requestBody:
+       content:
+         'application/json':
+           schema:
+             $ref: '#/components/schemas/RegisterDeviceToken'
+      responses:
+        '201':
+          $ref: '#/components/responses/RegisteredDeviceToken'
+
+
 components:
   schemas:
     LoginWithUsernameAndPassword:
@@ -70,6 +88,22 @@ components:
           type: string
         JWTExpiry:
           type: string
+    RegisterDeviceToken:
+      type: object
+      properties:
+        deviceToken:
+          type: string
+        deviceName:
+          type: string
+    DeviceTokenResponse:
+      type: object
+      properties:
+        deviceToken:
+          type: string
+        deviceName:
+          type: string
+        createdAt:
+          type: string
 
   responses:
     NoContent:
@@ -85,6 +119,11 @@ components:
             schema:
               type: string
               example: refreshToken=abcde12345; Path=/; HttpOnly
+    RegisteredDeviceToken:
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/DeviceTokenResponse'
 
   parameters:
     AuthenticationToken:
@@ -111,3 +150,5 @@ components:
 tags:
   - name: Authentication
     description: Authentication routes.
+  - name: Notifications
+    description: Notifications routes.
