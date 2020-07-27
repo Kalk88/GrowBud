@@ -1,31 +1,174 @@
-title: Growbud API
-description: Growbud REST API documentation
+openapi: "3.0.0"
+info:
+  title: Growbud API
+  description: Growbud REST API documentation
+  license:
+    name: Apache 2.0
+    url: https://github.com/OAI/OpenAPI-Specification/blob/master/https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
 
 servers:
-- url: https://localhost:9090
+- url: https://localhost:5001
   description: Local Development server
 
-/deviceTokens:
-  post:
-    description: Register a Firebase cloud messaging notification token for a device.
-    responses:
-      '201':
-        description: Created
-        content:
-          application/json:
-            schema:
-             type: object
-             properties:
-              deviceToken:
-                type: string
-              deviceName:
-                type: string
-              createdAt:
-                type: string
+paths:
+  /auth/login:
+    post:
+      tags:
+       - Authentication
+      summary: Login
+      description: Login a user to Growbud. On successful authentication a refresh token header is alo returned.
+      requestBody:
+       content:
+         'application/json':
+           schema:
+             $ref: '#/components/schemas/LoginWithUsernameAndPassword'
+      responses:
+       '201':
+         $ref: '#/components/responses/CreatedJWT'
 
-/deviceTokens/{id}:
-  delete:
-    description: Remove a Firebase cloud messaging notification token for a device
-    responses:
-      '204':
-        description: No Content
+
+  /auth/logout:
+    post:
+      tags:
+       - Authentication
+      summary: Logout
+      description: Log out a user form Growbud.
+      parameters:
+        - authorization:
+          $ref: '#/components/parameters/AuthenticationToken'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
+
+  /auth/refreshToken:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh token
+      description: Use a refresh token to retrieve a new authentication token without supplying username and password.
+      parameters:
+        - authorization:
+          $ref: '#/components/parameters/RefreshToken'
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatedJWT'
+
+  /deviceTokens:
+    post:
+      tags:
+        - Notifications
+      summary: Register device token.
+      parameters:
+        - authorization:
+          $ref: '#/components/parameters/AuthenticationToken'
+      requestBody:
+       content:
+         'application/json':
+           schema:
+             $ref: '#/components/schemas/RegisterDeviceToken'
+      responses:
+        '201':
+          $ref: '#/components/responses/RegisteredDeviceToken'
+
+  /deviceTokens/{ResourceId}:
+    delete:
+      tags:
+        - Notifications
+      summary: Unregister a device token
+      parameters:
+        - authorization:
+          $ref: '#/components/parameters/AuthenticationToken'
+        - id:
+          $ref: '#/components/parameters/ResourceId'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
+components:
+  schemas:
+    LoginWithUsernameAndPassword:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    SuccessfulAuthentication:
+      type: object
+      properties:
+        JWT:
+          type: string
+        JWTExpiry:
+          type: string
+    RegisterDeviceToken:
+      type: object
+      properties:
+        deviceToken:
+          type: string
+        deviceName:
+          type: string
+    DeviceTokenResponse:
+      type: object
+      properties:
+        deviceToken:
+          type: string
+        deviceName:
+          type: string
+        createdAt:
+          type: string
+
+  responses:
+    NoContent:
+      description: No Content
+    CreatedJWT:
+      description: Created
+      content:
+        'application/json':
+          schema:
+           $ref: '#/components/schemas/SuccessfulAuthentication'
+      headers:
+          Set-Cookie:
+            schema:
+              type: string
+              example: refreshToken=abcde12345; Path=/; HttpOnly
+    RegisteredDeviceToken:
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/DeviceTokenResponse'
+
+  parameters:
+    AuthenticationToken:
+      name: Authentication token
+      in: header
+      description: JWT to be passed as a header.
+      required: true
+      schema:
+        type: string
+    RefreshToken:
+      name: Refresh token
+      in: cookie
+      description: Token to be passed as a cookie.
+      required: true
+      schema:
+        type: string
+    ResourceId:
+      name: ResourceId
+      in: path
+      description: Id of the resource
+      required: true
+      schema:
+        type: string
+
+
+  securitySchemes:
+    JWT:
+      description: Authorization header.
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+tags:
+  - name: Authentication
+    description: Authentication routes.
+  - name: Notifications
+    description: Notifications routes.
